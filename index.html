@@ -19,6 +19,20 @@
 <link rel="stylesheet" href="https://design.lemeit.ar/lemeit-theme.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<!-- Zoom/pan del Gráfico: hammerjs habilita el gesto de pinch-zoom en celular;
+     chartjs-plugin-zoom es el que agrega el zoom por selección (arrastrar
+     un recuadro), la rueda/pinch y el paneo. Mismo patrón de respaldo a
+     cdnjs que jsPDF, por si jsDelivr falla. -->
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js';document.head.appendChild(s);"></script>
+<script>
+  // Registrar el plugin de zoom apenas está disponible Chart.js. Si por lo
+  // que sea ninguna de las dos CDN cargó, el gráfico sigue funcionando
+  // normal, simplemente sin zoom/pan (misma filosofía que el respaldo de jsPDF).
+  window.addEventListener("load", () => {
+    if (window.Chart && window.ChartZoom) Chart.register(window.ChartZoom);
+  });
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';document.head.appendChild(s);"></script>
 <script src="https://design.lemeit.ar/lemeit-common.js"></script>
 <script>
@@ -522,6 +536,14 @@
     color: var(--accent);
   }
 
+  .zoom-hint {
+    font-family: var(--font-display);
+    font-size: 10px;
+    color: var(--text-dim);
+    opacity: .7;
+    margin-top: 8px;
+  }
+
   .channel-toggle {
     display: flex;
     gap: 16px;
@@ -692,6 +714,7 @@
           Comparar sitios
         </label>
         <button class="export-btn" id="export-btn">Exportar CSV</button>
+        <button class="export-btn" id="reset-zoom-btn" onclick="resetChartZoom()" style="display:none">↺ Reset zoom</button>
       </div>
       <div class="param-toggle" id="param-toggle"></div>
       <!-- Filtro de sitios a comparar — solo visible con "Comparar sitios"
@@ -703,6 +726,7 @@
         <canvas id="history-chart" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
         <div class="loader" id="chart-empty" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;align-items:center;justify-content:center">Este sensor no tiene datos en el rango seleccionado.</div>
       </div>
+      <div class="zoom-hint" id="zoom-hint">🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil</div>
       <div class="channel-toggle" id="channel-toggle-wrap">
         <label><input type="checkbox" id="toggle-channels" /> Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)</label>
       </div>
@@ -1873,6 +1897,37 @@
     doc.save(nombreArchivo);
   }
 
+  // Zoom por selección ("box zoom") + pan + rueda/pellizco, vía
+  // chartjs-plugin-zoom. Se arma acá (en vez de en línea en cada gráfico)
+  // porque tanto renderChart() como renderChartCompare() la necesitan igual.
+  // El botón "Reset zoom" aparece recién cuando el usuario efectivamente
+  // hizo zoom o pan, y se oculta de nuevo al resetear.
+  function buildZoomOptions() {
+    const cs = getComputedStyle(document.documentElement);
+    const accent = cs.getPropertyValue("--accent").trim() || "#D9691F";
+    return {
+      pan: { enabled: true, mode: "x", modifierKey: null, onPanComplete: showResetZoomBtn },
+      zoom: {
+        drag: { enabled: true, backgroundColor: accent + "22", borderColor: accent, borderWidth: 1 },
+        wheel: { enabled: true },
+        pinch: { enabled: true },
+        mode: "x",
+        onZoomComplete: showResetZoomBtn,
+      },
+    };
+  }
+
+  function showResetZoomBtn() {
+    const btn = document.getElementById("reset-zoom-btn");
+    if (btn) btn.style.display = "";
+  }
+
+  function resetChartZoom() {
+    if (chart && chart.resetZoom) chart.resetZoom();
+    const btn = document.getElementById("reset-zoom-btn");
+    if (btn) btn.style.display = "none";
+  }
+
   function renderChart(rows) {
     const ctx = document.getElementById("history-chart");
     const labels = rows.map((r) => formatBsAsTime(r.timestamp));
@@ -1971,10 +2026,13 @@
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 10 }, bodyFont: { family: "JetBrains Mono", size: 12 },
           },
+          zoom: buildZoomOptions(),
         },
         scales,
       },
     });
+    const resetBtn = document.getElementById("reset-zoom-btn");
+    if (resetBtn) resetBtn.style.display = "none";
   }
 
   // Gráfico del modo "Comparar sitios": un parámetro (getCompareParam()),
@@ -2034,6 +2092,7 @@
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 10 }, bodyFont: { family: "JetBrains Mono", size: 12 },
           },
+          zoom: buildZoomOptions(),
         },
         scales: {
           x: { ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12 }, grid: { color: colorBorder } },
@@ -2050,6 +2109,8 @@
         },
       },
     });
+    const resetBtn = document.getElementById("reset-zoom-btn");
+    if (resetBtn) resetBtn.style.display = "none";
   }
 
   function exportCsv() {
@@ -2127,7 +2188,7 @@
     if (id === "mapa") cargarMapa();
   }
 
-  const APP_VERSION = "v1.0.11";
+  const APP_VERSION = "v1.0.12";
 
   if (window.LemeitCommon) {
     LemeitCommon.initSwitcher("aq");
