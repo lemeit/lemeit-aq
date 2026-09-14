@@ -1378,7 +1378,7 @@
           </div>
           <div class="card-face card-back">
             <div class="card-back-hdr">
-              <div class="card-back-title">${s.institucion || s.nombre} · PM2.5 24h</div>
+              <div class="card-back-title">${s.institucion || s.nombre} · PM2.5 (µg/m³) · 24h</div>
               <div class="card-back-close">✕ volver</div>
             </div>
             <div class="card-back-chart"><canvas id="mini-chart-${idPrefix}${s.sensor_index}"></canvas></div>
@@ -1526,6 +1526,10 @@
             grid: { color: colorBorder, drawTicks: false },
           },
           y: {
+            title: {
+              display: true, text: "µg/m³", color: colorDim,
+              font: { family: "JetBrains Mono", size: 8 }, padding: { bottom: 2 },
+            },
             ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 8 }, maxTicksLimit: 4 },
             grid: { color: colorBorder, drawTicks: false },
           },
@@ -2229,7 +2233,7 @@
     if (id === "mapa") cargarMapa();
   }
 
-  const APP_VERSION = "v1.0.13";
+  const APP_VERSION = "v1.0.14";
 
   if (window.LemeitCommon) {
     LemeitCommon.initSwitcher("aq");
