@@ -726,7 +726,7 @@
         <canvas id="history-chart" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
         <div class="loader" id="chart-empty" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;align-items:center;justify-content:center">Este sensor no tiene datos en el rango seleccionado.</div>
       </div>
-      <div class="zoom-hint" id="zoom-hint">🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil</div>
+      <div class="zoom-hint" id="zoom-hint">🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom</div>
       <div class="channel-toggle" id="channel-toggle-wrap">
         <label><input type="checkbox" id="toggle-channels" /> Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)</label>
       </div>
@@ -1902,11 +1902,18 @@
   // porque tanto renderChart() como renderChartCompare() la necesitan igual.
   // El botón "Reset zoom" aparece recién cuando el usuario efectivamente
   // hizo zoom o pan, y se oculta de nuevo al resetear.
-  function buildZoomOptions() {
+  function buildZoomOptions(maxIndex) {
     const cs = getComputedStyle(document.documentElement);
     const accent = cs.getPropertyValue("--accent").trim() || "#D9691F";
-    return {
-      pan: { enabled: true, mode: "x", modifierKey: null, onPanComplete: showResetZoomBtn },
+    const opts = {
+      // "ctrl" como modifierKey: sin esto, el arrastre simple del mouse
+      // dispara PAN y zoom-por-selección (drag) al mismo tiempo — compiten
+      // por el mismo gesto, el pan corre el eje mientras se arma el
+      // rectángulo de selección, y el resultado es un zoom que "se va" para
+      // el lado contrario de donde arrastraste (y empeora en zooms
+      // anidados). Con Ctrl+arrastre para paneo, el arrastre simple queda
+      // 100% para la selección de zoom, que es lo que se pidió.
+      pan: { enabled: true, mode: "x", modifierKey: "ctrl", onPanComplete: showResetZoomBtn },
       zoom: {
         drag: { enabled: true, backgroundColor: accent + "22", borderColor: accent, borderWidth: 1 },
         wheel: { enabled: true },
@@ -1915,6 +1922,13 @@
         onZoomComplete: showResetZoomBtn,
       },
     };
+    // Límites explícitos del eje X numérico: sin esto, zooms/pans sucesivos
+    // pueden irse fuera del rango de datos o colapsar a un solo punto.
+    // minRange: 4 evita un zoom tan cerrado que quede ilegible.
+    if (typeof maxIndex === "number" && maxIndex > 0) {
+      opts.limits = { x: { min: 0, max: maxIndex, minRange: Math.min(4, maxIndex) } };
+    }
+    return opts;
   }
 
   function showResetZoomBtn() {
@@ -1944,8 +1958,24 @@
       selectedParams.length === 1 && !(showChannels && CHANNEL_FIELDS[selectedParams[0]]);
 
     const datasets = [];
+    // Eje X numérico (linear) en vez de "category" (labels de texto): es lo
+    // que necesita chartjs-plugin-zoom para calcular bien el rango al hacer
+    // zoom repetido/anidado — con un eje "category" el 2do y 3er zoom
+    // terminaban seleccionando una franja incorrecta (bug de la librería
+    // con ese tipo de escala). Los labels de hora se siguen mostrando vía
+    // el callback de ticks, que traduce el índice numérico de vuelta a
+    // texto usando el array `labels`.
     const scales = {
-      x: { ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12 }, grid: { color: colorBorder } },
+      x: {
+        type: "linear",
+        min: 0,
+        max: Math.max(rows.length - 1, 0),
+        ticks: {
+          color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12,
+          callback: (value) => labels[Math.round(value)] ?? "",
+        },
+        grid: { color: colorBorder },
+      },
     };
 
     selectedParams.forEach((param, i) => {
@@ -1953,7 +1983,7 @@
       const axisId = `y_${param}`;
       datasets.push({
         label: def.unit ? `${def.label} (${def.unit})` : def.label,
-        data: rows.map((r) => r[param]),
+        data: rows.map((r, idx) => ({ x: idx, y: r[param] })),
         borderColor: def.color,
         backgroundColor: def.color + "14", // ~8% de opacidad (hex RGBA de 8 dígitos)
         borderWidth: 2,
@@ -1988,7 +2018,7 @@
         datasets.push(
           {
             label: `${def.label} · Canal A`,
-            data: rows.map((r) => r[ch.a]),
+            data: rows.map((r, idx) => ({ x: idx, y: r[ch.a] })),
             borderColor: def.color + "80", // ~50% opacidad
             borderWidth: 1,
             borderDash: [4, 3],
@@ -1998,7 +2028,7 @@
           },
           {
             label: `${def.label} · Canal B`,
-            data: rows.map((r) => r[ch.b]),
+            data: rows.map((r, idx) => ({ x: idx, y: r[ch.b] })),
             borderColor: def.color + "CC", // ~80% opacidad
             borderWidth: 1,
             borderDash: [1, 2],
@@ -2025,8 +2055,9 @@
             backgroundColor: cs.getPropertyValue("--bg-panel").trim(), borderColor: colorBorder,
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 10 }, bodyFont: { family: "JetBrains Mono", size: 12 },
+            callbacks: { title: (items) => (items.length ? labels[items[0].dataIndex] ?? "" : "") },
           },
-          zoom: buildZoomOptions(),
+          zoom: buildZoomOptions(rows.length - 1),
         },
         scales,
       },
@@ -2062,7 +2093,7 @@
       const byTs = new Map(rows.map((r) => [r.timestamp, r[param]]));
       return {
         label: siteLabel(idx),
-        data: allTimestamps.map((ts) => (byTs.has(ts) ? byTs.get(ts) : null)),
+        data: allTimestamps.map((ts, tsIdx) => ({ x: tsIdx, y: byTs.has(ts) ? byTs.get(ts) : null })),
         borderColor: siteColor(i),
         backgroundColor: siteColor(i) + "14",
         borderWidth: 2,
@@ -2091,11 +2122,21 @@
             backgroundColor: cs.getPropertyValue("--bg-panel").trim(), borderColor: colorBorder,
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 10 }, bodyFont: { family: "JetBrains Mono", size: 12 },
+            callbacks: { title: (items) => (items.length ? labels[items[0].dataIndex] ?? "" : "") },
           },
-          zoom: buildZoomOptions(),
+          zoom: buildZoomOptions(allTimestamps.length - 1),
         },
         scales: {
-          x: { ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12 }, grid: { color: colorBorder } },
+          x: {
+            type: "linear",
+            min: 0,
+            max: Math.max(allTimestamps.length - 1, 0),
+            ticks: {
+              color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12,
+              callback: (value) => labels[Math.round(value)] ?? "",
+            },
+            grid: { color: colorBorder },
+          },
           y: {
             ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 10 } },
             grid: { color: colorBorder },
@@ -2188,7 +2229,7 @@
     if (id === "mapa") cargarMapa();
   }
 
-  const APP_VERSION = "v1.0.12";
+  const APP_VERSION = "v1.0.13";
 
   if (window.LemeitCommon) {
     LemeitCommon.initSwitcher("aq");
