@@ -1,7 +1,7 @@
 {
-  "name": "Aire Saladillo — Calidad de aire",
-  "short_name": "Aire Saladillo",
-  "description": "Calidad de aire en tiempo real en escuelas y jardines de Saladillo: PM1.0/PM2.5/PM10, VOC, CO2, NOx, temperatura, humedad y presión.",
+  "name": "Monitoreo Ambiental Escolar",
+  "short_name": "Aire Escolar",
+  "description": "Calidad de aire en tiempo real en instituciones educativas de la Provincia de Buenos Aires: PM1.0/PM2.5/PM10, VOC, CO2, NOx, temperatura, humedad y presión.",
   "id": "/",
   "start_url": "./?pwa=1",
   "scope": "./",

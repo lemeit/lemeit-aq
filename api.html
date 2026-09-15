@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>API · Aire Saladillo</title>
+<title>API · Monitoreo Ambiental Escolar</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -86,12 +86,12 @@
 
 <div class="header">
   <div class="logo">AQ</div>
-  <h1>API · Aire Saladillo</h1>
+  <h1>API · Monitoreo Ambiental Escolar</h1>
   <a class="back" href="index.html">&larr; Volver al portal</a>
 </div>
 
 <main>
-  <p>Esta es la API pública de solo lectura que ya usa <code>aq.lemeit.ar</code> para mostrar los datos de la red de sensores de calidad del aire (PurpleAir y AirGradient) en escuelas y jardines de Saladillo. Cualquiera puede consumirla directamente, sin registro ni token: es de lectura, CORS abierto, y devuelve los mismos datos ambientales que ya son públicos en el portal.</p>
+  <p>Esta es la API pública de solo lectura que ya usa <code>aq.lemeit.ar</code> para mostrar los datos de la red de sensores de calidad del aire (PurpleAir y AirGradient) en instituciones educativas de la Provincia de Buenos Aires. Cualquiera puede consumirla directamente, sin registro ni token: es de lectura, CORS abierto, y devuelve los mismos datos ambientales que ya son públicos en el portal.</p>
 
   <p class="dim">Base URL: <code>https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev</code></p>
 
@@ -131,10 +131,10 @@ curl "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/historic
   <pre>curl -O -J "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/historico/12345?range=30d&formato=csv"</pre>
 
   <h2>Notas</h2>
-  <p class="dim">No hace falta API key ni registro: los datos son de carácter ambiental y ya son públicos en el portal. La API tiene un uso moderado de todos modos — evitá consultas en loop muy frecuentes. Los timestamps se guardan y devuelven en UTC. Si vas a reutilizar estos datos públicamente, agradecemos que menciones como fuente a <a href="https://aq.lemeit.ar" style="color:var(--accent)">aq.lemeit.ar</a> — Red de sensores de calidad del aire de Saladillo.</p>
+  <p class="dim">No hace falta API key ni registro: los datos son de carácter ambiental y ya son públicos en el portal. La API tiene un uso moderado de todos modos — evitá consultas en loop muy frecuentes. Los timestamps se guardan y devuelven en UTC. Si vas a reutilizar estos datos públicamente, agradecemos que menciones como fuente a <a href="https://aq.lemeit.ar" style="color:var(--accent)">aq.lemeit.ar</a> — Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires.</p>
 </main>
 
-<footer>aq.lemeit.ar · Red de sensores de calidad del aire en escuelas y jardines de Saladillo</footer>
+<footer>aq.lemeit.ar · Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</footer>
 
 </body>
 </html>
