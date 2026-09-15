@@ -1172,12 +1172,20 @@
       : `${API_BASE}/tiles/light_all/{z}/{x}/{y}{r}.png`;
 
     const conCoords = latestSensors.filter((s) => s.latitud != null && s.longitud != null);
-    const centro = conCoords.length
-      ? [conCoords.reduce((a, s) => a + s.latitud, 0) / conCoords.length, conCoords.reduce((a, s) => a + s.longitud, 0) / conCoords.length]
-      : [-35.628, -59.797];
 
     if (!mapaInst) {
-      mapaInst = L.map("mapa-container").setView(centro, 13);
+      // Encuadre inicial que cubra los dos partidos (Saladillo + 25 de Mayo),
+      // no solo el centroide de los sensores ya desplegados — todavia no hay
+      // sensores propios en 25 de Mayo (Fase 2, escuelas "Lola Mora" y
+      // "Casares/Del Valle", ver plan de despliegue), pero se agrega su
+      // ubicacion de referencia (misma que usa EMA-25C en emas.lemeit.ar)
+      // para que el mapa no arranque mostrando solo Saladillo. Mismo criterio
+      // que en emas.lemeit.ar.
+      const puntosSaladillo = conCoords.length
+        ? conCoords.map((s) => [s.latitud, s.longitud])
+        : [[-35.628, -59.797]];
+      const boundsInicial = L.latLngBounds([...puntosSaladillo, [-35.435069, -60.170656]]);
+      mapaInst = L.map("mapa-container").fitBounds(boundsInicial, { padding: [30, 30] });
       mapaTileLayer = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap contributors © CARTO" }).addTo(mapaInst);
     } else {
       if (mapaTileLayer) mapaInst.removeLayer(mapaTileLayer);
