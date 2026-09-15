@@ -7,15 +7,19 @@ name: Ingesta PurpleAir (automática + manual)
 # después porque ese Cron Trigger quedó registrado pero nunca disparó
 # scheduled() (parece un bug del lado de Cloudflare, no de este repo).
 #
-# Corre en los minutos :07/:22/:37/:52 — a propósito NO coincide con los
-# minutos del Cron Trigger de Cloudflare (:03/:18/:33/:48) ni con los del
-# cron externo en cron-job.org (:12/:27/:42/:57), que se sumó como tercera
-# capa de respaldo. Los tres pueden correr en paralelo sin duplicar datos
-# gracias al INSERT OR IGNORE + UNIQUE(sensor_index, timestamp) en
-# schema.sql. workflow_dispatch se mantiene para backfill puntual a mano.
+# Pausado de nuevo (septiembre 2026): con el Cron Trigger de Cloudflare sin
+# disparar y este `schedule:` + cron-job.org corriendo en paralelo, cada
+# ciclo de ~15 min terminaba pegándole 2 veces completas a la API de
+# PurpleAir (duplica el gasto de puntos — el INSERT OR IGNORE evita filas
+# duplicadas en D1, pero no evita el gasto en PurpleAir). Se deja
+# cron-job.org como único camino activo (servicio de cron dedicado, sin el
+# problema de delays bajo carga compartida que sí tiene GitHub Actions —
+# ver "Historia" en README). Si cron-job.org falla o el consumo de puntos
+# deja de ser un problema, se puede reactivar descomentando el `schedule:`
+# de abajo. workflow_dispatch se mantiene para backfill puntual a mano.
 on:
-  schedule:
-    - cron: "7,22,37,52 * * * *"
+  # schedule:
+  #   - cron: "7,22,37,52 * * * *"
   workflow_dispatch: {}
 
 jobs:
