@@ -131,7 +131,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   <pre>curl -O -J "https://api.lemeit.ar/aq/api/historico/12345?range=30d&formato=csv"</pre>
 
   <h2 id="necesitas-el-historial-completo-de-un-sensor">¿Necesitás el historial completo de un sensor?</h2>
-  <p class="dim"><code>/api/historico</code> tiene un tope de 20.000 filas por pedido (3000 si no se manda <code>limit</code>) — un sensor con varios meses de datos lo puede superar. Para bajarlo completo, pedilo en tramos de fecha con <code>desde</code>/<code>hasta</code> (por ejemplo, un pedido por mes) y unís los CSV. Si te hace falta todo de una sola vez, <a href="https://profe.lemeit.ar" style="color:var(--accent)">escribile a Luciano</a> y te pasa un export directo de la base.</p>
+  <p class="dim">Cada pedido a <code>/api/historico</code> devuelve como máximo 20.000 filas (3000 por defecto). Para un sensor con varios meses de datos, descargalo en tramos con <code>desde</code>/<code>hasta</code> (por ejemplo, un pedido por mes) y unís los CSV. Si necesitás todo de una sola vez, contactate a <a href="mailto:info@lemeit.ar" style="color:var(--accent)">info@lemeit.ar</a>.</p>
 
   <h2>Notas</h2>
   <p class="dim">No hace falta API key ni registro: los datos son de carácter ambiental y ya son públicos en el portal. La API tiene un uso moderado de todos modos — evitá consultas en loop muy frecuentes. Los timestamps se guardan y devuelven en UTC. Si vas a reutilizar estos datos públicamente, agradecemos que menciones como fuente a <a href="https://aq.lemeit.ar" style="color:var(--accent)">aq.lemeit.ar</a> — Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires.</p>
