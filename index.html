@@ -792,9 +792,11 @@
 <footer class="lm-footer" id="lm-footer"></footer>
 
 <script>
-  // Reemplazar por la URL real una vez desplegado el Worker
+  // Dominio público compartido (Cloudflare Route api.lemeit.ar/aq/* → este
+  // Worker, ver worker/wrangler.toml). El *.workers.dev de abajo comentado
+  // sigue andando igual como respaldo directo.
   // (ej: https://purpleair-saladillo-api.TU-SUBDOMINIO.workers.dev)
-  const API_BASE = "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev";
+  const API_BASE = "https://api.lemeit.ar/aq";
 
   let chart = null;
   let currentSensorIndex = null;

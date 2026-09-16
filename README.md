@@ -144,10 +144,10 @@ Sin agregar ningún panel: cada GET a un endpoint público (`/api/sensores`, `/a
 Para consultarlo, dos endpoints de solo lectura protegidos por el secret `ADMIN_KEY` (`wrangler secret put ADMIN_KEY`, dentro de `worker/`), enviado como header `X-Admin-Key` (mismo esquema que `X-Ingest-Key` en `/api/ingest-ahora`):
 
 ```
-curl -H "X-Admin-Key: TU_ADMIN_KEY" https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/admin/resumen
+curl -H "X-Admin-Key: TU_ADMIN_KEY" https://api.lemeit.ar/aq/api/admin/resumen
     -> visitas de las últimas 24h y 7 días, top 10 rutas y top 10 países (7 días)
 
-curl -H "X-Admin-Key: TU_ADMIN_KEY" "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/admin/visitas?limit=200"
+curl -H "X-Admin-Key: TU_ADMIN_KEY" "https://api.lemeit.ar/aq/api/admin/visitas?limit=200"
     -> las últimas N visitas, una por una (default 200, máximo 2000)
 ```
 

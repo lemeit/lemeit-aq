@@ -93,20 +93,20 @@
 <main>
   <p>Esta es la API pública de solo lectura que ya usa <code>aq.lemeit.ar</code> para mostrar los datos de la red de sensores de calidad del aire (PurpleAir y AirGradient) en instituciones educativas de la Provincia de Buenos Aires. Cualquiera puede consumirla directamente, sin registro ni token: es de lectura, CORS abierto, y devuelve los mismos datos ambientales que ya son públicos en el portal.</p>
 
-  <p class="dim">Base URL: <code>https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev</code></p>
+  <p class="dim">Base URL: <code>https://api.lemeit.ar/aq</code></p>
 
   <h2>GET /api/sensores</h2>
   <div class="endpoint">
     <span class="path"><span class="method">GET</span>/api/sensores</span>
     <p class="dim">Metadata de todos los sensores activos: nombre, institución, latitud/longitud, proveedor (purpleair / airgradient).</p>
-    <pre>curl "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/sensores"</pre>
+    <pre>curl "https://api.lemeit.ar/aq/api/sensores"</pre>
   </div>
 
   <h2>GET /api/ultimas</h2>
   <div class="endpoint">
     <span class="path"><span class="method">GET</span>/api/ultimas</span>
     <p class="dim">Última lectura registrada de cada sensor, con su metadata.</p>
-    <pre>curl "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/ultimas"</pre>
+    <pre>curl "https://api.lemeit.ar/aq/api/ultimas"</pre>
   </div>
 
   <h2>GET /api/historico/:sensor_index</h2>
@@ -121,14 +121,14 @@
       <tr><td><code>limit</code></td><td>Tope de filas devueltas. Default 3000, máximo 20000.</td></tr>
       <tr><td><code>formato</code></td><td><code>csv</code> para descargar un archivo CSV en vez de JSON (ver más abajo).</td></tr>
     </table>
-    <pre>curl "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/historico/12345?range=7d"
+    <pre>curl "https://api.lemeit.ar/aq/api/historico/12345?range=7d"
 
-curl "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/historico/12345?desde=2026-08-01&hasta=2026-08-15"</pre>
+curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-08-15"</pre>
   </div>
 
   <h2>Descargar como CSV</h2>
   <p>Los tres endpoints aceptan <code>&formato=csv</code> y devuelven el mismo contenido en CSV, con encabezado, listo para abrir en Excel o Google Sheets:</p>
-  <pre>curl -O -J "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev/api/historico/12345?range=30d&formato=csv"</pre>
+  <pre>curl -O -J "https://api.lemeit.ar/aq/api/historico/12345?range=30d&formato=csv"</pre>
 
   <h2>Notas</h2>
   <p class="dim">No hace falta API key ni registro: los datos son de carácter ambiental y ya son públicos en el portal. La API tiene un uso moderado de todos modos — evitá consultas en loop muy frecuentes. Los timestamps se guardan y devuelven en UTC. Si vas a reutilizar estos datos públicamente, agradecemos que menciones como fuente a <a href="https://aq.lemeit.ar" style="color:var(--accent)">aq.lemeit.ar</a> — Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires.</p>

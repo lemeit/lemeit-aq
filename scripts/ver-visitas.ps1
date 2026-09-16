@@ -22,7 +22,7 @@ param(
     [string]$Key = $env:PA_ADMIN_KEY
 )
 
-$ApiBase = "https://purpleair-saladillo-api.fisicai-eureka-01.workers.dev"
+$ApiBase = "https://api.lemeit.ar/aq"
 
 if (-not $Key) {
     $secure = Read-Host "Admin key" -AsSecureString

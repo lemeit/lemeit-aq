@@ -382,7 +382,13 @@ export default {
     }
 
     const url = new URL(request.url);
-    const path = url.pathname;
+    let path = url.pathname;
+    // api.lemeit.ar/aq/* (Route de Cloudflare, ver worker/wrangler.toml) llega
+    // con el prefijo /aq incluido — se lo sacamos acá, una sola vez, para que
+    // todo el matching de abajo (/api/sensores, /tiles/..., etc.) siga
+    // funcionando igual sin importar por qué dominio entró la request. El
+    // *.workers.dev directo (sin /aq) sigue andando también, sin tocar nada.
+    if (path.startsWith("/aq/")) path = path.slice(3);
 
     const tileMatch = path.match(/^\/tiles\/(light_all|dark_all)\/(\d+)\/(-?\d+)\/(-?\d+)(@2x)?\.png$/);
     if (tileMatch) {
