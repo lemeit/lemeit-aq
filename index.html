@@ -201,7 +201,7 @@
      (que solo indica si la API respondió), para no mezclar "¿la API está
      viva?" con "¿cuántos sensores dejaron de mandar datos?". Oculto por
      completo cuando no hay ninguno stale (ver loadSensors). */
-  .status-offline-inline { color: var(--unhealthy); }
+  #status-offline-group { display: flex; align-items: center; gap: 5px; margin-left: 4px; color: var(--unhealthy); }
 
   .grid {
     display: grid;
@@ -645,7 +645,6 @@
     .header { padding: 8px 12px; gap: 8px; }
     .header-mid h1 { font-size: 13px; }
     .header-mid p { display: none; }
-    .status span { display: none; }
     main { padding: 10px; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
   }
@@ -661,11 +660,11 @@
   </div>
   <div class="header-right">
     <div class="status">
-      <div class="status-row">
-        <div class="dot" id="dot"></div>
-        <span id="status-text">Cargando datos...</span>
-      </div>
-      <span class="status-sub">actualizado cada 15 min</span>
+      <div class="dot" id="dot" title="Conexión con la API"></div>
+      <span id="status-online-count" title="Sensores en línea">–</span>
+      <span id="status-offline-group" style="display:none">
+        <span class="dot error" title="Sensores fuera de línea"></span><span id="status-offline-count"></span>
+      </span>
     </div>
     <div class="lm-switcher" id="lm-switcher">
       <button class="lm-switcher-btn">Portales ⌄</button>
@@ -1328,18 +1327,21 @@
       // grilla ya está mostrando como desconectado.
       const offlineCount = data.filter((s) => isStale(s.timestamp)).length;
       const onlineCount = data.length - offlineCount;
-      // Todo en una sola línea de texto (sin un segundo dot aparte) para que
-      // nunca se corte en dos renglones raros en pantallas angostas — el
-      // conteo de offline, cuando hay alguno, va en rojo dentro del mismo
-      // texto en vez de como elemento flex separado.
-      let statusHtml = `${onlineCount} sensor${onlineCount === 1 ? "" : "es"} en línea`;
+      // Solo el punto (verde/rojo) + el número al lado — nada de texto que
+      // envolver, así no hay forma de que se corte raro ni en mobile ni en
+      // pantallas angostas. El título de cada dot lleva la explicación.
+      document.getElementById("status-online-count").textContent = String(onlineCount);
+      const offlineGroup = document.getElementById("status-offline-group");
       if (offlineCount > 0) {
-        statusHtml += ` · <span class="status-offline-inline">${offlineCount} fuera de línea</span>`;
+        document.getElementById("status-offline-count").textContent = String(offlineCount);
+        offlineGroup.style.display = "";
+      } else {
+        offlineGroup.style.display = "none";
       }
-      document.getElementById("status-text").innerHTML = statusHtml;
       if (dot) { dot.classList.add("ok"); dot.classList.remove("error"); }
     } catch (err) {
-      document.getElementById("status-text").textContent = "No se pudo conectar con la API";
+      document.getElementById("status-online-count").textContent = "–";
+      document.getElementById("status-offline-group").style.display = "none";
       if (dot) { dot.classList.add("error"); dot.classList.remove("ok"); }
       console.error(err);
     }
