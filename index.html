@@ -537,15 +537,6 @@
     color: var(--accent);
   }
 
-  .hist-info-link {
-    font-family: var(--font-display);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .hist-info-link:hover { color: var(--accent); text-decoration: underline; }
-
   .zoom-hint {
     font-family: var(--font-display);
     font-size: 10px;
@@ -700,9 +691,8 @@
         </select>
         <input type="date" class="sel" id="hist-desde" style="display:none" onchange="loadHistorialTable()">
         <input type="date" class="sel" id="hist-hasta" style="display:none" onchange="loadHistorialTable()">
-        <button class="export-btn" id="hist-export-btn" onclick="downloadHistorialCsv()">Descargar CSV</button>
+        <button class="export-btn" id="hist-export-btn" onclick="downloadHistorialCsv()" title="Tope de 20.000 filas por descarga — para un rango más largo, repetí con otras fechas">Descargar CSV</button>
         <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()">Descargar PDF (reporte)</button>
-        <a class="hist-info-link" href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank" title="Tope de 20.000 filas por descarga — para un rango más largo, repetí la descarga con otras fechas">ⓘ</a>
       </div>
       <div class="param-filter" id="hist-param-filter"></div>
       <div id="tabla-wrap"><div class="loader">—</div></div>
