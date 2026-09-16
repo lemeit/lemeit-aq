@@ -201,7 +201,7 @@
      (que solo indica si la API respondió), para no mezclar "¿la API está
      viva?" con "¿cuántos sensores dejaron de mandar datos?". Oculto por
      completo cuando no hay ninguno stale (ver loadSensors). */
-  .status-offline { display: flex; align-items: center; gap: 5px; margin-left: 3px; color: var(--unhealthy); }
+  .status-offline-inline { color: var(--unhealthy); }
 
   .grid {
     display: grid;
@@ -487,6 +487,9 @@
     cursor: pointer;
     max-width: 160px;
   }
+  /* Selector de institución/sensor: nombres bastante más largos que el resto
+     de los selects (rango, etc.) — necesita más ancho para no truncar. */
+  .sel-sensor { max-width: 220px; }
 
   /* ── TABLA (pestaña Historial, igual que EMA) ── */
   .table-wrap { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
@@ -661,9 +664,6 @@
       <div class="status-row">
         <div class="dot" id="dot"></div>
         <span id="status-text">Cargando datos...</span>
-        <span id="status-offline" class="status-offline" style="display:none">
-          <span class="dot error"></span><span id="status-offline-text"></span>
-        </span>
       </div>
       <span class="status-sub">actualizado cada 15 min</span>
     </div>
@@ -698,7 +698,7 @@
       <div class="table-hdr">
         <h2 id="hist-titulo">Seleccioná una institución para ver el histórico</h2>
         <div class="table-hdr-controls">
-          <select class="sel" id="sel-sensor-hist" onchange="onSensorSelect(this.value)"></select>
+          <select class="sel sel-sensor" id="sel-sensor-hist" onchange="onSensorSelect(this.value)"></select>
           <select class="sel" id="sel-range-hist" onchange="onHistRangeChange()">
             <option value="24h">24 h</option>
             <option value="7d">7 días</option>
@@ -711,7 +711,7 @@
           <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()">Descargar PDF (reporte)</button>
         </div>
       </div>
-      <p class="hist-info-text">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, repetí con otras fechas. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a></p>
+      <p class="hist-info-text">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a></p>
       <div class="param-filter" id="hist-param-filter"></div>
       <div id="tabla-wrap"><div class="loader">—</div></div>
     </div>
@@ -722,7 +722,7 @@
     <div class="chart-wrap">
       <div class="chart-hdr">
         <h2 id="graf-titulo">Seleccioná una institución para ver el histórico</h2>
-        <select class="sel" id="sel-sensor-grafico" onchange="onSensorSelect(this.value)"></select>
+        <select class="sel sel-sensor" id="sel-sensor-grafico" onchange="onSensorSelect(this.value)"></select>
         <select class="sel" id="sel-range-chart" onchange="onGraficoRangeChange()">
           <option value="24h">24 h</option>
           <option value="7d">7 días</option>
@@ -1328,20 +1328,18 @@
       // grilla ya está mostrando como desconectado.
       const offlineCount = data.filter((s) => isStale(s.timestamp)).length;
       const onlineCount = data.length - offlineCount;
-      document.getElementById("status-text").textContent =
-        `${onlineCount} sensor${onlineCount === 1 ? "" : "es"} en línea`;
-      const statusOffline = document.getElementById("status-offline");
+      // Todo en una sola línea de texto (sin un segundo dot aparte) para que
+      // nunca se corte en dos renglones raros en pantallas angostas — el
+      // conteo de offline, cuando hay alguno, va en rojo dentro del mismo
+      // texto en vez de como elemento flex separado.
+      let statusHtml = `${onlineCount} sensor${onlineCount === 1 ? "" : "es"} en línea`;
       if (offlineCount > 0) {
-        document.getElementById("status-offline-text").textContent =
-          `${offlineCount} fuera de línea`;
-        statusOffline.style.display = "";
-      } else {
-        statusOffline.style.display = "none";
+        statusHtml += ` · <span class="status-offline-inline">${offlineCount} fuera de línea</span>`;
       }
+      document.getElementById("status-text").innerHTML = statusHtml;
       if (dot) { dot.classList.add("ok"); dot.classList.remove("error"); }
     } catch (err) {
       document.getElementById("status-text").textContent = "No se pudo conectar con la API";
-      document.getElementById("status-offline").style.display = "none";
       if (dot) { dot.classList.add("error"); dot.classList.remove("ok"); }
       console.error(err);
     }
