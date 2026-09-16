@@ -12,7 +12,8 @@
 -- registrado en corridas siguientes. Ver worker/src/index.js → ingestAirGradient().
 --
 -- Se corre a mano contra D1 (no es automática en cada deploy):
---   wrangler d1 execute purpleair-saladillo --remote --file=migration_004_airgradient.sql
+--   cd worker
+--   wrangler d1 execute purpleair-saladillo --remote --file=../d1/migration_004_airgradient.sql
 
 ALTER TABLE sensores ADD COLUMN proveedor TEXT NOT NULL DEFAULT 'purpleair';
 ALTER TABLE sensores ADD COLUMN serial_externo TEXT;

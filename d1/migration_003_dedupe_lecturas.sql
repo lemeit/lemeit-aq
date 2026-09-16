@@ -19,7 +19,8 @@
 --      (desempatando por el id más alto).
 --
 -- Se corre a mano contra D1 (no es automática en cada deploy):
---   wrangler d1 execute <NOMBRE_DB> --remote --file=migration_003_dedupe_lecturas.sql
+--   cd worker
+--   wrangler d1 execute <NOMBRE_DB> --remote --file=../d1/migration_003_dedupe_lecturas.sql
 
 -- 1) Deja solo la fila de menor id por cada (sensor_index, timestamp) repetido.
 DELETE FROM lecturas

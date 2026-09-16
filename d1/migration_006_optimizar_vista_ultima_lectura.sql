@@ -23,7 +23,7 @@
 --
 -- Se corre a mano contra D1 (no es automática en cada deploy):
 --   cd worker
---   wrangler d1 execute purpleair-saladillo --remote --file=../migration_006_optimizar_vista_ultima_lectura.sql
+--   wrangler d1 execute purpleair-saladillo --remote --file=../d1/migration_006_optimizar_vista_ultima_lectura.sql
 
 DROP VIEW IF EXISTS v_ultima_lectura;
 
