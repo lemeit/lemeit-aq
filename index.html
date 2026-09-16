@@ -1686,7 +1686,7 @@
   // sitio; el estilo "reporte" (texto plano/fuente retro) vive solo en el
   // PDF descargable (ver downloadHistorialPdf). ──
   let histRows = [];
-  let histHiddenParams = new Set(); // claves ocultadas a mano desde el filtro
+  let histHiddenParams = new Set(); // claves ocultadas manualmente desde el filtro
 
   const HIST_COLS = [
     // PM1.0/PM10 los reportan tanto PurpleAir como AirGradient (igual que
@@ -2279,7 +2279,7 @@
   // relojes de AQI son la portada más útil en el celular. En el navegador
   // de escritorio normal seguimos abriendo en "Mapa" como hasta ahora.
   // navigator.standalone cubre Safari/iOS, que no soporta bien la media
-  // query display-mode; el query param sirve además para probarlo a mano.
+  // query display-mode; el query param sirve además para probarlo manualmente.
   const isPwaLaunch = window.matchMedia("(display-mode: standalone)").matches
     || window.navigator.standalone === true
     || new URLSearchParams(location.search).has("pwa");

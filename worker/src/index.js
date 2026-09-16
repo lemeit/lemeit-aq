@@ -65,7 +65,7 @@ async function fetchPurpleAirData(env) {
 async function upsertSensorMetadata(env, sensorIndex, nombre, lat, lon) {
   // "proveedor" se fija explícitamente en el INSERT (no depende de un
   // DEFAULT del esquema) pero no se toca en el UPDATE, mismo criterio que
-  // "nombre": si alguna vez se corrige a mano en D1, la ingesta periódica
+  // "nombre": si alguna vez se corrige manualmente en D1, la ingesta periódica
   // no lo pisa.
   await env.DB.prepare(
     `INSERT INTO sensores (sensor_index, nombre, latitud, longitud, proveedor)
