@@ -197,6 +197,12 @@
   .dot.error { background: var(--unhealthy); }
   @keyframes aq-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 
+  /* Indicador aparte de "N fuera de línea" — separado del dot principal
+     (que solo indica si la API respondió), para no mezclar "¿la API está
+     viva?" con "¿cuántos sensores dejaron de mandar datos?". Oculto por
+     completo cuando no hay ninguno stale (ver loadSensors). */
+  .status-offline { display: flex; align-items: center; gap: 5px; margin-left: 3px; color: var(--unhealthy); }
+
   .grid {
     display: grid;
     /* Más ancho que antes (era 200px): con el mini-grafico + nombres de
@@ -651,6 +657,9 @@
     <div class="status">
       <div class="dot" id="dot"></div>
       <span id="status-text">Cargando datos...</span>
+      <span id="status-offline" class="status-offline" style="display:none">
+        <span class="dot error"></span><span id="status-offline-text"></span>
+      </span>
     </div>
     <div class="lm-switcher" id="lm-switcher">
       <button class="lm-switcher-btn">Portales ⌄</button>
@@ -1303,11 +1312,27 @@
       renderGrid(data);
       populateSensorSelects();
       if (document.getElementById("tab-mapa").classList.contains("active")) cargarMapa();
+      // "En línea" = reportó una lectura hace menos de STALE_MINUTES (misma
+      // regla que decide el badge "Sin datos" de cada card, ver
+      // buildSensorCardInner) — así el resumen de arriba coincide con lo que
+      // se ve abajo, en vez de contar como "activo" a un sensor que la propia
+      // grilla ya está mostrando como desconectado.
+      const offlineCount = data.filter((s) => isStale(s.timestamp)).length;
+      const onlineCount = data.length - offlineCount;
       document.getElementById("status-text").textContent =
-        `${data.length} sensor${data.length === 1 ? "" : "es"} activo${data.length === 1 ? "" : "s"} · actualizado cada 15 min`;
+        `${onlineCount} sensor${onlineCount === 1 ? "" : "es"} en línea · actualizado cada 15 min`;
+      const statusOffline = document.getElementById("status-offline");
+      if (offlineCount > 0) {
+        document.getElementById("status-offline-text").textContent =
+          `${offlineCount} fuera de línea`;
+        statusOffline.style.display = "";
+      } else {
+        statusOffline.style.display = "none";
+      }
       if (dot) { dot.classList.add("ok"); dot.classList.remove("error"); }
     } catch (err) {
       document.getElementById("status-text").textContent = "No se pudo conectar con la API";
+      document.getElementById("status-offline").style.display = "none";
       if (dot) { dot.classList.add("error"); dot.classList.remove("ok"); }
       console.error(err);
     }
