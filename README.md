@@ -166,7 +166,7 @@ Para algo más agregado (visitas a `index.html` en sí, no solo a la API, más n
 
 **Gestión del espacio en D1**: cada visita ocupa una fila chica (~150-250 bytes); con el plan gratis de D1 (5 GB) no hay riesgo de quedarse sin espacio en el corto/mediano plazo. No hay limpieza automática implementada todavía — la tabla `visitas` crece sin límite. Si en el futuro hace falta, se puede borrar a mano (`wrangler d1 execute purpleair-saladillo --remote --command "DELETE FROM visitas WHERE ts < datetime('now', '-6 months')"`) o sumar un borrado automático al cron existente. Queda pendiente para cuando haga falta — por ahora, sin tráfico real, no es urgente.
 
-Este mismo esquema (migración + dos endpoints + script de consulta) se puede replicar igual en `ema-saladillo` y `agua-saladillo` si hace falta — son el mismo patrón de Worker + D1. Pendiente, no implementado todavía.
+Este mismo esquema (migración + dos endpoints + script de consulta) se puede replicar igual en `lemeit-emas` y `lemeit-wq` si hace falta — son el mismo patrón de Worker + D1. Pendiente, no implementado todavía.
 
 ## Base de datos (Cloudflare D1)
 
