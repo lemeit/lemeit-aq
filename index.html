@@ -490,8 +490,11 @@
 
   /* ── TABLA (pestaña Historial, igual que EMA) ── */
   .table-wrap { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .table-hdr { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .table-hdr h2 { font-family: var(--font-body); font-size: 13px; font-weight: 500; flex: 1; min-width: 0; }
+  .table-hdr { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+  .table-hdr h2 { font-family: var(--font-body); font-size: 13px; font-weight: 500; }
+  .table-hdr-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hist-info-text { font-size: 11px; color: var(--text-dim); padding: 8px 14px; margin: 0; border-bottom: 1px solid var(--border); }
+  .hist-info-text a { color: var(--accent); }
   table { width: 100%; border-collapse: collapse; }
   th {
     font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: .07em;
@@ -655,11 +658,14 @@
   </div>
   <div class="header-right">
     <div class="status">
-      <div class="dot" id="dot"></div>
-      <span id="status-text">Cargando datos...</span>
-      <span id="status-offline" class="status-offline" style="display:none">
-        <span class="dot error"></span><span id="status-offline-text"></span>
-      </span>
+      <div class="status-row">
+        <div class="dot" id="dot"></div>
+        <span id="status-text">Cargando datos...</span>
+        <span id="status-offline" class="status-offline" style="display:none">
+          <span class="dot error"></span><span id="status-offline-text"></span>
+        </span>
+      </div>
+      <span class="status-sub">actualizado cada 15 min</span>
     </div>
     <div class="lm-switcher" id="lm-switcher">
       <button class="lm-switcher-btn">Portales ⌄</button>
@@ -691,18 +697,21 @@
     <div class="table-wrap">
       <div class="table-hdr">
         <h2 id="hist-titulo">Seleccioná una institución para ver el histórico</h2>
-        <select class="sel" id="sel-sensor-hist" onchange="onSensorSelect(this.value)"></select>
-        <select class="sel" id="sel-range-hist" onchange="onHistRangeChange()">
-          <option value="24h">24 h</option>
-          <option value="7d">7 días</option>
-          <option value="30d">30 días</option>
-          <option value="custom">Rango de fechas…</option>
-        </select>
-        <input type="date" class="sel" id="hist-desde" style="display:none" onchange="loadHistorialTable()">
-        <input type="date" class="sel" id="hist-hasta" style="display:none" onchange="loadHistorialTable()">
-        <button class="export-btn" id="hist-export-btn" onclick="downloadHistorialCsv()" title="Tope de 20.000 filas por descarga — para un rango más largo, repetí con otras fechas">Descargar CSV</button>
-        <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()">Descargar PDF (reporte)</button>
+        <div class="table-hdr-controls">
+          <select class="sel" id="sel-sensor-hist" onchange="onSensorSelect(this.value)"></select>
+          <select class="sel" id="sel-range-hist" onchange="onHistRangeChange()">
+            <option value="24h">24 h</option>
+            <option value="7d">7 días</option>
+            <option value="30d">30 días</option>
+            <option value="custom">Rango de fechas…</option>
+          </select>
+          <input type="date" class="sel" id="hist-desde" style="display:none" onchange="loadHistorialTable()">
+          <input type="date" class="sel" id="hist-hasta" style="display:none" onchange="loadHistorialTable()">
+          <button class="export-btn" id="hist-export-btn" onclick="downloadHistorialCsv()">Descargar CSV</button>
+          <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()">Descargar PDF (reporte)</button>
+        </div>
       </div>
+      <p class="hist-info-text">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, repetí con otras fechas. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a></p>
       <div class="param-filter" id="hist-param-filter"></div>
       <div id="tabla-wrap"><div class="loader">—</div></div>
     </div>
@@ -1320,7 +1329,7 @@
       const offlineCount = data.filter((s) => isStale(s.timestamp)).length;
       const onlineCount = data.length - offlineCount;
       document.getElementById("status-text").textContent =
-        `${onlineCount} sensor${onlineCount === 1 ? "" : "es"} en línea · actualizado cada 15 min`;
+        `${onlineCount} sensor${onlineCount === 1 ? "" : "es"} en línea`;
       const statusOffline = document.getElementById("status-offline");
       if (offlineCount > 0) {
         document.getElementById("status-offline-text").textContent =
