@@ -495,10 +495,26 @@
     border-radius: 6px;
     cursor: pointer;
     max-width: 160px;
+    /* Sin esto, un <select> con texto más largo que max-width lo hace
+       *envolver* en varias líneas en vez de recortarlo — se ve roto,
+       sobre todo en instituciones con nombre largo (ej. "Colegio
+       Secundario Madre Teresa") en modo app en celular. */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   /* Selector de institución/sensor: nombres bastante más largos que el resto
-     de los selects (rango, etc.) — necesita más ancho para no truncar. */
+     de los selects (rango, etc.) — necesita más ancho para no truncar tan
+     seguido; igual queda el ellipsis de arriba como red de seguridad para
+     los nombres más largos de todos. */
   .sel-sensor { max-width: 220px; }
+  @media (max-width: 640px) {
+    /* En mobile hay menos ancho disponible, pero el selector de
+       institución sigue siendo el control más importante del header de
+       Historial/Gráfico — le damos casi todo el ancho de la fila en vez
+       de competir en una sola línea con rango/fechas/export. */
+    .sel-sensor { max-width: 100%; flex: 1 1 100%; }
+  }
 
   /* ── TABLA (pestaña Historial, igual que EMA) ── */
   .table-wrap { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
