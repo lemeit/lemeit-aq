@@ -1,10 +1,10 @@
 # Aire Saladillo — Red de Sensores PurpleAir + AirGradient
 
-[![sitio](https://img.shields.io/badge/sitio-aq.lemeit.ar-009688?style=flat-square)](https://aq.lemeit.ar) [![docs](https://img.shields.io/badge/docs-wiki.lemeit.ar-009688?style=flat-square)](https://wiki.lemeit.ar/red-ambiental/01-aire-saladillo/) [![API](https://img.shields.io/badge/API-pública-FF5722?style=flat-square)](https://aq.lemeit.ar/api.html) [![licencia](https://img.shields.io/badge/licencia-MIT-009688?style=flat-square)](#licencia)
+[![sitio](https://img.shields.io/badge/sitio-app.lemeit.ar/aq-009688?style=flat-square)](https://app.lemeit.ar/aq) [![docs](https://img.shields.io/badge/docs-wiki.lemeit.ar-009688?style=flat-square)](https://wiki.lemeit.ar/red-ambiental/01-aire-saladillo/) [![API](https://img.shields.io/badge/API-pública-FF5722?style=flat-square)](https://app.lemeit.ar/aq/api.html) [![licencia](https://img.shields.io/badge/licencia-MIT-009688?style=flat-square)](#licencia)
 
-Sistema de adquisición y visualización de calidad de aire (material particulado PM2.5/PM10, y desde agosto 2026 también CO2 y NOx) a partir de sensores de bajo costo **PurpleAir** y **AirGradient** instalados en escuelas, jardines de infantes y domicilios de Saladillo, Buenos Aires, Argentina. Publicado en [aq.lemeit.ar](https://aq.lemeit.ar).
+Sistema de adquisición y visualización de calidad de aire (material particulado PM2.5/PM10, y desde agosto 2026 también CO2 y NOx) a partir de sensores de bajo costo **PurpleAir** y **AirGradient** instalados en escuelas, jardines de infantes y domicilios de Saladillo, Buenos Aires, Argentina. Publicado en [app.lemeit.ar/aq](https://app.lemeit.ar/aq).
 
-Es uno de tres proyectos de monitoreo ambiental que comparten la misma infraestructura de Cloudflare (Pages + Workers + D1), pensados para integrarse a futuro: [emas.lemeit.ar](https://emas.lemeit.ar) (meteorología), este (calidad del aire) y [wq.lemeit.ar](https://wq.lemeit.ar) (calidad del agua).
+Es uno de tres proyectos de monitoreo ambiental que comparten la misma infraestructura de Cloudflare (Pages + Workers + D1), pensados para integrarse a futuro: [app.lemeit.ar/emas](https://app.lemeit.ar/emas) (meteorología), este (calidad del aire) y [app.lemeit.ar/wq](https://app.lemeit.ar/wq) (calidad del agua).
 
 📚 Documentación técnica completa, guías de uso de la API y bitácora de los tres portales: [wiki.lemeit.ar](https://wiki.lemeit.ar).
 
@@ -30,7 +30,7 @@ Cloudflare D1 — tablas "sensores" y "lecturas"
     ↓ (consultada por)
 Worker "purpleair-saladillo-api" — fetch() (API REST propia, JSON)
     ↓
-Dashboard HTML estático (Cloudflare Pages) — aq.lemeit.ar
+Dashboard HTML estático (Cloudflare Pages) — app.lemeit.ar/aq
 ```
 
 ## Historia de la ingesta automática (agosto 2026)
@@ -162,7 +162,7 @@ Para no tener que escribir la URL y el header cada vez, `scripts/ver-visitas.ps1
 
 Pide la `ADMIN_KEY` la primera vez (input oculto). Para no tipearla cada vez en una sesión: `$env:PA_ADMIN_KEY = "tu_clave"` antes de correr el script. La clave no queda guardada en el script ni en el repo.
 
-Para algo más agregado (visitas a `index.html` en sí, no solo a la API, más navegadores/dispositivos, etc.), Cloudflare ya trae analíticas propias sin tocar código: **Cloudflare dashboard → Workers & Pages → el proyecto de Pages (`aq.lemeit.ar`) → pestaña "Analytics"** muestra requests y visitantes únicos de la web estática; para el Worker de la API, la pestaña "Metrics" del Worker muestra lo mismo a nivel de requests. Ninguna de las dos requiere activar nada.
+Para algo más agregado (visitas a `index.html` en sí, no solo a la API, más navegadores/dispositivos, etc.), Cloudflare ya trae analíticas propias sin tocar código: **Cloudflare dashboard → Workers & Pages → el proyecto de Pages (`app.lemeit.ar/aq`) → pestaña "Analytics"** muestra requests y visitantes únicos de la web estática; para el Worker de la API, la pestaña "Metrics" del Worker muestra lo mismo a nivel de requests. Ninguna de las dos requiere activar nada.
 
 **Gestión del espacio en D1**: cada visita ocupa una fila chica (~150-250 bytes); con el plan gratis de D1 (5 GB) no hay riesgo de quedarse sin espacio en el corto/mediano plazo. No hay limpieza automática implementada todavía — la tabla `visitas` crece sin límite. Si en el futuro hace falta, se puede borrar manualmente (`wrangler d1 execute purpleair-saladillo --remote --command "DELETE FROM visitas WHERE ts < datetime('now', '-6 months')"`) o sumar un borrado automático al cron existente. Queda pendiente para cuando haga falta — por ahora, sin tráfico real, no es urgente.
 
@@ -187,7 +187,7 @@ El Worker `worker/src/index.js` expone:
 | `POST /api/ingest-ahora-airgradient` | Dispara una corrida de ingesta manual de AirGradient. Mismo esquema de auth que el endpoint anterior |
 | `GET /tiles/:style/:z/:x/:y{@2x}.png` (`style` = `light_all` \| `dark_all`) | Proxy de tiles del mapa hacia CARTO Basemaps — agrega la key del secret `CARTO_API_KEY` del lado del servidor, así nunca queda expuesta en el HTML público. Ver "Variables de entorno / secrets" arriba. Cachea 7 días tanto en la CDN de Cloudflare (`cf.cacheTtl`) como en el navegador (`Cache-Control`). |
 
-**API pública (agosto 2026)**: los tres endpoints de lectura (`/api/sensores`, `/api/ultimas`, `/api/historico/:sensor_index`) están pensados para que cualquiera los consuma directo, sin registro ni token — CORS abierto, sin autenticación. `/api/historico` además acepta `desde`/`hasta` (`YYYY-MM-DD[ HH:MM:SS]`, UTC) como alternativa a `range` para pedir un rango de fechas absoluto en vez de relativo a "ahora", y los tres aceptan `&formato=csv` para bajar CSV en vez de JSON. Documentación con ejemplos de uso: [`aq.lemeit.ar/api.html`](https://aq.lemeit.ar/api.html) (fuente: `api.html` en la raíz de este repo).
+**API pública (agosto 2026)**: los tres endpoints de lectura (`/api/sensores`, `/api/ultimas`, `/api/historico/:sensor_index`) están pensados para que cualquiera los consuma directo, sin registro ni token — CORS abierto, sin autenticación. `/api/historico` además acepta `desde`/`hasta` (`YYYY-MM-DD[ HH:MM:SS]`, UTC) como alternativa a `range` para pedir un rango de fechas absoluto en vez de relativo a "ahora", y los tres aceptan `&formato=csv` para bajar CSV en vez de JSON. Documentación con ejemplos de uso: [`app.lemeit.ar/aq/api.html`](https://app.lemeit.ar/aq/api.html) (fuente: `api.html` en la raíz de este repo).
 
 ### Cómo editar sensores manualmente en D1 (nombre, institución, etc.)
 
@@ -242,7 +242,7 @@ Notas para retomar en próximas sesiones de desarrollo (no son parte de la funci
 
 - Este proyecto se enmarca en una iniciativa más amplia de ciencia ciudadana ambiental — *Ciencia Ciudadana Ambiental: Escuelas de Saladillo en Acción por un Aire Limpio* — que busca desplegar sensores de bajo costo dentro y cerca de instituciones educativas urbanas y rurales del partido de Saladillo, involucrando a los estudiantes en el monitoreo, el análisis de datos y la concientización comunitaria, con la mira puesta en aportar información de base para eventuales ordenanzas municipales de calidad del aire.
 - El autor (Ing. Luciano Lamaita, Ing. Químico) es Embajador Comunitario de OpenAQ (2023), integra el Grupo de Trabajo de Air Quality de la ECSA (European Citizen Science Association) y participa de los proyectos CanAirIO, AireCiudadano y Sensor.Community — de ahí surgen buena parte de los antecedentes técnicos y metodológicos, incluyendo la experiencia nacional de ciencia ciudadana ambiental del Ministerio de Ambiente y Desarrollo Sustentable de la Nación, el PNUD y la iniciativa open-seneca (Universidad de Cambridge), con mediciones previas en CABA, Rosario, Mendoza, Córdoba y Tucumán (2019–2021).
-- El autor trabajó anteriormente en el **Ministerio de Ambiente de la Provincia de Buenos Aires**, y mantiene buena sinergia y contacto con el **CEMCA** (Centro de Monitoreo de Calidad de Aire — panel público en [apps.ambiente.gba.gob.ar/cemca](https://apps.ambiente.gba.gob.ar/cemca/)), un área de ese mismo Ministerio, con intención de seguir trabajando en conjunto a futuro. El panel del CEMCA se usó como referencia de diseño para el mapa de `aq.lemeit.ar` (selector de contaminante/capa de datos, mapa de estaciones).
+- El autor trabajó anteriormente en el **Ministerio de Ambiente de la Provincia de Buenos Aires**, y mantiene buena sinergia y contacto con el **CEMCA** (Centro de Monitoreo de Calidad de Aire — panel público en [apps.ambiente.gba.gob.ar/cemca](https://apps.ambiente.gba.gob.ar/cemca/)), un área de ese mismo Ministerio, con intención de seguir trabajando en conjunto a futuro. El panel del CEMCA se usó como referencia de diseño para el mapa de `app.lemeit.ar/aq` (selector de contaminante/capa de datos, mapa de estaciones).
 - Hay planes de integrar proyectos en conjunto con el CEMCA/Min. de Ambiente PBA a futuro, mencionados como ejemplo: **colocation de sensores de bajo costo** (instalar sensores PurpleAir junto a estaciones oficiales certificadas para comparar/calibrar contra el equipo de referencia).
 - Al retomar este tema, conviene revisar si hay wiki, contactos o documentación adicional que el autor quiera sumar antes de planificar la integración técnica (autenticación, formato de datos a compartir, etc.).
 
