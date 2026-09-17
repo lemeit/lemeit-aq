@@ -118,7 +118,11 @@
     font-size: 10px;
     font-weight: 700;
     color: #fff;
-    background: var(--accent);
+    /* Verde-azulado de la paleta compartida (--lm-chip-value en
+       design.lemeit.ar), el mismo que los badges "sitio/docs/licencia" del
+       README — no usa --accent (naranja) porque ese color sigue siendo el
+       de botones/links del resto del sitio. */
+    background: var(--lm-chip-value, #009688);
     padding: 4px 7px;
     border-radius: 5px;
     flex-shrink: 0;
@@ -660,7 +664,7 @@
 <body>
 
 <div class="header">
-  <div class="logo">AQ</div>
+  <div class="logo">AE</div>
   <div class="header-mid">
     <h1 id="h-titulo"><span class="h-titulo-full">Monitoreo Ambiental Escolar</span><span class="h-titulo-short">Aire Escolar</span></h1>
     <p id="h-sub">Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</p>

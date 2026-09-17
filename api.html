@@ -44,7 +44,10 @@
   }
   .logo {
     font-family: var(--font-display); font-size: 10px; font-weight: 700; color: #fff;
-    background: var(--accent); padding: 4px 7px; border-radius: 5px; flex-shrink: 0;
+    /* Verde-azulado de la paleta compartida, igual que en index.html y que
+       los badges del README — no --accent, que sigue siendo el naranja del
+       resto del sitio. */
+    background: var(--lm-chip-value, #009688); padding: 4px 7px; border-radius: 5px; flex-shrink: 0;
   }
   .header h1 { font-size: 15px; font-weight: 600; }
   .header a.back { margin-left: auto; font-size: 12px; color: var(--text-dim); text-decoration: none; }
@@ -85,7 +88,7 @@
 <body>
 
 <div class="header">
-  <div class="logo">AQ</div>
+  <div class="logo">AE</div>
   <h1>API · Monitoreo Ambiental Escolar</h1>
   <a class="back" href="index.html">&larr; Volver al portal</a>
 </div>
