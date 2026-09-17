@@ -138,6 +138,11 @@
     color: var(--text-dim);
     margin-top: 1px;
   }
+  /* Título corto ("Aire Escolar", el mismo nombre que usa el switcher de
+     portales en lemeit-common.js) — oculto acá, se muestra solo en mobile
+     (ver @media más abajo) para que no se corte "Monitoreo Ambiental E..."
+     en pantallas angostas, junto a las luces de estado y el logo AQ. */
+  .h-titulo-short { display: none; }
 
   .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
@@ -645,6 +650,8 @@
     .header { padding: 8px 12px; gap: 8px; }
     .header-mid h1 { font-size: 13px; }
     .header-mid p { display: none; }
+    .h-titulo-full { display: none; }
+    .h-titulo-short { display: inline; }
     main { padding: 10px; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
   }
@@ -655,7 +662,7 @@
 <div class="header">
   <div class="logo">AQ</div>
   <div class="header-mid">
-    <h1 id="h-titulo">Monitoreo Ambiental Escolar</h1>
+    <h1 id="h-titulo"><span class="h-titulo-full">Monitoreo Ambiental Escolar</span><span class="h-titulo-short">Aire Escolar</span></h1>
     <p id="h-sub">Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</p>
   </div>
   <div class="header-right">
