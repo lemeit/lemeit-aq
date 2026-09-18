@@ -842,7 +842,7 @@
         <!-- lm-attrib-row-lg: logos más grandes que los del footer (lm-attrib-row-sm)
              para diferenciar este panel institucional del pie de página. -->
         <div class="lm-attrib-row lm-attrib-row-lg">
-          <a href="https://openaq.org" target="_blank" class="lm-attrib-chip" title="OpenAQ — el autor es Embajador Comunitario desde 2023">
+          <a href="https://openaq.org" target="_blank" class="lm-attrib-chip" data-i18n-title="openaq_ambassador_title" title="OpenAQ — el autor es Embajador Comunitario desde 2023">
             <img src="https://design.lemeit.ar/logos/openaq.svg" alt="OpenAQ" height="32">
           </a>
           <a href="https://www.purpleair.com" target="_blank" class="lm-attrib-chip" title="PurpleAir">
@@ -929,6 +929,8 @@
       acerca_p3: 'Ing. Luciano Lamaita — docente de Física y Química en Saladillo, Buenos Aires — más proyectos en <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
       acerca_p4: '<a href="creditos.html" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.',
       acerca_attrib_label: "Redes y programas de los que este proyecto participa",
+      openaq_ambassador_title: "OpenAQ — el autor es Embajador Comunitario desde 2023",
+      footer_extra: 'datos de <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
 
       aqi_label: "Índice de calidad de aire (AQI)",
       aqi_sin_dato: "Sin dato",
@@ -1029,6 +1031,8 @@
       acerca_p3: 'Luciano Lamaita, engineer — physics and chemistry teacher in Saladillo, Buenos Aires — more projects at <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
       acerca_p4: '<a href="creditos.html" style="color:var(--accent)">Sources, data and licenses</a> — where this project\'s sensors and reference data come from, and under what terms they\'re used.',
       acerca_attrib_label: "Networks and programs this project takes part in",
+      openaq_ambassador_title: "OpenAQ — the author has been a Community Ambassador since 2023",
+      footer_extra: 'data from <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
 
       aqi_label: "Air Quality Index (AQI)",
       aqi_sin_dato: "No data",
@@ -1123,6 +1127,7 @@
     LANG = lang;
     localStorage.setItem("lang", lang);
     applyStaticTranslations();
+    renderSharedFooter();
     buildParamToggle();
     if (latestSensors.length) {
       renderGrid(latestSensors);
@@ -2641,20 +2646,29 @@
 
   const APP_VERSION = "v1.0.15";
 
-  if (window.LemeitCommon) {
-    LemeitCommon.initSwitcher("aq");
+  // Footer compartido (lemeit-common.js, fuera de este repo): se re-invoca
+  // en setLang() porque el texto "extra" y el tooltip del logo de OpenAQ
+  // son nuestros (van por t()) — el resto del componente (versión, layout)
+  // no es traducible desde acá, vive en lemeit-common.js.
+  function renderSharedFooter() {
+    if (!window.LemeitCommon) return;
     LemeitCommon.renderFooter(document.getElementById("lm-footer"), {
       version: APP_VERSION,
-      extra: 'datos de <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
+      extra: t("footer_extra"),
       // Misma fila de logos que en "Acerca de" — ahora renderFooter() de
       // lemeit-common.js la arma sola, antes del texto, con el layout
       // compartido definido en lemeit-theme.css.
       logos: [
-        { href: "https://openaq.org", src: "https://design.lemeit.ar/logos/openaq.svg", alt: "OpenAQ", title: "OpenAQ — el autor es Embajador Comunitario desde 2023" },
+        { href: "https://openaq.org", src: "https://design.lemeit.ar/logos/openaq.svg", alt: "OpenAQ", title: t("openaq_ambassador_title") },
         { href: "https://www.purpleair.com", src: "https://design.lemeit.ar/logos/purpleair.png", alt: "PurpleAir" },
         { href: "https://www.airgradient.com", src: "https://design.lemeit.ar/logos/airgradient.svg", alt: "AirGradient" },
       ],
     });
+  }
+
+  if (window.LemeitCommon) {
+    LemeitCommon.initSwitcher("aq");
+    renderSharedFooter();
   }
 
   // PWA: si la app se abrió instalada (standalone) o con ?pwa=1 en la URL
