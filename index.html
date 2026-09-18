@@ -666,6 +666,26 @@
   [data-theme="dark"] .theme-toggle .moon { display: none; }
   [data-theme="light"] .theme-toggle .sun { display: none; }
 
+  /* ── LANG TOGGLE — mismo espíritu minimalista que theme-toggle, pero en
+     texto (ES/EN) en vez de ícono, porque acá no hay un símbolo universal
+     sin ambigüedad como sol/luna. ── */
+  .lang-toggle {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 6px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .lang-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
   @media (max-width: 640px) {
     .header { padding: 8px 12px; gap: 8px; }
     .header-mid h1 { font-size: 13px; }
@@ -682,22 +702,23 @@
 <div class="header">
   <div class="logo">AE</div>
   <div class="header-mid">
-    <h1 id="h-titulo"><span class="h-titulo-full">Monitoreo Ambiental Escolar</span><span class="h-titulo-short">Aire Escolar</span></h1>
-    <p id="h-sub">Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</p>
+    <h1 id="h-titulo"><span class="h-titulo-full" data-i18n="header_titulo_full">Monitoreo Ambiental Escolar</span><span class="h-titulo-short" data-i18n="header_titulo_short">Aire Escolar</span></h1>
+    <p id="h-sub" data-i18n="header_sub">Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</p>
   </div>
   <div class="header-right">
     <div class="status">
-      <div class="dot" id="dot" title="Conexión con la API"></div>
-      <span id="status-online-count" title="Sensores en línea">–</span>
+      <div class="dot" id="dot" data-i18n-title="status_dot_title" title="Conexión con la API"></div>
+      <span id="status-online-count" data-i18n-title="status_online_title" title="Sensores en línea">–</span>
       <span id="status-offline-group" style="display:none">
-        <span class="dot error" title="Sensores fuera de línea"></span><span id="status-offline-count"></span>
+        <span class="dot error" data-i18n-title="status_offline_title" title="Sensores fuera de línea"></span><span id="status-offline-count"></span>
       </span>
     </div>
     <div class="lm-switcher" id="lm-switcher">
-      <button class="lm-switcher-btn">Portales ⌄</button>
+      <button class="lm-switcher-btn" data-i18n="portales_btn">Portales ⌄</button>
       <div class="lm-switcher-menu"></div>
     </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema claro/oscuro">
+    <button class="lang-toggle" id="lang-toggle" data-i18n-title="lang_toggle_title" aria-label="Switch to English" title="Switch to English" onclick="setLang(LANG === 'es' ? 'en' : 'es')">EN</button>
+    <button class="theme-toggle" id="theme-toggle" data-i18n-title="theme_toggle_title" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema claro/oscuro">
       <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
     </button>
@@ -705,11 +726,11 @@
 </div>
 
 <div class="nav">
-  <button class="nav-btn" onclick="showTab('actuales',this)">Actuales</button>
-  <button class="nav-btn" onclick="showTab('historial',this)">Historial</button>
-  <button class="nav-btn" onclick="showTab('grafico',this)">Gráfico</button>
-  <button class="nav-btn active" onclick="showTab('mapa',this)">Mapa</button>
-  <button class="nav-btn" onclick="showTab('acerca',this)">Acerca de</button>
+  <button class="nav-btn" onclick="showTab('actuales',this)" data-i18n="nav_actuales">Actuales</button>
+  <button class="nav-btn" onclick="showTab('historial',this)" data-i18n="nav_historial">Historial</button>
+  <button class="nav-btn" onclick="showTab('grafico',this)" data-i18n="nav_grafico">Gráfico</button>
+  <button class="nav-btn active" onclick="showTab('mapa',this)" data-i18n="nav_mapa">Mapa</button>
+  <button class="nav-btn" onclick="showTab('acerca',this)" data-i18n="nav_acerca">Acerca de</button>
 </div>
 
 <main>
@@ -722,22 +743,22 @@
   <div class="section" id="tab-historial">
     <div class="table-wrap">
       <div class="table-hdr">
-        <h2 id="hist-titulo">Seleccioná una institución para ver el histórico</h2>
+        <h2 id="hist-titulo" data-i18n="titulo_default">Seleccioná una institución para ver el histórico</h2>
         <div class="table-hdr-controls">
           <select class="sel sel-sensor" id="sel-sensor-hist" onchange="onSensorSelect(this.value)"></select>
           <select class="sel" id="sel-range-hist" onchange="onHistRangeChange()">
-            <option value="24h">24 h</option>
-            <option value="7d">7 días</option>
-            <option value="30d">30 días</option>
-            <option value="custom">Rango de fechas…</option>
+            <option value="24h" data-i18n="range_24h">24 h</option>
+            <option value="7d" data-i18n="range_7d">7 días</option>
+            <option value="30d" data-i18n="range_30d">30 días</option>
+            <option value="custom" data-i18n="range_custom">Rango de fechas…</option>
           </select>
           <input type="date" class="sel" id="hist-desde" style="display:none" onchange="loadHistorialTable()">
           <input type="date" class="sel" id="hist-hasta" style="display:none" onchange="loadHistorialTable()">
-          <button class="export-btn" id="hist-export-btn" onclick="downloadHistorialCsv()">Descargar CSV</button>
-          <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()">Descargar PDF (reporte)</button>
+          <button class="export-btn" id="hist-export-btn" onclick="downloadHistorialCsv()" data-i18n="hist_export_csv">Descargar CSV</button>
+          <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()" data-i18n="hist_export_pdf">Descargar PDF (reporte)</button>
         </div>
       </div>
-      <p class="hist-info-text">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a></p>
+      <p class="hist-info-text" id="hist-info-text" data-i18n-html="hist_info_text_html">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a></p>
       <div class="param-filter" id="hist-param-filter"></div>
       <div id="tabla-wrap"><div class="loader">—</div></div>
     </div>
@@ -747,19 +768,19 @@
   <div class="section" id="tab-grafico">
     <div class="chart-wrap">
       <div class="chart-hdr">
-        <h2 id="graf-titulo">Seleccioná una institución para ver el histórico</h2>
+        <h2 id="graf-titulo" data-i18n="titulo_default">Seleccioná una institución para ver el histórico</h2>
         <select class="sel sel-sensor" id="sel-sensor-grafico" onchange="onSensorSelect(this.value)"></select>
         <select class="sel" id="sel-range-chart" onchange="onGraficoRangeChange()">
-          <option value="24h">24 h</option>
-          <option value="7d">7 días</option>
-          <option value="30d">30 días</option>
+          <option value="24h" data-i18n="range_24h">24 h</option>
+          <option value="7d" data-i18n="range_7d">7 días</option>
+          <option value="30d" data-i18n="range_30d">30 días</option>
         </select>
         <label class="compare-toggle">
           <input type="checkbox" id="toggle-compare-sitios" onchange="onToggleCompareSitios(this.checked)">
-          Comparar sitios
+          <span data-i18n="compare_sitios_label">Comparar sitios</span>
         </label>
-        <button class="export-btn" id="export-btn">Exportar CSV</button>
-        <button class="export-btn" id="reset-zoom-btn" onclick="resetChartZoom()" style="display:none">↺ Reset zoom</button>
+        <button class="export-btn" id="export-btn" data-i18n="export_csv_btn">Exportar CSV</button>
+        <button class="export-btn" id="reset-zoom-btn" onclick="resetChartZoom()" style="display:none" data-i18n="reset_zoom_btn">↺ Reset zoom</button>
       </div>
       <div class="param-toggle" id="param-toggle"></div>
       <!-- Filtro de sitios a comparar — solo visible con "Comparar sitios"
@@ -769,11 +790,11 @@
       <div class="param-filter" id="grafico-sitios-filter" style="display:none"></div>
       <div class="chart-canvas-wrap">
         <canvas id="history-chart" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
-        <div class="loader" id="chart-empty" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;align-items:center;justify-content:center">Este sensor no tiene datos en el rango seleccionado.</div>
+        <div class="loader" id="chart-empty" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;align-items:center;justify-content:center" data-i18n="chart_empty_msg">Este sensor no tiene datos en el rango seleccionado.</div>
       </div>
-      <div class="zoom-hint" id="zoom-hint">🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom</div>
+      <div class="zoom-hint" id="zoom-hint" data-i18n="zoom_hint">🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom</div>
       <div class="channel-toggle" id="channel-toggle-wrap">
-        <label><input type="checkbox" id="toggle-channels" /> Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)</label>
+        <label><input type="checkbox" id="toggle-channels" /> <span data-i18n="channel_toggle_label">Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)</span></label>
       </div>
     </div>
   </div>
@@ -782,16 +803,16 @@
   <div class="section active" id="tab-mapa">
     <div class="chart-wrap" style="padding:0;overflow:hidden">
       <div class="chart-hdr" style="padding:12px 14px 0">
-        <h2>Mapa de sensores</h2>
+        <h2 data-i18n="mapa_titulo">Mapa de sensores</h2>
         <select class="sel" id="sel-mapa-param" onchange="cargarMapa()">
-          <option value="aqi">Capa: AQI</option>
-          <option value="pm2_5">Capa: PM2.5</option>
-          <option value="temperatura">Capa: Temperatura</option>
-          <option value="humedad">Capa: Humedad</option>
-          <option value="presion">Capa: Presión</option>
-          <option value="voc">Capa: VOC</option>
-          <option value="co2">Capa: CO2</option>
-          <option value="nox">Capa: NOx</option>
+          <option value="aqi" data-i18n="mapa_capa_aqi">Capa: AQI</option>
+          <option value="pm2_5" data-i18n="mapa_capa_pm2_5">Capa: PM2.5</option>
+          <option value="temperatura" data-i18n="mapa_capa_temperatura">Capa: Temperatura</option>
+          <option value="humedad" data-i18n="mapa_capa_humedad">Capa: Humedad</option>
+          <option value="presion" data-i18n="mapa_capa_presion">Capa: Presión</option>
+          <option value="voc" data-i18n="mapa_capa_voc">Capa: VOC</option>
+          <option value="co2" data-i18n="mapa_capa_co2">Capa: CO2</option>
+          <option value="nox" data-i18n="mapa_capa_nox">Capa: NOx</option>
         </select>
       </div>
       <div id="mapa-container"></div>
@@ -802,22 +823,22 @@
 
   <div class="section" id="tab-acerca">
     <div class="panel">
-      <div class="panel-title">Acerca de este proyecto</div>
-      <p style="font-size:12px;color:var(--text-dim);line-height:1.7">
+      <div class="panel-title" data-i18n="acerca_panel_title">Acerca de este proyecto</div>
+      <p style="font-size:12px;color:var(--text-dim);line-height:1.7" data-i18n-html="acerca_p1">
         Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.
       </p>
-      <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px">
+      <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p2">
         Arquitectura: varios disparadores automáticos (un Worker de Cloudflare y GitHub Actions, con un respaldo externo) consultan la API de PurpleAir cada 15 minutos y guardan los datos en Cloudflare D1; un Worker expone una <a href="api.html" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos.
         Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.
       </p>
-      <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px">
+      <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p3">
         Ing. Luciano Lamaita — docente de Física y Química en Saladillo, Buenos Aires — más proyectos en <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>
       </p>
-      <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px">
+      <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p4">
         <a href="creditos.html" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.
       </p>
       <div class="acerca-attrib">
-        <div class="acerca-attrib-label">Redes y programas de los que este proyecto participa</div>
+        <div class="acerca-attrib-label" data-i18n="acerca_attrib_label">Redes y programas de los que este proyecto participa</div>
         <!-- lm-attrib-row-lg: logos más grandes que los del footer (lm-attrib-row-sm)
              para diferenciar este panel institucional del pie de página. -->
         <div class="lm-attrib-row lm-attrib-row-lg">
@@ -846,6 +867,316 @@
   // (ej: https://purpleair-saladillo-api.TU-SUBDOMINIO.workers.dev)
   const API_BASE = "https://api.lemeit.ar/aq";
 
+  // ── I18N ──
+  // Diccionario ES/EN embebido + helper t(). Selector de idioma persiste en
+  // localStorage (mismo patrón que el theme-toggle). Todo el texto visible del
+  // dashboard pasa por acá: HTML estático via data-i18n / data-i18n-html /
+  // data-i18n-title, y contenido generado por JS (tarjetas, tabla, gráfico,
+  // mapa, PDF/CSV) vía la función t().
+  let LANG = localStorage.getItem("lang") || "es";
+
+  const I18N = {
+    es: {
+      page_title: "Monitoreo Ambiental Escolar · Calidad de aire en instituciones educativas",
+      apple_title: "Aire Escolar",
+      nav_actuales: "Actuales",
+      nav_historial: "Historial",
+      nav_grafico: "Gráfico",
+      nav_mapa: "Mapa",
+      nav_acerca: "Acerca de",
+      header_titulo_full: "Monitoreo Ambiental Escolar",
+      header_titulo_short: "Aire Escolar",
+      header_sub: "Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires",
+      status_dot_title: "Conexión con la API",
+      status_online_title: "Sensores en línea",
+      status_offline_title: "Sensores fuera de línea",
+      portales_btn: "Portales ⌄",
+      theme_toggle_title: "Cambiar tema claro/oscuro",
+      lang_toggle_title: "Switch to English",
+      titulo_default: "Seleccioná una institución para ver el histórico",
+      hist_titulo_selected: "Registros recientes — {label}",
+      graf_titulo_selected: "Histórico — {label}",
+      range_24h: "24 h",
+      range_7d: "7 días",
+      range_30d: "30 días",
+      range_custom: "Rango de fechas…",
+      hist_export_csv: "Descargar CSV",
+      hist_export_pdf: "Descargar PDF (reporte)",
+      hist_info_text_html: 'La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a>',
+      param_filter_label: "Parámetros a mostrar:",
+      tabla_col_fecha: "Fecha / hora",
+      loader_cargando: "Cargando...",
+      loader_sin_datos: "Sin datos.",
+      loader_error: "Error: {msg}",
+      compare_sitios_label: "Comparar sitios",
+      export_csv_btn: "Exportar CSV",
+      reset_zoom_btn: "↺ Reset zoom",
+      chart_empty_msg: "Este sensor no tiene datos en el rango seleccionado.",
+      zoom_hint: "🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom",
+      channel_toggle_label: "Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)",
+      mapa_titulo: "Mapa de sensores",
+      mapa_capa_aqi: "Capa: AQI",
+      mapa_capa_pm2_5: "Capa: PM2.5",
+      mapa_capa_temperatura: "Capa: Temperatura",
+      mapa_capa_humedad: "Capa: Humedad",
+      mapa_capa_presion: "Capa: Presión",
+      mapa_capa_voc: "Capa: VOC",
+      mapa_capa_co2: "Capa: CO2",
+      mapa_capa_nox: "Capa: NOx",
+      acerca_panel_title: "Acerca de este proyecto",
+      acerca_p1: 'Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.',
+      acerca_p2: 'Arquitectura: varios disparadores automáticos (un Worker de Cloudflare y GitHub Actions, con un respaldo externo) consultan la API de PurpleAir cada 15 minutos y guardan los datos en Cloudflare D1; un Worker expone una <a href="api.html" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
+      acerca_p3: 'Ing. Luciano Lamaita — docente de Física y Química en Saladillo, Buenos Aires — más proyectos en <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
+      acerca_p4: '<a href="creditos.html" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.',
+      acerca_attrib_label: "Redes y programas de los que este proyecto participa",
+
+      aqi_label: "Índice de calidad de aire (AQI)",
+      aqi_sin_dato: "Sin dato",
+      aqi_buena: "Buena",
+      aqi_moderada: "Moderada",
+      aqi_grupos_sensibles: "Grupos sensibles",
+      aqi_no_saludable: "No saludable",
+      aqi_sin_datos_card: "Sin datos",
+      card_actualizado: "Actualizado {fecha} (ARG)",
+      card_stale_warning: "⚠ Sin datos nuevos hace más de {min} min — el sensor podría estar desconectado",
+      card_flip_hint: "toca para ver el gráfico ⟳",
+      card_back_close: "✕ volver",
+      card_back_title: "{nombre} · PM2.5 (µg/m³) · 24h",
+      sensor_num: "Sensor #{n}",
+      empty_state_sin_lecturas: "Todavía no hay lecturas guardadas.",
+      api_error_status: "La API respondió {status}",
+
+      param_pm1_0: "PM1.0",
+      param_pm2_5: "PM2.5",
+      param_pm10_0: "PM10",
+      param_temperatura: "Temp.",
+      param_humedad: "Humedad",
+      param_presion: "Presión",
+      param_voc: "VOC",
+      param_co2: "CO2",
+      param_nox: "NOx",
+      param_aqi: "AQI",
+      unit_index: "índice",
+
+      compare_titulo: "Comparando {n} sitio{plural} — {label}",
+      compare_elegi_uno: "Comparar sitios — elegí al menos uno",
+      site_num: "Sitio #{n}",
+      channel_a: "Canal A",
+      channel_b: "Canal B",
+
+      mapa_sin_coords: "Ningún sensor con coordenadas cargadas todavía.",
+      mapa_sin_datos_escala: "Sin datos de {label} para mostrar escala.",
+      mapa_escala_nota: "(escala relativa a los sensores actuales, no es un estándar de calidad)",
+
+      pdf_no_jspdf: "No se pudo cargar el generador de PDF (jsPDF). Puede ser el bloqueador de anuncios/contenido del navegador, o que se haya cortado la conexion a internet. Probá recargar la página o desactivar el bloqueador para este sitio y volvé a intentar.",
+      pdf_header: "REGISTRO HISTORICO — CIENCIA CIUDADANA AMBIENTAL",
+      pdf_sitio_line: "SITIO: {sitio}    SENSOR: #{sensor}    RANGO: {rango}    REGISTROS: {n}",
+      pdf_fecha_hora: "FECHA / HORA",
+      rango_ultimas_24h: "últimas 24 h",
+      rango_ultimos_7d: "últimos 7 días",
+      rango_ultimos_30d: "últimos 30 días",
+    },
+    en: {
+      page_title: "School Air Quality Monitoring · Air quality in educational institutions",
+      apple_title: "School Air",
+      nav_actuales: "Current",
+      nav_historial: "History",
+      nav_grafico: "Chart",
+      nav_mapa: "Map",
+      nav_acerca: "About",
+      header_titulo_full: "School Air Quality Monitoring",
+      header_titulo_short: "School Air",
+      header_sub: "Air quality sensor network in educational institutions of Buenos Aires Province",
+      status_dot_title: "Connection to the API",
+      status_online_title: "Sensors online",
+      status_offline_title: "Sensors offline",
+      portales_btn: "Portals ⌄",
+      theme_toggle_title: "Toggle light/dark theme",
+      lang_toggle_title: "Cambiar a español",
+      titulo_default: "Select an institution to see its history",
+      hist_titulo_selected: "Recent records — {label}",
+      graf_titulo_selected: "History — {label}",
+      range_24h: "24 h",
+      range_7d: "7 days",
+      range_30d: "30 days",
+      range_custom: "Date range…",
+      hist_export_csv: "Download CSV",
+      hist_export_pdf: "Download PDF (report)",
+      hist_info_text_html: 'The download includes what\'s filtered on screen, capped at 20,000 rows — for a wider range, use the date selector above. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">Need the complete history?</a>',
+      param_filter_label: "Parameters to show:",
+      tabla_col_fecha: "Date / time",
+      loader_cargando: "Loading...",
+      loader_sin_datos: "No data.",
+      loader_error: "Error: {msg}",
+      compare_sitios_label: "Compare sites",
+      export_csv_btn: "Export CSV",
+      reset_zoom_btn: "↺ Reset zoom",
+      chart_empty_msg: "This sensor has no data in the selected range.",
+      zoom_hint: "🔍 Drag on the chart to zoom · mouse wheel to zoom in/out · pinch to zoom on touch · Ctrl+drag to pan while zoomed",
+      channel_toggle_label: "Show A/B channels separately (for selected PM1.0/PM2.5/PM10)",
+      mapa_titulo: "Sensor map",
+      mapa_capa_aqi: "Layer: AQI",
+      mapa_capa_pm2_5: "Layer: PM2.5",
+      mapa_capa_temperatura: "Layer: Temperature",
+      mapa_capa_humedad: "Layer: Humidity",
+      mapa_capa_presion: "Layer: Pressure",
+      mapa_capa_voc: "Layer: VOC",
+      mapa_capa_co2: "Layer: CO2",
+      mapa_capa_nox: "Layer: NOx",
+      acerca_panel_title: "About this project",
+      acerca_p1: 'A network of <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> sensors installed in educational institutions and homes across Buenos Aires Province — a pilot project in the Saladillo and 25 de Mayo districts — measuring particulate matter (PM2.5/PM10) and other parameters in real time, as part of an environmental monitoring and education initiative.',
+      acerca_p2: 'Architecture: several automated triggers (a Cloudflare Worker and GitHub Actions, with an external backup) poll the PurpleAir API every 15 minutes and store the data in Cloudflare D1; a Worker exposes its own public <a href="api.html" style="color:var(--accent)">REST API</a>, which this dashboard consumes and which anyone can also use to pull the data. It\'s one of three sibling environmental projects: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (weather), this one (air quality), and <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (water quality). Technical documentation for all three is at <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
+      acerca_p3: 'Luciano Lamaita, engineer — physics and chemistry teacher in Saladillo, Buenos Aires — more projects at <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
+      acerca_p4: '<a href="creditos.html" style="color:var(--accent)">Sources, data and licenses</a> — where this project\'s sensors and reference data come from, and under what terms they\'re used.',
+      acerca_attrib_label: "Networks and programs this project takes part in",
+
+      aqi_label: "Air Quality Index (AQI)",
+      aqi_sin_dato: "No data",
+      aqi_buena: "Good",
+      aqi_moderada: "Moderate",
+      aqi_grupos_sensibles: "Sensitive groups",
+      aqi_no_saludable: "Unhealthy",
+      aqi_sin_datos_card: "No data",
+      card_actualizado: "Updated {fecha} (ARG)",
+      card_stale_warning: "⚠ No new data for over {min} min — the sensor may be offline",
+      card_flip_hint: "tap to see the chart ⟳",
+      card_back_close: "✕ back",
+      card_back_title: "{nombre} · PM2.5 (µg/m³) · 24h",
+      sensor_num: "Sensor #{n}",
+      empty_state_sin_lecturas: "No readings saved yet.",
+      api_error_status: "The API responded {status}",
+
+      param_pm1_0: "PM1.0",
+      param_pm2_5: "PM2.5",
+      param_pm10_0: "PM10",
+      param_temperatura: "Temp.",
+      param_humedad: "Humidity",
+      param_presion: "Pressure",
+      param_voc: "VOC",
+      param_co2: "CO2",
+      param_nox: "NOx",
+      param_aqi: "AQI",
+      unit_index: "index",
+
+      compare_titulo: "Comparing {n} site{plural} — {label}",
+      compare_elegi_uno: "Compare sites — choose at least one",
+      site_num: "Site #{n}",
+      channel_a: "Channel A",
+      channel_b: "Channel B",
+
+      mapa_sin_coords: "No sensors with coordinates loaded yet.",
+      mapa_sin_datos_escala: "No {label} data to show a scale.",
+      mapa_escala_nota: "(scale relative to the sensors currently shown, not a health standard)",
+
+      pdf_no_jspdf: "Couldn't load the PDF generator (jsPDF). This can happen with an ad/content blocker, or if the internet connection dropped. Try reloading the page or disabling the blocker for this site and try again.",
+      pdf_header: "HISTORICAL RECORD — ENVIRONMENTAL CITIZEN SCIENCE",
+      pdf_sitio_line: "SITE: {sitio}    SENSOR: #{sensor}    RANGE: {rango}    RECORDS: {n}",
+      pdf_fecha_hora: "DATE / TIME",
+      rango_ultimas_24h: "last 24 h",
+      rango_ultimos_7d: "last 7 days",
+      rango_ultimos_30d: "last 30 days",
+    },
+  };
+
+  function t(key, vars) {
+    let s = (I18N[LANG] && I18N[LANG][key]) ?? I18N.es[key] ?? key;
+    if (vars) {
+      Object.keys(vars).forEach((k) => {
+        s = s.split(`{${k}}`).join(vars[k]);
+      });
+    }
+    return s;
+  }
+
+  function paramLabel(key) {
+    return t(`param_${key}`);
+  }
+
+  function paramUnitSuffix(unit) {
+    // unit === "IDX" es el sentinel para VOC/NOx (índice/index, no unidad física)
+    if (!unit) return "";
+    if (unit === "IDX") return ` (${t("unit_index")})`;
+    return ` ${unit}`;
+  }
+
+  function applyStaticTranslations() {
+    document.documentElement.setAttribute("lang", LANG);
+    document.title = t("page_title");
+    const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (appleTitle) appleTitle.setAttribute("content", t("apple_title"));
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      el.textContent = t(el.getAttribute("data-i18n"));
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach((el) => {
+      el.innerHTML = t(el.getAttribute("data-i18n-html"));
+    });
+    document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+      const val = t(el.getAttribute("data-i18n-title"));
+      el.title = val;
+      if (el.hasAttribute("aria-label")) el.setAttribute("aria-label", val);
+    });
+    const langBtn = document.getElementById("lang-toggle");
+    if (langBtn) langBtn.textContent = LANG === "es" ? "EN" : "ES";
+  }
+
+  function setLang(lang) {
+    LANG = lang;
+    localStorage.setItem("lang", lang);
+    applyStaticTranslations();
+    buildParamToggle();
+    if (latestSensors.length) {
+      renderGrid(latestSensors);
+      populateSensorSelects();
+    }
+    if (document.getElementById("tab-mapa").classList.contains("active")) cargarMapa();
+    updateHistTitulo();
+    updateGrafTitulo();
+    if (compareMode) {
+      renderGraficoSitiosFilter();
+      if (Object.keys(compareRowsBySite).length) renderChartCompare();
+    } else if (currentRows.length) {
+      renderChart(currentRows);
+    }
+    if (histRows.length) {
+      renderHistParamFilter();
+      renderHistTable();
+    }
+  }
+
+  // Actualizan los títulos de "Historial" y "Gráfico" en el idioma actual —
+  // se llaman tanto al seleccionar/cambiar de sensor como al cambiar de
+  // idioma (setLang), para no duplicar la lógica de qué texto corresponde
+  // en cada estado (sensor elegido / ninguno / modo comparar sitios).
+  function updateHistTitulo() {
+    const el = document.getElementById("hist-titulo");
+    if (!el) return;
+    el.textContent = currentSensorIndex != null
+      ? t("hist_titulo_selected", { label: currentLabel })
+      : t("titulo_default");
+  }
+
+  function updateGrafTitulo() {
+    const el = document.getElementById("graf-titulo");
+    if (!el) return;
+    if (compareMode) {
+      const indexes = Array.from(compareSensorIndexes);
+      if (!indexes.length) {
+        el.textContent = t("compare_elegi_uno");
+        return;
+      }
+      const param = getCompareParam();
+      el.textContent = t("compare_titulo", {
+        n: indexes.length,
+        plural: indexes.length === 1 ? "" : "s",
+        label: paramLabel(param),
+      });
+    } else {
+      el.textContent = currentSensorIndex != null
+        ? t("graf_titulo_selected", { label: currentLabel })
+        : t("titulo_default");
+    }
+  }
+
   let chart = null;
   let currentSensorIndex = null;
   let currentLabel = "";
@@ -866,7 +1197,7 @@
   function siteColor(i) { return SITE_COLORS[i % SITE_COLORS.length]; }
   function siteLabel(sensorIndex) {
     const s = latestSensors.find((x) => x.sensor_index === sensorIndex);
-    return (s && (s.institucion || s.nombre)) || `Sitio #${sensorIndex}`;
+    return (s && (s.institucion || s.nombre)) || t("site_num", { n: sensorIndex });
   }
 
   // Insignia de proveedor en el borde inferior de cada tarjeta (Actuales y
@@ -921,7 +1252,7 @@
       const hidden = (key === "voc" || key === "co2" || key === "nox") ? ' style="display:none"' : "";
       return `<label class="param-toggle-item" data-param="${key}"${hidden}>
         <input type="checkbox" class="chart-param-cb" value="${key}" ${checked}>
-        <span class="param-toggle-swatch" style="background:${def.color}"></span>${def.label}
+        <span class="param-toggle-swatch" style="background:${def.color}"></span>${paramLabel(key)}
       </label>`;
     }).join("");
     box.addEventListener("change", (e) => {
@@ -1095,11 +1426,11 @@
   }
 
   function aqiInfo(aqi) {
-    if (aqi == null) return { label: "Sin dato", color: "var(--text-dim)", bg: "transparent" };
-    if (aqi <= 50) return { label: "Buena", color: "var(--good)", bg: "rgba(143,181,107,0.12)" };
-    if (aqi <= 100) return { label: "Moderada", color: "var(--moderate)", bg: "rgba(217,164,65,0.12)" };
-    if (aqi <= 150) return { label: "Grupos sensibles", color: "var(--unhealthy-sg)", bg: "rgba(217,105,31,0.12)" };
-    return { label: "No saludable", color: "var(--unhealthy)", bg: "rgba(217,115,111,0.12)" };
+    if (aqi == null) return { label: t("aqi_sin_dato"), color: "var(--text-dim)", bg: "transparent" };
+    if (aqi <= 50) return { label: t("aqi_buena"), color: "var(--good)", bg: "rgba(143,181,107,0.12)" };
+    if (aqi <= 100) return { label: t("aqi_moderada"), color: "var(--moderate)", bg: "rgba(217,164,65,0.12)" };
+    if (aqi <= 150) return { label: t("aqi_grupos_sensibles"), color: "var(--unhealthy-sg)", bg: "rgba(217,105,31,0.12)" };
+    return { label: t("aqi_no_saludable"), color: "var(--unhealthy)", bg: "rgba(217,115,111,0.12)" };
   }
 
   function pm25ToAqi(pm) {
@@ -1168,7 +1499,7 @@
   // más (quedaría "42 índice"), se muestran aclarados entre paréntesis.
   function unitSuffix(def) {
     if (!def.unit) return "";
-    return def.unit === "índice" ? " (índice)" : ` ${def.unit}`;
+    return def.unit === "índice" ? ` (${t("unit_index")})` : ` ${def.unit}`;
   }
 
   function formatParamValue(s, param) {
@@ -1185,21 +1516,21 @@
     const def = MAPA_PARAMS[param];
     if (param === "aqi" || param === "pm2_5") {
       legend.innerHTML = `
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--good)"></span>Buena</span>
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--moderate)"></span>Moderada</span>
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--unhealthy-sg)"></span>Grupos sensibles</span>
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--unhealthy)"></span>No saludable</span>`;
+        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--good)"></span>${t("aqi_buena")}</span>
+        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--moderate)"></span>${t("aqi_moderada")}</span>
+        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--unhealthy-sg)"></span>${t("aqi_grupos_sensibles")}</span>
+        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--unhealthy)"></span>${t("aqi_no_saludable")}</span>`;
       return;
     }
     if (!domain) {
-      legend.innerHTML = `<span class="mapa-legend-item">Sin datos de ${def.label.toLowerCase()} para mostrar escala.</span>`;
+      legend.innerHTML = `<span class="mapa-legend-item">${t("mapa_sin_datos_escala", { label: paramLabel(param).toLowerCase() })}</span>`;
       return;
     }
     legend.innerHTML = `
       <span class="mapa-legend-item">${domain.min}${unitSuffix(def)}</span>
       <span class="mapa-legend-gradient"></span>
       <span class="mapa-legend-item">${domain.max}${unitSuffix(def)}</span>
-      <span class="mapa-legend-note">(escala relativa a los sensores actuales, no es un estándar de calidad)</span>`;
+      <span class="mapa-legend-note">${t("mapa_escala_nota")}</span>`;
   }
 
   // Da vuelta (o cierra) la card del sensor dentro de #mapa-cards — reusa
@@ -1270,7 +1601,7 @@
     const param = selParam.value || "aqi";
 
     if (!conCoords.length) {
-      mapaCards.innerHTML = '<div class="loader">Ningún sensor con coordenadas cargadas todavía.</div>';
+      mapaCards.innerHTML = `<div class="loader">${t("mapa_sin_coords")}</div>`;
       renderMapaLegend(param, null);
       return;
     }
@@ -1343,7 +1674,7 @@
       // pestañas (Historial, Gráfico), no solo la de "Actuales".
       if (!res.ok || !Array.isArray(data)) {
         throw new Error(
-          (data && data.error) || `La API respondió ${res.status}`
+          (data && data.error) || t("api_error_status", { status: res.status })
         );
       }
       latestSensors = data;
@@ -1388,11 +1719,11 @@
     // ese dato quedó viejo y ya no refleja el aire actual. En su lugar, un
     // badge neutro (gris, --text-dim) que avisa que no hay datos recientes.
     const info = stale
-      ? { label: "Sin datos", color: "var(--text-dim)", bg: "transparent" }
+      ? { label: t("aqi_sin_datos_card"), color: "var(--text-dim)", bg: "transparent" }
       : aqiInfo(aqi);
     // Si "institución" todavía no está cargada (columna nueva, ver README),
     // institución y nombre son el mismo valor — no repetirlo dos veces.
-    const nombreDispositivo = (s.institucion && s.institucion !== s.nombre) ? s.nombre : `Sensor #${s.sensor_index}`;
+    const nombreDispositivo = (s.institucion && s.institucion !== s.nombre) ? s.nombre : t("sensor_num", { n: s.sensor_index });
     const provBadge = PROVIDER_BADGE[s.proveedor || "purpleair"];
     return `
         <div class="card-inner">
@@ -1407,45 +1738,45 @@
             <div class="aqi-gauge" style="${stale ? "opacity:0.35;" : ""}">
               ${aqiGaugeSvg(stale ? null : aqi, info.color)}
             </div>
-            <div class="aqi-label">Índice de calidad de aire (AQI)</div>
+            <div class="aqi-label">${t("aqi_label")}</div>
             <div class="metrics-row">
               <div class="metric">
                 <div class="metric-value">${s.pm2_5 ?? "—"} µg/m³</div>
-                <div class="metric-label">PM2.5</div>
+                <div class="metric-label">${t("param_pm2_5")}</div>
               </div>
               <div class="metric">
                 <div class="metric-value">${s.temperatura ?? "—"}°C</div>
-                <div class="metric-label">Temp.</div>
+                <div class="metric-label">${t("param_temperatura")}</div>
               </div>
               <div class="metric">
                 <div class="metric-value">${s.humedad ?? "—"}%</div>
-                <div class="metric-label">Humedad</div>
+                <div class="metric-label">${t("param_humedad")}</div>
               </div>
               <div class="metric">
                 <div class="metric-value">${s.presion ?? "—"} hPa</div>
-                <div class="metric-label">Presión</div>
+                <div class="metric-label">${t("param_presion")}</div>
               </div>
               ${s.voc != null ? `
               <div class="metric">
                 <div class="metric-value">${s.voc}</div>
-                <div class="metric-label">VOC (índice)</div>
+                <div class="metric-label">${t("param_voc")} (${t("unit_index")})</div>
               </div>` : ""}
               ${s.co2 != null ? `
               <div class="metric">
                 <div class="metric-value">${s.co2} ppm</div>
-                <div class="metric-label">CO2</div>
+                <div class="metric-label">${t("param_co2")}</div>
               </div>` : ""}
               ${s.nox != null ? `
               <div class="metric">
                 <div class="metric-value">${s.nox}</div>
-                <div class="metric-label">NOx (índice)</div>
+                <div class="metric-label">${t("param_nox")} (${t("unit_index")})</div>
               </div>` : ""}
             </div>
             <div class="card-sub" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
-              Actualizado ${formatBsAsFull(s.timestamp)} (ARG)
-              ${stale ? `<br><span style="color:var(--text-dim)">⚠ Sin datos nuevos hace más de ${STALE_MINUTES} min — el sensor podría estar desconectado</span>` : ""}
+              ${t("card_actualizado", { fecha: formatBsAsFull(s.timestamp) })}
+              ${stale ? `<br><span style="color:var(--text-dim)">${t("card_stale_warning", { min: STALE_MINUTES })}</span>` : ""}
             </div>
-            <div class="card-flip-hint">toca para ver el gráfico ⟳</div>
+            <div class="card-flip-hint">${t("card_flip_hint")}</div>
             ${provBadge ? `
             <a href="${provBadge.href}" target="_blank" class="card-provider-badge" title="Sensor ${provBadge.label}" onclick="event.stopPropagation()">
               <img src="${provBadge.src}" alt="${provBadge.label}">
@@ -1453,8 +1784,8 @@
           </div>
           <div class="card-face card-back">
             <div class="card-back-hdr">
-              <div class="card-back-title">${s.institucion || s.nombre} · PM2.5 (µg/m³) · 24h</div>
-              <div class="card-back-close">✕ volver</div>
+              <div class="card-back-title">${t("card_back_title", { nombre: s.institucion || s.nombre })}</div>
+              <div class="card-back-close">${t("card_back_close")}</div>
             </div>
             <div class="card-back-chart"><canvas id="mini-chart-${idPrefix}${s.sensor_index}"></canvas></div>
           </div>
@@ -1467,7 +1798,7 @@
     grid.innerHTML = "";
 
     if (!sensors.length) {
-      grid.innerHTML = `<div class="empty-state">Todavía no hay lecturas guardadas.</div>`;
+      grid.innerHTML = `<div class="empty-state">${t("empty_state_sin_lecturas")}</div>`;
       return;
     }
 
@@ -1537,8 +1868,8 @@
   async function applySensorSelection(sensorIndex, label) {
     currentSensorIndex = sensorIndex;
     currentLabel = label;
-    document.getElementById("hist-titulo").textContent = `Registros recientes — ${label}`;
-    document.getElementById("graf-titulo").textContent = `Histórico — ${label}`;
+    updateHistTitulo();
+    updateGrafTitulo();
     await Promise.all([loadHistory(), loadHistorialTable()]);
     syncSensorSelectors();
   }
@@ -1684,7 +2015,7 @@
       renderGraficoSitiosFilter();
       loadCompareHistory();
     } else {
-      document.getElementById("graf-titulo").textContent = currentLabel ? `Histórico — ${currentLabel}` : "Seleccioná una institución para ver el histórico";
+      updateGrafTitulo();
       const chartEmpty = document.getElementById("chart-empty");
       if (chartEmpty) chartEmpty.style.display = currentRows.length ? "none" : "flex";
       renderChart(currentRows);
@@ -1718,7 +2049,7 @@
     if (!indexes.length) {
       if (chart) chart.destroy();
       if (chartEmpty) chartEmpty.style.display = "flex";
-      document.getElementById("graf-titulo").textContent = "Comparar sitios — elegí al menos uno";
+      updateGrafTitulo();
       return;
     }
     try {
@@ -1790,28 +2121,28 @@
       const hasta = document.getElementById("hist-hasta").value;
       return desde && hasta ? `${desde} a ${hasta}` : "—";
     }
-    return { "24h": "últimas 24 h", "7d": "últimos 7 días", "30d": "últimos 30 días" }[range] || range;
+    return { "24h": t("rango_ultimas_24h"), "7d": t("rango_ultimos_7d"), "30d": t("rango_ultimos_30d") }[range] || range;
   }
 
   async function loadHistorialTable() {
     if (currentSensorIndex == null) return;
     const qp = histQueryParams();
     if (qp === null) return;
-    document.getElementById("tabla-wrap").innerHTML = '<div class="loader">Cargando...</div>';
+    document.getElementById("tabla-wrap").innerHTML = `<div class="loader">${t("loader_cargando")}</div>`;
     try {
       const res = await fetch(`${API_BASE}/api/historico/${currentSensorIndex}?${qp}`);
       const rows = await res.json();
       histRows = rows;
       if (!rows.length) {
         document.getElementById("hist-param-filter").innerHTML = "";
-        document.getElementById("tabla-wrap").innerHTML = '<div class="loader">Sin datos.</div>';
+        document.getElementById("tabla-wrap").innerHTML = `<div class="loader">${t("loader_sin_datos")}</div>`;
         return;
       }
       renderHistParamFilter();
       renderHistTable();
     } catch (e) {
       document.getElementById("tabla-wrap").innerHTML =
-        `<div class="loader" style="color:var(--unhealthy)">Error: ${e.message}</div>`;
+        `<div class="loader" style="color:var(--unhealthy)">${t("loader_error", { msg: e.message })}</div>`;
     }
   }
 
@@ -1825,12 +2156,12 @@
 
   function renderHistParamFilter() {
     document.getElementById("hist-param-filter").innerHTML =
-      `<span class="param-filter-label">Parámetros a mostrar:</span>` +
+      `<span class="param-filter-label">${t("param_filter_label")}</span>` +
       histDisponibles().map((c) => `
         <label>
           <input type="checkbox" ${histHiddenParams.has(c.key) ? "" : "checked"}
             onchange="toggleHistParam('${c.key}', this.checked)">
-          ${c.label}
+          ${paramLabel(c.key)}
         </label>
       `).join("");
   }
@@ -1851,10 +2182,10 @@
         <td class="muted">${formatBsAsFull(r.timestamp)}</td>
         ${cols.map((c) => `<td${c.key === "pm2_5" ? ' class="num"' : ""}>${r[c.key] ?? "—"}</td>`).join("")}
       </tr>`).join("");
-    const headers = cols.map((c) => `<th>${c.label} <span class="th-unit">(${c.unit})</span></th>`).join("");
+    const headers = cols.map((c) => `<th>${paramLabel(c.key)} <span class="th-unit">(${c.unit})</span></th>`).join("");
     return `
       <table>
-        <thead><tr><th>Fecha / hora</th>${headers}</tr></thead>
+        <thead><tr><th>${t("tabla_col_fecha")}</th>${headers}</tr></thead>
         <tbody>${filas}</tbody>
       </table>`;
   }
@@ -1896,7 +2227,7 @@
   function downloadHistorialPdf() {
     if (!histRows.length || currentSensorIndex == null) return;
     if (!window.jspdf || !window.jspdf.jsPDF) {
-      alert("No se pudo cargar el generador de PDF (jsPDF). Puede ser el bloqueador de anuncios/contenido del navegador, o que se haya cortado la conexion a internet. Probá recargar la página o desactivar el bloqueador para este sitio y volvé a intentar.");
+      alert(t("pdf_no_jspdf"));
       return;
     }
     const { jsPDF } = window.jspdf;
@@ -1912,11 +2243,11 @@
 
     const cols = histColsVisibles();
     const colDefs = [
-      { key: "_ts", header: "FECHA / HORA", width: 17, align: "left" },
+      { key: "_ts", header: t("pdf_fecha_hora"), width: 17, align: "left" },
       ...cols.map((c) => ({
         key: c.key,
-        header: `${c.label.toUpperCase()} (${c.unit})`,
-        width: Math.max(c.label.length + c.unit.length + 5, 11),
+        header: `${paramLabel(c.key).toUpperCase()} (${c.unit})`,
+        width: Math.max(paramLabel(c.key).length + c.unit.length + 5, 11),
         align: "right",
       })),
     ];
@@ -1930,10 +2261,10 @@
 
     function printHeaderBlock() {
       doc.setFont("courier", "bold");
-      doc.text("REGISTRO HISTORICO — CIENCIA CIUDADANA AMBIENTAL", marginLeft, y);
+      doc.text(t("pdf_header"), marginLeft, y);
       y += lineHeight * 1.3;
       doc.setFont("courier", "normal");
-      doc.text(`SITIO: ${currentLabel || "-"}    SENSOR: #${currentSensorIndex}    RANGO: ${histRangoTexto()}    REGISTROS: ${histRows.length}`, marginLeft, y);
+      doc.text(t("pdf_sitio_line", { sitio: currentLabel || "-", sensor: currentSensorIndex, rango: histRangoTexto(), n: histRows.length }), marginLeft, y);
       y += lineHeight * 1.6;
       printColHeaders();
     }
@@ -2063,7 +2394,7 @@
       const def = CHART_PARAM_DEFS[param];
       const axisId = `y_${param}`;
       datasets.push({
-        label: def.unit ? `${def.label} (${def.unit})` : def.label,
+        label: def.unit ? `${paramLabel(param)} (${def.unit})` : paramLabel(param),
         data: rows.map((r, idx) => ({ x: idx, y: r[param] })),
         borderColor: def.color,
         backgroundColor: def.color + "14", // ~8% de opacidad (hex RGBA de 8 dígitos)
@@ -2079,7 +2410,7 @@
         grid: { color: colorBorder, drawOnChartArea: i === 0 }, // solo la 1er escala dibuja cuadrícula, para no saturar
         title: {
           display: true,
-          text: def.unit ? `${def.label} (${def.unit})` : def.label,
+          text: def.unit ? `${paramLabel(param)} (${def.unit})` : paramLabel(param),
           color: def.color,
           font: { family: "JetBrains Mono", size: 10 },
         },
@@ -2098,7 +2429,7 @@
         const axisId = `y_${param}`;
         datasets.push(
           {
-            label: `${def.label} · Canal A`,
+            label: `${paramLabel(param)} · ${t("channel_a")}`,
             data: rows.map((r, idx) => ({ x: idx, y: r[ch.a] })),
             borderColor: def.color + "80", // ~50% opacidad
             borderWidth: 1,
@@ -2108,7 +2439,7 @@
             yAxisID: axisId,
           },
           {
-            label: `${def.label} · Canal B`,
+            label: `${paramLabel(param)} · ${t("channel_b")}`,
             data: rows.map((r, idx) => ({ x: idx, y: r[ch.b] })),
             borderColor: def.color + "CC", // ~80% opacidad
             borderWidth: 1,
@@ -2185,8 +2516,7 @@
       };
     });
 
-    document.getElementById("graf-titulo").textContent =
-      `Comparando ${indexes.length} sitio${indexes.length === 1 ? "" : "s"} — ${def.label}`;
+    updateGrafTitulo();
 
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
@@ -2223,7 +2553,7 @@
             grid: { color: colorBorder },
             title: {
               display: true,
-              text: def.unit ? `${def.label} (${def.unit})` : def.label,
+              text: def.unit ? `${paramLabel(param)} (${def.unit})` : paramLabel(param),
               color: colorDim,
               font: { family: "JetBrains Mono", size: 10 },
             },
@@ -2275,8 +2605,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const def = CHART_PARAM_DEFS[param];
-    a.download = `comparacion_${def.label.replace(/\s+/g, "_")}_${currentRange}.csv`;
+    a.download = `comparacion_${paramLabel(param).replace(/\s+/g, "_")}_${currentRange}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -2347,6 +2676,7 @@
     });
   }
 
+  applyStaticTranslations();
   buildParamToggle();
   loadSensors();
   setInterval(loadSensors, 5 * 60 * 1000); // refresca cada 5 min

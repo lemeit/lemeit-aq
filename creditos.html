@@ -49,6 +49,12 @@
   .header h1 { font-size: 15px; font-weight: 600; }
   .header a.back { margin-left: auto; font-size: 12px; color: var(--text-dim); text-decoration: none; }
   .header a.back:hover { color: var(--accent); }
+  .lang-toggle {
+    flex-shrink: 0; display: inline-flex; align-items: center; background: none;
+    border: 1px solid var(--border); border-radius: 5px; padding: 3px 6px; cursor: pointer;
+    color: var(--text-dim); font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: .02em;
+  }
+  .lang-toggle:hover { color: var(--accent); border-color: var(--accent); }
   main { max-width: 780px; margin: 0 auto; padding: 24px 18px 60px; }
   h2 { font-size: 17px; margin: 38px 0 10px; color: var(--accent); }
   h2:first-of-type { margin-top: 0; }
@@ -81,70 +87,187 @@
   }
   footer { max-width: 780px; margin: 0 auto; padding: 0 18px 40px; color: var(--text-dim); font-size: 12px; }
 </style>
+<script>
+let LANG = localStorage.getItem("lang") || "es";
+
+const I18N = {
+  es: {
+    page_title: "Fuentes, datos y licencias · Monitoreo Ambiental Escolar",
+    header_title: "Fuentes, datos y licencias",
+    back_link: "&larr; Volver al portal",
+    intro: "Monitoreo Ambiental Escolar existe gracias al hardware y los datos de referencia de otros proyectos — algunos nos donaron equipos, otros publican los datos que usamos como contexto. Esta página deja explícito qué se usa de cada uno, bajo qué licencia, y cómo pensamos usar (y devolver) esos datos nosotros. No es un documento legal formal — es una nota de transparencia, escrita para que cualquiera (incluidos los propios proveedores) entienda de un vistazo qué hacemos con lo que nos dieron.",
+
+    h2_purpleair: "PurpleAir",
+    purpleair_p1: `<a href="https://www.purpleair.com" target="_blank">purpleair.com</a> fabrica los sensores <strong>PurpleAir Flex</strong> que forman el núcleo de esta red. Nacieron en 2015, cuando su fundador, Adrian Dybwad, quiso medir el polvo que levantaba una cantera cerca de su casa en Draper, Utah, y no encontró nada que no costara miles de dólares:`,
+    purpleair_quote1: `"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."`,
+    purpleair_p2: "De ahí salió un sensor de bajo costo pensado para que cualquiera pudiera responderse esa misma pregunta. La filosofía se mantiene hoy:",
+    purpleair_quote2: `"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."`,
+    h3_como_se_usan: "Cómo se usan acá",
+    purpleair_uso: `Los <strong>5 sensores PurpleAir Flex</strong> de la red fueron una donación de <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (convocatoria de mitad de 2024), a partir de una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda. Los datos se consultan cada 15 minutos vía la API oficial de PurpleAir (<code>api.purpleair.com</code>) y se guardan en una base propia (Cloudflare D1) para poder ofrecer historial e informes — PurpleAir solo retiene ventanas cortas de datos en su propia plataforma.`,
+    h3_licencia: "Licencia",
+    purpleair_licencia: `Los datos del mapa y de la API en tiempo real de PurpleAir se publican bajo su propia <a href="https://www.purpleair.com/license" target="_blank">licencia de datos</a> (uso no comercial, con atribución). Este proyecto es enteramente educativo y sin fines de lucro, y cita a PurpleAir como fuente en cada tarjeta de sensor y en el pie de página del sitio. Para el texto completo y vigente, la referencia es siempre la página de licencia enlazada abajo.`,
+    purpleair_link_quienes: "Quiénes son",
+    purpleair_link_licencia: "Licencia de datos",
+    purpleair_link_terminos: "Términos de servicio",
+    purpleair_link_privacidad: "Privacidad",
+
+    h2_airgradient: "AirGradient",
+    airgradient_p1: `<a href="https://www.airgradient.com" target="_blank">airgradient.com</a> fabrica los sensores <strong>Open Air</strong> que suman a la red la medición de CO2, VOC y NOx además de material particulado. Es hardware y firmware abierto: publican diseños y código bajo licencia <strong>CC BY-SA 4.0</strong>, e invitan explícitamente a modificarlos.`,
+    airgradient_p2: "Tienen una postura fuerte sobre a quién le pertenecen los datos de calidad de aire:",
+    airgradient_quote1: `"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — sitio de AirGradient`,
+    airgradient_p3: `Su CEO, Achim Haug, lo plantea incluso en términos éticos: restringir la propiedad de los datos es <em>"wrong and against humanity's best interests"</em>, aunque una empresa pueda seguir siendo rentable sosteniendo datos abiertos. Tienen hasta un <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">quiz interactivo</a> para ayudar a detectar letra chica restrictiva en los términos de otros fabricantes.`,
+    airgradient_uso: `Los <strong>2 sensores AirGradient Open Air</strong> de la red están activos, hoy conectados en un domicilio particular a modo de prueba mientras se define en qué instituciones se instalan. Los datos se consultan por API propia de AirGradient y se guardan en la misma base D1 que PurpleAir, con el campo <code>proveedor</code> distinguiendo el origen.`,
+    airgradient_licencia: `El hardware y firmware de AirGradient son <strong>CC BY-SA 4.0</strong> (código abierto, uso y modificación libres con atribución). Los datos que sus propios monitores generan quedan bajo control de quien los opera — en este caso, del proyecto — que decide si publicarlos. Acá se publican en la API propia de Monitoreo Ambiental Escolar, con la misma filosofía de datos abiertos que promueve AirGradient.`,
+    airgradient_link_privacidad: "Privacidad",
+    airgradient_link_terminos: "Términos y condiciones",
+    airgradient_link_quiz: "Quiz de propiedad de datos",
+
+    h2_openaq: "OpenAQ",
+    openaq_p1: `<a href="https://openaq.org" target="_blank">openaq.org</a> es una organización sin fines de lucro cuya misión es abrir el acceso a datos de calidad de aire a nivel mundial — en sus propias palabras, "fights air inequality by opening up air quality data". No venden datos ni información de usuarios, y sostienen la plataforma con una postura similar a la de AirGradient: el dato ambiental es un bien público.`,
+    openaq_uso: "Hoy OpenAQ es sobre todo una referencia de diseño y de filosofía de proyecto — no hay una integración activa de datos entre Monitoreo Ambiental Escolar y OpenAQ todavía. AirGradient ofrece la opción de publicar los datos de sus monitores en OpenAQ (queda a elección del operador); es algo a evaluar a futuro para los 2 sensores AirGradient de la red.",
+    openaq_link_privacidad: "Privacidad",
+    openaq_link_terminos: "Términos",
+
+    h2_datos_propios: "Los datos que genera este proyecto",
+    datos_propios_p: `Siguiendo la misma filosofía de PurpleAir, AirGradient y OpenAQ, los datos que Monitoreo Ambiental Escolar genera y publica (metadata de sensores, lecturas históricas) están disponibles sin autenticación ni registro a través de la <a href="api.html">API pública</a> del proyecto — de lectura, CORS abierto, pensada para que cualquiera la consuma directo. Si reutilizás estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a>.`,
+
+    footer: "app.lemeit.ar/aq · Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires",
+    lang_toggle_title: "Switch to English",
+  },
+  en: {
+    page_title: "Sources, data and licenses · School Air Quality Monitoring",
+    header_title: "Sources, data and licenses",
+    back_link: "&larr; Back to portal",
+    intro: "School Air Quality Monitoring exists thanks to the hardware and reference data of other projects — some donated equipment, others publish the data we use as context. This page spells out what we use from each one, under what license, and how we intend to use (and give back) that data ourselves. It's not a formal legal document — it's a transparency note, written so that anyone (including the providers themselves) can see at a glance what we do with what they gave us.",
+
+    h2_purpleair: "PurpleAir",
+    purpleair_p1: `<a href="https://www.purpleair.com" target="_blank">purpleair.com</a> makes the <strong>PurpleAir Flex</strong> sensors that form the core of this network. They started in 2015, when founder Adrian Dybwad wanted to measure the dust a quarry was kicking up near his home in Draper, Utah, and couldn't find anything to buy that didn't cost thousands of dollars:`,
+    purpleair_quote1: `"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."`,
+    purpleair_p2: "That's how a low-cost sensor was born, meant for anyone to answer that same question for themselves. The philosophy holds today:",
+    purpleair_quote2: `"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."`,
+    h3_como_se_usan: "How they're used here",
+    purpleair_uso: `The network's <strong>5 PurpleAir Flex sensors</strong> were a donation from <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (mid-2024 call), following a needs proposal submitted by the author — the project placed 2nd in that round. Data is polled every 15 minutes via PurpleAir's official API (<code>api.purpleair.com</code>) and stored in our own database (Cloudflare D1) to offer history and reports — PurpleAir only retains short data windows on its own platform.`,
+    h3_licencia: "License",
+    purpleair_licencia: "PurpleAir's map and real-time API data are published under their own <a href=\"https://www.purpleair.com/license\" target=\"_blank\">data license</a> (non-commercial use, with attribution). This project is entirely educational and non-profit, and credits PurpleAir as a source on every sensor card and in the site's footer. For the complete, current text, the license page linked below is always the reference.",
+    purpleair_link_quienes: "About them",
+    purpleair_link_licencia: "Data license",
+    purpleair_link_terminos: "Terms of service",
+    purpleair_link_privacidad: "Privacy",
+
+    h2_airgradient: "AirGradient",
+    airgradient_p1: `<a href="https://www.airgradient.com" target="_blank">airgradient.com</a> makes the <strong>Open Air</strong> sensors that add CO2, VOC and NOx measurement to the network, on top of particulate matter. It's open hardware and firmware: they publish designs and code under a <strong>CC BY-SA 4.0</strong> license, and explicitly invite people to modify them.`,
+    airgradient_p2: "They take a strong stance on who owns air quality data:",
+    airgradient_quote1: `"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — AirGradient's site`,
+    airgradient_p3: `Their CEO, Achim Haug, frames it even in ethical terms: restricting data ownership is <em>"wrong and against humanity's best interests,"</em> even though a company can still be profitable while keeping data open. They even have an <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">interactive quiz</a> to help spot restrictive fine print in other manufacturers' terms.`,
+    airgradient_uso: `The network's <strong>2 AirGradient Open Air sensors</strong> are active, currently connected at a private home as a trial while it's decided which institutions will host them. Data is polled via AirGradient's own API and stored in the same D1 database as PurpleAir's, with the <code>proveedor</code> field distinguishing the source.`,
+    airgradient_licencia: "AirGradient's hardware and firmware are <strong>CC BY-SA 4.0</strong> (open source, free use and modification with attribution). The data their monitors generate stays under the control of whoever operates them — in this case, the project — which decides whether to publish it. Here it's published on School Air Quality Monitoring's own API, following the same open-data philosophy AirGradient promotes.",
+    airgradient_link_privacidad: "Privacy",
+    airgradient_link_terminos: "Terms and conditions",
+    airgradient_link_quiz: "Data ownership quiz",
+
+    h2_openaq: "OpenAQ",
+    openaq_p1: `<a href="https://openaq.org" target="_blank">openaq.org</a> is a non-profit whose mission is to open up access to air quality data worldwide — in their own words, it "fights air inequality by opening up air quality data." They don't sell data or user information, and sustain the platform with a stance similar to AirGradient's: environmental data is a public good.`,
+    openaq_uso: "Today OpenAQ is mostly a design and project-philosophy reference — there's no active data integration between School Air Quality Monitoring and OpenAQ yet. AirGradient offers the option of publishing its monitors' data to OpenAQ (up to the operator to decide); it's something to evaluate down the line for the network's 2 AirGradient sensors.",
+    openaq_link_privacidad: "Privacy",
+    openaq_link_terminos: "Terms",
+
+    h2_datos_propios: "The data this project generates",
+    datos_propios_p: `Following the same philosophy as PurpleAir, AirGradient and OpenAQ, the data School Air Quality Monitoring generates and publishes (sensor metadata, historical readings) is available without authentication or registration through the project's <a href="api.html">public API</a> — read-only, CORS open, meant for anyone to consume directly. If you reuse this data publicly, we'd appreciate a mention of <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a> as the source.`,
+
+    footer: "app.lemeit.ar/aq · Air quality sensor network in educational institutions of Buenos Aires Province",
+    lang_toggle_title: "Cambiar a español",
+  },
+};
+
+function t(key) {
+  return (I18N[LANG] && I18N[LANG][key]) ?? I18N.es[key] ?? key;
+}
+
+function applyStaticTranslations() {
+  document.documentElement.setAttribute("lang", LANG);
+  document.title = t("page_title");
+  document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.getAttribute("data-i18n")); });
+  document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.getAttribute("data-i18n-html")); });
+  const langBtn = document.getElementById("lang-toggle");
+  if (langBtn) {
+    langBtn.textContent = LANG === "es" ? "EN" : "ES";
+    langBtn.title = t("lang_toggle_title");
+    langBtn.setAttribute("aria-label", t("lang_toggle_title"));
+  }
+}
+
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem("lang", lang);
+  applyStaticTranslations();
+}
+</script>
 </head>
 <body>
 
 <div class="header">
   <div class="logo">AE</div>
-  <h1>Fuentes, datos y licencias</h1>
-  <a class="back" href="index.html">&larr; Volver al portal</a>
+  <h1 data-i18n="header_title">Fuentes, datos y licencias</h1>
+  <a class="back" href="index.html" data-i18n-html="back_link">&larr; Volver al portal</a>
+  <button class="lang-toggle" id="lang-toggle" onclick="setLang(LANG === 'es' ? 'en' : 'es')" title="Switch to English" aria-label="Switch to English">EN</button>
 </div>
 
 <main>
-  <p>Monitoreo Ambiental Escolar existe gracias al hardware y los datos de referencia de otros proyectos — algunos nos donaron equipos, otros publican los datos que usamos como contexto. Esta página deja explícito qué se usa de cada uno, bajo qué licencia, y cómo pensamos usar (y devolver) esos datos nosotros. No es un documento legal formal — es una nota de transparencia, escrita para que cualquiera (incluidos los propios proveedores) entienda de un vistazo qué hacemos con lo que nos dieron.</p>
+  <p data-i18n="intro">Monitoreo Ambiental Escolar existe gracias al hardware y los datos de referencia de otros proyectos — algunos nos donaron equipos, otros publican los datos que usamos como contexto. Esta página deja explícito qué se usa de cada uno, bajo qué licencia, y cómo pensamos usar (y devolver) esos datos nosotros. No es un documento legal formal — es una nota de transparencia, escrita para que cualquiera (incluidos los propios proveedores) entienda de un vistazo qué hacemos con lo que nos dieron.</p>
 
-  <h2>PurpleAir</h2>
+  <h2 data-i18n="h2_purpleair">PurpleAir</h2>
   <div class="provider">
-    <p><a href="https://www.purpleair.com" target="_blank">purpleair.com</a> fabrica los sensores <strong>PurpleAir Flex</strong> que forman el núcleo de esta red. Nacieron en 2015, cuando su fundador, Adrian Dybwad, quiso medir el polvo que levantaba una cantera cerca de su casa en Draper, Utah, y no encontró nada que no costara miles de dólares:</p>
-    <blockquote>"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."</blockquote>
-    <p>De ahí salió un sensor de bajo costo pensado para que cualquiera pudiera responderse esa misma pregunta. La filosofía se mantiene hoy:</p>
-    <blockquote>"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."</blockquote>
-    <h3>Cómo se usan acá</h3>
-    <p>Los <strong>5 sensores PurpleAir Flex</strong> de la red fueron una donación de <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (convocatoria de mitad de 2024), a partir de una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda. Los datos se consultan cada 15 minutos vía la API oficial de PurpleAir (<code>api.purpleair.com</code>) y se guardan en una base propia (Cloudflare D1) para poder ofrecer historial e informes — PurpleAir solo retiene ventanas cortas de datos en su propia plataforma.</p>
-    <h3>Licencia</h3>
-    <p class="dim">Los datos del mapa y de la API en tiempo real de PurpleAir se publican bajo su propia <a href="https://www.purpleair.com/license" target="_blank">licencia de datos</a> (uso no comercial, con atribución). Este proyecto es enteramente educativo y sin fines de lucro, y cita a PurpleAir como fuente en cada tarjeta de sensor y en el pie de página del sitio. Para el texto completo y vigente, la referencia es siempre la página de licencia enlazada abajo.</p>
+    <p data-i18n-html="purpleair_p1"><a href="https://www.purpleair.com" target="_blank">purpleair.com</a> fabrica los sensores <strong>PurpleAir Flex</strong> que forman el núcleo de esta red. Nacieron en 2015, cuando su fundador, Adrian Dybwad, quiso medir el polvo que levantaba una cantera cerca de su casa en Draper, Utah, y no encontró nada que no costara miles de dólares:</p>
+    <blockquote data-i18n="purpleair_quote1">"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."</blockquote>
+    <p data-i18n="purpleair_p2">De ahí salió un sensor de bajo costo pensado para que cualquiera pudiera responderse esa misma pregunta. La filosofía se mantiene hoy:</p>
+    <blockquote data-i18n="purpleair_quote2">"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."</blockquote>
+    <h3 data-i18n="h3_como_se_usan">Cómo se usan acá</h3>
+    <p data-i18n-html="purpleair_uso">Los <strong>5 sensores PurpleAir Flex</strong> de la red fueron una donación de <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (convocatoria de mitad de 2024), a partir de una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda. Los datos se consultan cada 15 minutos vía la API oficial de PurpleAir (<code>api.purpleair.com</code>) y se guardan en una base propia (Cloudflare D1) para poder ofrecer historial e informes — PurpleAir solo retiene ventanas cortas de datos en su propia plataforma.</p>
+    <h3 data-i18n="h3_licencia">Licencia</h3>
+    <p class="dim" data-i18n-html="purpleair_licencia">Los datos del mapa y de la API en tiempo real de PurpleAir se publican bajo su propia <a href="https://www.purpleair.com/license" target="_blank">licencia de datos</a> (uso no comercial, con atribución). Este proyecto es enteramente educativo y sin fines de lucro, y cita a PurpleAir como fuente en cada tarjeta de sensor y en el pie de página del sitio. Para el texto completo y vigente, la referencia es siempre la página de licencia enlazada abajo.</p>
     <div class="provider-links">
-      <a href="https://www.purpleair.com/about" target="_blank">Quiénes son</a>
-      <a href="https://www.purpleair.com/license" target="_blank">Licencia de datos</a>
-      <a href="https://www.purpleair.com/policies/terms-of-service" target="_blank">Términos de servicio</a>
-      <a href="https://www.purpleair.com/policies/privacy-policy" target="_blank">Privacidad</a>
+      <a href="https://www.purpleair.com/about" target="_blank" data-i18n="purpleair_link_quienes">Quiénes son</a>
+      <a href="https://www.purpleair.com/license" target="_blank" data-i18n="purpleair_link_licencia">Licencia de datos</a>
+      <a href="https://www.purpleair.com/policies/terms-of-service" target="_blank" data-i18n="purpleair_link_terminos">Términos de servicio</a>
+      <a href="https://www.purpleair.com/policies/privacy-policy" target="_blank" data-i18n="purpleair_link_privacidad">Privacidad</a>
     </div>
   </div>
 
-  <h2>AirGradient</h2>
+  <h2 data-i18n="h2_airgradient">AirGradient</h2>
   <div class="provider">
-    <p><a href="https://www.airgradient.com" target="_blank">airgradient.com</a> fabrica los sensores <strong>Open Air</strong> que suman a la red la medición de CO2, VOC y NOx además de material particulado. Es hardware y firmware abierto: publican diseños y código bajo licencia <strong>CC BY-SA 4.0</strong>, e invitan explícitamente a modificarlos.</p>
-    <p>Tienen una postura fuerte sobre a quién le pertenecen los datos de calidad de aire:</p>
-    <blockquote>"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — sitio de AirGradient</blockquote>
-    <p>Su CEO, Achim Haug, lo plantea incluso en términos éticos: restringir la propiedad de los datos es <em>"wrong and against humanity's best interests"</em>, aunque una empresa pueda seguir siendo rentable sosteniendo datos abiertos. Tienen hasta un <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">quiz interactivo</a> para ayudar a detectar letra chica restrictiva en los términos de otros fabricantes.</p>
-    <h3>Cómo se usan acá</h3>
-    <p>Los <strong>2 sensores AirGradient Open Air</strong> de la red están activos, hoy conectados en un domicilio particular a modo de prueba mientras se define en qué instituciones se instalan. Los datos se consultan por API propia de AirGradient y se guardan en la misma base D1 que PurpleAir, con el campo <code>proveedor</code> distinguiendo el origen.</p>
-    <h3>Licencia</h3>
-    <p class="dim">El hardware y firmware de AirGradient son <strong>CC BY-SA 4.0</strong> (código abierto, uso y modificación libres con atribución). Los datos que sus propios monitores generan quedan bajo control de quien los opera — en este caso, del proyecto — que decide si publicarlos. Acá se publican en la API propia de Monitoreo Ambiental Escolar, con la misma filosofía de datos abiertos que promueve AirGradient.</p>
+    <p data-i18n-html="airgradient_p1"><a href="https://www.airgradient.com" target="_blank">airgradient.com</a> fabrica los sensores <strong>Open Air</strong> que suman a la red la medición de CO2, VOC y NOx además de material particulado. Es hardware y firmware abierto: publican diseños y código bajo licencia <strong>CC BY-SA 4.0</strong>, e invitan explícitamente a modificarlos.</p>
+    <p data-i18n="airgradient_p2">Tienen una postura fuerte sobre a quién le pertenecen los datos de calidad de aire:</p>
+    <blockquote data-i18n="airgradient_quote1">"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — sitio de AirGradient</blockquote>
+    <p data-i18n-html="airgradient_p3">Su CEO, Achim Haug, lo plantea incluso en términos éticos: restringir la propiedad de los datos es <em>"wrong and against humanity's best interests"</em>, aunque una empresa pueda seguir siendo rentable sosteniendo datos abiertos. Tienen hasta un <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">quiz interactivo</a> para ayudar a detectar letra chica restrictiva en los términos de otros fabricantes.</p>
+    <h3 data-i18n="h3_como_se_usan">Cómo se usan acá</h3>
+    <p data-i18n-html="airgradient_uso">Los <strong>2 sensores AirGradient Open Air</strong> de la red están activos, hoy conectados en un domicilio particular a modo de prueba mientras se define en qué instituciones se instalan. Los datos se consultan por API propia de AirGradient y se guardan en la misma base D1 que PurpleAir, con el campo <code>proveedor</code> distinguiendo el origen.</p>
+    <h3 data-i18n="h3_licencia">Licencia</h3>
+    <p class="dim" data-i18n-html="airgradient_licencia">El hardware y firmware de AirGradient son <strong>CC BY-SA 4.0</strong> (código abierto, uso y modificación libres con atribución). Los datos que sus propios monitores generan quedan bajo control de quien los opera — en este caso, del proyecto — que decide si publicarlos. Acá se publican en la API propia de Monitoreo Ambiental Escolar, con la misma filosofía de datos abiertos que promueve AirGradient.</p>
     <div class="provider-links">
-      <a href="https://www.airgradient.com/privacy-policy/" target="_blank">Privacidad</a>
-      <a href="https://www.airgradient.com/terms-conditions/" target="_blank">Términos y condiciones</a>
-      <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">Quiz de propiedad de datos</a>
+      <a href="https://www.airgradient.com/privacy-policy/" target="_blank" data-i18n="airgradient_link_privacidad">Privacidad</a>
+      <a href="https://www.airgradient.com/terms-conditions/" target="_blank" data-i18n="airgradient_link_terminos">Términos y condiciones</a>
+      <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank" data-i18n="airgradient_link_quiz">Quiz de propiedad de datos</a>
     </div>
   </div>
 
-  <h2>OpenAQ</h2>
+  <h2 data-i18n="h2_openaq">OpenAQ</h2>
   <div class="provider">
-    <p><a href="https://openaq.org" target="_blank">openaq.org</a> es una organización sin fines de lucro cuya misión es abrir el acceso a datos de calidad de aire a nivel mundial — en sus propias palabras, "fights air inequality by opening up air quality data". No venden datos ni información de usuarios, y sostienen la plataforma con una postura similar a la de AirGradient: el dato ambiental es un bien público.</p>
-    <h3>Cómo se usan acá</h3>
-    <p>Hoy OpenAQ es sobre todo una referencia de diseño y de filosofía de proyecto — no hay una integración activa de datos entre Monitoreo Ambiental Escolar y OpenAQ todavía. AirGradient ofrece la opción de publicar los datos de sus monitores en OpenAQ (queda a elección del operador); es algo a evaluar a futuro para los 2 sensores AirGradient de la red.</p>
+    <p data-i18n-html="openaq_p1"><a href="https://openaq.org" target="_blank">openaq.org</a> es una organización sin fines de lucro cuya misión es abrir el acceso a datos de calidad de aire a nivel mundial — en sus propias palabras, "fights air inequality by opening up air quality data". No venden datos ni información de usuarios, y sostienen la plataforma con una postura similar a la de AirGradient: el dato ambiental es un bien público.</p>
+    <h3 data-i18n="h3_como_se_usan">Cómo se usan acá</h3>
+    <p data-i18n="openaq_uso">Hoy OpenAQ es sobre todo una referencia de diseño y de filosofía de proyecto — no hay una integración activa de datos entre Monitoreo Ambiental Escolar y OpenAQ todavía. AirGradient ofrece la opción de publicar los datos de sus monitores en OpenAQ (queda a elección del operador); es algo a evaluar a futuro para los 2 sensores AirGradient de la red.</p>
     <div class="provider-links">
-      <a href="https://openaq.org/privacy/" target="_blank">Privacidad</a>
-      <a href="https://openaq.org/terms/" target="_blank">Términos</a>
+      <a href="https://openaq.org/privacy/" target="_blank" data-i18n="openaq_link_privacidad">Privacidad</a>
+      <a href="https://openaq.org/terms/" target="_blank" data-i18n="openaq_link_terminos">Términos</a>
     </div>
   </div>
 
-  <h2>Los datos que genera este proyecto</h2>
-  <p>Siguiendo la misma filosofía de PurpleAir, AirGradient y OpenAQ, los datos que Monitoreo Ambiental Escolar genera y publica (metadata de sensores, lecturas históricas) están disponibles sin autenticación ni registro a través de la <a href="api.html">API pública</a> del proyecto — de lectura, CORS abierto, pensada para que cualquiera la consuma directo. Si reutilizás estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a>.</p>
+  <h2 data-i18n="h2_datos_propios">Los datos que genera este proyecto</h2>
+  <p data-i18n-html="datos_propios_p">Siguiendo la misma filosofía de PurpleAir, AirGradient y OpenAQ, los datos que Monitoreo Ambiental Escolar genera y publica (metadata de sensores, lecturas históricas) están disponibles sin autenticación ni registro a través de la <a href="api.html">API pública</a> del proyecto — de lectura, CORS abierto, pensada para que cualquiera la consuma directo. Si reutilizás estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a>.</p>
 
 </main>
 
-<footer>app.lemeit.ar/aq · Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</footer>
+<footer data-i18n="footer">app.lemeit.ar/aq · Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires</footer>
 
+<script>applyStaticTranslations();</script>
 </body>
 </html>
