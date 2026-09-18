@@ -639,6 +639,105 @@
     flex-shrink: 0;
   }
 
+  /* ── Botón ⓘ de info por parámetro + modal educativo ──
+     Diseño propio, no una copia del panel de AirGradient que inspiró la
+     idea: acá es un ícono de texto minimalista (no un ícono ilustrado a
+     color) y la tarjeta es un panel angosto de una sola columna con un
+     filo de acento a la izquierda, en vez del bloque ancho de dos
+     columnas con header de color sólido que usan ellos. */
+  .param-info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    margin-left: 3px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: .7;
+    vertical-align: middle;
+  }
+  .param-info-btn:hover { color: var(--accent); opacity: 1; }
+
+  .info-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .info-modal-overlay.open { display: flex; }
+  .info-modal {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    max-width: 420px;
+    width: 100%;
+    max-height: 82vh;
+    overflow-y: auto;
+    padding: 18px 20px 16px;
+    position: relative;
+    box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  }
+  .info-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    font-size: 15px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 6px;
+  }
+  .info-modal-close:hover { color: var(--accent); }
+  .info-modal-icon {
+    width: 26px;
+    height: 26px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .info-modal-title {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    padding-right: 20px;
+  }
+  .info-modal-body {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .info-modal-body p { margin: 0 0 10px; }
+  .info-modal-body ul { margin: 0 0 4px; padding-left: 18px; }
+  .info-modal-body li { margin-bottom: 7px; }
+  .info-modal-body strong { color: var(--text); }
+  .info-modal-sources {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-display);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+  .info-modal-sources a { color: var(--accent); }
+
   .empty-state {
     text-align: center;
     color: var(--text-dim);
@@ -858,6 +957,13 @@
 
 </main>
 
+<div class="info-modal-overlay" id="info-modal-overlay" onclick="if (event.target === this) closeInfoModal()">
+  <div class="info-modal" id="info-modal" role="dialog" aria-modal="true">
+    <button type="button" class="info-modal-close" onclick="closeInfoModal()" aria-label="Cerrar" data-i18n-title="info_modal_close_title" title="Cerrar">✕</button>
+    <div id="info-modal-content"></div>
+  </div>
+</div>
+
 <footer class="lm-footer" id="lm-footer"></footer>
 
 <script>
@@ -931,6 +1037,65 @@
       acerca_attrib_label: "Redes y programas de los que este proyecto participa",
       openaq_ambassador_title: "OpenAQ — el autor es Embajador Comunitario desde 2023",
       footer_extra: 'datos de <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
+
+      // ── Tarjetas educativas por parámetro (ⓘ en Historial/Gráfico y AQI) ──
+      // Contenido propio, redactado acá, citando fuentes públicas (OMS, EPA,
+      // AQLI) — no es una reproducción de material de ningún fabricante.
+      info_modal_close_title: "Cerrar",
+      info_pm_title: "Material particulado (PM)",
+      info_pm_body_html: `
+        <p>Partículas sólidas y líquidas suspendidas en el aire, clasificadas por tamaño: PM10 (menores a 10 micrones) y PM2.5 (menores a 2.5 micrones — unas 30 veces más finas que un cabello humano).</p>
+        <ul>
+          <li>Cuanto más chica la partícula, más profundo llega en el sistema respiratorio: el <strong>PM2.5</strong> puede alcanzar los alvéolos pulmonares y pasar al torrente sanguíneo.</li>
+          <li>La OMS <strong>no define un nivel seguro</strong> de exposición — cuanto más bajo, mejor. Su guía de 2021 recomienda un promedio anual de PM2.5 menor a 5 µg/m³.</li>
+          <li>Según el Air Quality Life Index (AQLI, Universidad de Chicago), la exposición crónica a PM puede acortar varios años la expectativa de vida en las regiones más contaminadas.</li>
+          <li>Ventilar en horarios de menor tráfico y usar purificadores con filtro <strong>HEPA</strong> ayuda a reducir la exposición en interiores.</li>
+        </ul>`,
+      info_pm_sources_html: 'Fuentes: <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">OMS — Guías mundiales de calidad del aire (2021)</a> · <a href="https://www.epa.gov/pm-pollution" target="_blank">US EPA — Particulate Matter Basics</a> · <a href="https://aqli.epic.uchicago.edu" target="_blank">AQLI — Universidad de Chicago (EPIC)</a>',
+
+      info_co2_title: "Dióxido de carbono (CO2)",
+      info_co2_body_html: `
+        <p>Gas que exhalamos al respirar. En exteriores ronda los 420-430 ppm; en ambientes cerrados con poca ventilación puede subir rápido.</p>
+        <ul>
+          <li>No es un contaminante en el sentido clásico, pero es un buen <strong>indicador indirecto</strong> de qué tan bien ventilado está un ambiente.</li>
+          <li>Niveles altos (por encima de ~1000-1500 ppm) se asocian a dolores de cabeza, somnolencia y menor rendimiento cognitivo.</li>
+          <li><strong>Ventilar</strong> (abrir ventanas, aumentar el caudal de aire fresco del HVAC) es la forma más directa de bajarlo — los aires acondicionados de pared no ayudan, porque solo recirculan el aire interior.</li>
+          <li>Sirve como una referencia útil en aulas y espacios cerrados para saber cuándo conviene ventilar.</li>
+        </ul>`,
+      info_co2_sources_html: 'Fuentes: <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">OMS — Guías de calidad del aire</a> · <a href="https://www.ashrae.org" target="_blank">ASHRAE — pautas de ventilación</a>',
+
+      info_voc_title: "Compuestos orgánicos volátiles (VOC)",
+      info_voc_body_html: `
+        <p>Un grupo de más de 10.000 sustancias químicas distintas que se evaporan fácilmente a temperatura ambiente — desde solventes de limpieza hasta perfumes y pinturas.</p>
+        <ul>
+          <li><strong>No todos son igual de dañinos</strong>: el grupo va de sustancias inocuas a compuestos tóxicos, así que un valor alto no dice por sí solo qué tan peligroso es el aire.</li>
+          <li>Los sensores de bajo costo (como los de esta red) no identifican qué compuesto específico detectan — reportan un <strong>índice relativo</strong>, no la concentración exacta de un gas en particular.</li>
+          <li>Son más útiles para notar <strong>cambios y picos</strong> a lo largo del día (por ejemplo al limpiar o pintar) que para leer un valor absoluto aislado.</li>
+          <li>Fuentes típicas en interiores: productos de limpieza, aerosoles, pinturas, muebles nuevos, impresoras y cocinar.</li>
+        </ul>`,
+      info_voc_sources_html: 'Fuentes: <a href="https://www.epa.gov/indoor-air-quality-iaq/volatile-organic-compounds-impact-indoor-air-quality" target="_blank">US EPA — VOCs e impacto en la calidad del aire interior</a>',
+
+      info_nox_title: "Óxidos de nitrógeno (NOx)",
+      info_nox_body_html: `
+        <p>La suma de monóxido de nitrógeno (NO) y dióxido de nitrógeno (NO2), dos gases con propiedades similares y muy asociados a la combustión.</p>
+        <ul>
+          <li>Se generan sobre todo por <strong>motores de combustión</strong> (autos, camiones, generadores) — por eso suelen ser más altos cerca de avenidas y en horas pico.</li>
+          <li>La exposición se asocia a enfermedades respiratorias (asma, EPOC) y cardiovasculares.</li>
+          <li>Además de afectar la salud directamente, el NOx contribuye a formar smog y ozono troposférico.</li>
+          <li>Igual que el VOC, los sensores de bajo costo reportan un <strong>índice relativo</strong> de cambio, no una concentración exacta en partes por millón.</li>
+        </ul>`,
+      info_nox_sources_html: 'Fuentes: <a href="https://www.epa.gov/no2-pollution/basic-information-about-no2" target="_blank">US EPA — Información básica sobre NO2</a> · <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">OMS — Guías de calidad del aire</a>',
+
+      info_aqi_title: "Índice de calidad del aire (AQI)",
+      info_aqi_body_html: `
+        <p>Una forma de resumir varios contaminantes (sobre todo PM2.5) en un solo número fácil de interpretar — pensado para comunicar el riesgo al público en general, no para uso científico de precisión.</p>
+        <ul>
+          <li>Cada tramo tiene un color y una categoría (Buena, Moderada, Grupos sensibles, No saludable...) — el detalle completo está en la ficha de cada sensor.</li>
+          <li>Distintos países usan escalas de AQI algo distintas (EPA de EE.UU., India, China...) — esta red usa la escala de la <strong>EPA de EE.UU.</strong>, la más difundida internacionalmente.</li>
+          <li>Un AQI "Moderado" no es necesariamente seguro para todos: asmáticos, niños, adultos mayores o embarazadas pueden verse afectados antes que la población general.</li>
+          <li>Sirve como primer vistazo rápido — para un análisis más fino conviene mirar el valor de PM2.5 en µg/m³ directamente.</li>
+        </ul>`,
+      info_aqi_sources_html: 'Fuentes: <a href="https://www.airnow.gov/aqi/aqi-basics/" target="_blank">US EPA — AQI Basics</a>',
 
       aqi_label: "Índice de calidad de aire (AQI)",
       aqi_sin_dato: "Sin dato",
@@ -1034,6 +1199,65 @@
       openaq_ambassador_title: "OpenAQ — the author has been a Community Ambassador since 2023",
       footer_extra: 'data from <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
 
+      // ── Per-parameter educational cards (ⓘ in Historial/Gráfico and AQI) ──
+      // Own content, written here, citing public sources (WHO, EPA, AQLI) —
+      // not a reproduction of any manufacturer's material.
+      info_modal_close_title: "Close",
+      info_pm_title: "Particulate Matter (PM)",
+      info_pm_body_html: `
+        <p>Solid and liquid particles suspended in the air, classified by size: PM10 (smaller than 10 microns) and PM2.5 (smaller than 2.5 microns — about 30 times finer than a human hair).</p>
+        <ul>
+          <li>The smaller the particle, the deeper it reaches into the respiratory system: <strong>PM2.5</strong> can reach the lung's alveoli and pass into the bloodstream.</li>
+          <li>The WHO <strong>doesn't define a safe level</strong> of exposure — the lower, the better. Its 2021 guideline recommends an annual PM2.5 average below 5 µg/m³.</li>
+          <li>According to the Air Quality Life Index (AQLI, University of Chicago), chronic PM exposure can shorten life expectancy by several years in the most polluted regions.</li>
+          <li>Ventilating during lower-traffic hours and using <strong>HEPA</strong>-filter air purifiers helps reduce indoor exposure.</li>
+        </ul>`,
+      info_pm_sources_html: 'Sources: <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">WHO — Global Air Quality Guidelines (2021)</a> · <a href="https://www.epa.gov/pm-pollution" target="_blank">US EPA — Particulate Matter Basics</a> · <a href="https://aqli.epic.uchicago.edu" target="_blank">AQLI — University of Chicago (EPIC)</a>',
+
+      info_co2_title: "Carbon Dioxide (CO2)",
+      info_co2_body_html: `
+        <p>A gas we exhale when we breathe. Outdoors it sits around 420-430 ppm; in enclosed spaces with poor ventilation it can rise quickly.</p>
+        <ul>
+          <li>It isn't a pollutant in the classic sense, but it's a good <strong>indirect indicator</strong> of how well-ventilated a space is.</li>
+          <li>High levels (above ~1000-1500 ppm) are linked to headaches, drowsiness and reduced cognitive performance.</li>
+          <li><strong>Ventilating</strong> (opening windows, increasing an HVAC system's fresh-air rate) is the most direct way to bring it down — wall-mounted A/C units don't help, since they only recirculate indoor air.</li>
+          <li>It's a useful reference in classrooms and enclosed spaces to know when it's time to ventilate.</li>
+        </ul>`,
+      info_co2_sources_html: 'Sources: <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">WHO — Air quality guidelines</a> · <a href="https://www.ashrae.org" target="_blank">ASHRAE — ventilation guidelines</a>',
+
+      info_voc_title: "Volatile Organic Compounds (VOCs)",
+      info_voc_body_html: `
+        <p>A group of more than 10,000 different chemical substances that evaporate easily at room temperature — from cleaning solvents to perfumes and paints.</p>
+        <ul>
+          <li><strong>Not all are equally harmful</strong>: the group ranges from harmless substances to toxic compounds, so a high value alone doesn't say how dangerous the air is.</li>
+          <li>Low-cost sensors (like the ones in this network) don't identify which specific compound they're detecting — they report a <strong>relative index</strong>, not the exact concentration of any one gas.</li>
+          <li>They're more useful for noticing <strong>changes and spikes</strong> over the course of a day (for example while cleaning or painting) than for reading an isolated absolute value.</li>
+          <li>Typical indoor sources: cleaning products, aerosols, paint, new furniture, printers and cooking.</li>
+        </ul>`,
+      info_voc_sources_html: 'Sources: <a href="https://www.epa.gov/indoor-air-quality-iaq/volatile-organic-compounds-impact-indoor-air-quality" target="_blank">US EPA — VOCs\' Impact on Indoor Air Quality</a>',
+
+      info_nox_title: "Nitrogen Oxides (NOx)",
+      info_nox_body_html: `
+        <p>The sum of nitric oxide (NO) and nitrogen dioxide (NO2), two gases with similar properties that are closely tied to combustion.</p>
+        <ul>
+          <li>Mainly generated by <strong>combustion engines</strong> (cars, trucks, generators) — that's why levels tend to be higher near busy roads and during rush hour.</li>
+          <li>Exposure is linked to respiratory diseases (asthma, COPD) and cardiovascular disease.</li>
+          <li>Beyond its direct health effects, NOx contributes to forming smog and ground-level ozone.</li>
+          <li>Like VOCs, low-cost sensors report a <strong>relative index</strong> of change, not an exact concentration in parts per million.</li>
+        </ul>`,
+      info_nox_sources_html: 'Sources: <a href="https://www.epa.gov/no2-pollution/basic-information-about-no2" target="_blank">US EPA — Basic Information about NO2</a> · <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">WHO — Air quality guidelines</a>',
+
+      info_aqi_title: "Air Quality Index (AQI)",
+      info_aqi_body_html: `
+        <p>A way of summarizing several pollutants (mainly PM2.5) into a single, easy-to-read number — meant to communicate risk to the general public, not for precise scientific use.</p>
+        <ul>
+          <li>Each band has a color and a category (Good, Moderate, Sensitive groups, Unhealthy...) — the full detail is on each sensor's card.</li>
+          <li>Different countries use somewhat different AQI scales (US EPA, India, China...) — this network uses the <strong>US EPA</strong> scale, the most widely used internationally.</li>
+          <li>A "Moderate" AQI isn't necessarily safe for everyone: people with asthma, children, older adults or pregnant people can be affected before the general population is.</li>
+          <li>It's a useful quick glance — for finer analysis, it's better to look at the PM2.5 value in µg/m³ directly.</li>
+        </ul>`,
+      info_aqi_sources_html: 'Sources: <a href="https://www.airnow.gov/aqi/aqi-basics/" target="_blank">US EPA — AQI Basics</a>',
+
       aqi_label: "Air Quality Index (AQI)",
       aqi_sin_dato: "No data",
       aqi_buena: "Good",
@@ -1096,6 +1320,52 @@
     return t(`param_${key}`);
   }
 
+  // ── Tarjetas educativas por parámetro (ⓘ) ──
+  const INFO_CARD_KEYS = { pm1_0: "pm", pm2_5: "pm", pm10_0: "pm", voc: "voc", co2: "co2", nox: "nox" };
+  const INFO_CARD_ICONS = {
+    pm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="8" r="1.6"/><circle cx="13" cy="6" r="1"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="15" r="1.3"/><circle cx="17" cy="18" r="1"/><circle cx="5" cy="17" r="1.6"/></svg>',
+    co2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15a4 4 0 0 1 1.2-7.8A5.5 5.5 0 0 1 15 6.5 4.5 4.5 0 0 1 20 11a4 4 0 0 1-1 8H6"/></svg>',
+    voc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5.2a4 4 0 0 1-.8 2.4L6 15.6A3 3 0 0 0 8.4 21h7.2a3 3 0 0 0 2.4-5.4l-3.2-5A4 4 0 0 1 14 8.2V3"/></svg>',
+    nox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h4l2-9 3 14 2-9h7"/></svg>',
+    aqi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10a8 8 0 0 1 16 0v11"/><path d="M4 21h16"/><path d="M9 21v-6M15 21v-6"/></svg>',
+  };
+  let currentInfoModalKey = null;
+
+  // Botón ⓘ para un parámetro del gráfico/historial (pm1_0/pm2_5/pm10_0 →
+  // tarjeta "pm" compartida; voc/co2/nox → la propia). Devuelve "" para
+  // parámetros sin tarjeta (temperatura, humedad, presión).
+  function infoIconFor(paramKey) {
+    const cardKey = INFO_CARD_KEYS[paramKey];
+    if (!cardKey) return "";
+    return infoIconHtml(cardKey);
+  }
+
+  function infoIconHtml(cardKey) {
+    const label = t(`info_${cardKey}_title`);
+    return ` <button type="button" class="param-info-btn" onclick="openInfoModal('${cardKey}', event)" aria-label="${label}" title="${label}">ⓘ</button>`;
+  }
+
+  function openInfoModal(cardKey, ev) {
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    document.getElementById("info-modal-content").innerHTML = `
+      <div class="info-modal-icon">${INFO_CARD_ICONS[cardKey] || ""}</div>
+      <div class="info-modal-title">${t(`info_${cardKey}_title`)}</div>
+      <div class="info-modal-body">${t(`info_${cardKey}_body_html`)}</div>
+      <div class="info-modal-sources">${t(`info_${cardKey}_sources_html`)}</div>
+    `;
+    document.getElementById("info-modal-overlay").classList.add("open");
+    currentInfoModalKey = cardKey;
+  }
+
+  function closeInfoModal() {
+    document.getElementById("info-modal-overlay").classList.remove("open");
+    currentInfoModalKey = null;
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && currentInfoModalKey) closeInfoModal();
+  });
+
   function paramUnitSuffix(unit) {
     // unit === "IDX" es el sentinel para VOC/NOx (índice/index, no unidad física)
     if (!unit) return "";
@@ -1146,6 +1416,7 @@
       renderHistParamFilter();
       renderHistTable();
     }
+    if (currentInfoModalKey) openInfoModal(currentInfoModalKey);
   }
 
   // Actualizan los títulos de "Historial" y "Gráfico" en el idioma actual —
@@ -1257,7 +1528,7 @@
       const hidden = (key === "voc" || key === "co2" || key === "nox") ? ' style="display:none"' : "";
       return `<label class="param-toggle-item" data-param="${key}"${hidden}>
         <input type="checkbox" class="chart-param-cb" value="${key}" ${checked}>
-        <span class="param-toggle-swatch" style="background:${def.color}"></span>${paramLabel(key)}
+        <span class="param-toggle-swatch" style="background:${def.color}"></span>${paramLabel(key)}${infoIconFor(key)}
       </label>`;
     }).join("");
     box.addEventListener("change", (e) => {
@@ -1743,7 +2014,7 @@
             <div class="aqi-gauge" style="${stale ? "opacity:0.35;" : ""}">
               ${aqiGaugeSvg(stale ? null : aqi, info.color)}
             </div>
-            <div class="aqi-label">${t("aqi_label")}</div>
+            <div class="aqi-label">${t("aqi_label")}${infoIconHtml("aqi")}</div>
             <div class="metrics-row">
               <div class="metric">
                 <div class="metric-value">${s.pm2_5 ?? "—"} µg/m³</div>
@@ -2166,7 +2437,7 @@
         <label>
           <input type="checkbox" ${histHiddenParams.has(c.key) ? "" : "checked"}
             onchange="toggleHistParam('${c.key}', this.checked)">
-          ${paramLabel(c.key)}
+          ${paramLabel(c.key)}${infoIconFor(c.key)}
         </label>
       `).join("");
   }
