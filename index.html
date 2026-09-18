@@ -738,6 +738,68 @@
   }
   .info-modal-sources a { color: var(--accent); }
 
+  /* ── Docpage sections: API pública y Créditos, portadas antes en api.html
+       y creditos.html como páginas HTML separadas. Ahora viven acá adentro
+       como secciones más (showTab('api'|'creditos', null)), sin botón propio
+       en la barra de navegación — se llega solo desde los links que ya
+       existen ("Acerca de" y el texto de ayuda de Historial). Todo scoped
+       bajo .docpage para no pisar el resto de los estilos del dashboard. ── */
+  .docpage { max-width: 780px; margin: 0 auto; padding-bottom: 20px; }
+  .docpage-nav { margin-bottom: 14px; }
+  .docpage-back {
+    display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-display);
+    font-size: 12px; color: var(--text-dim); text-decoration: none;
+  }
+  .docpage-back:hover { color: var(--accent); }
+  .docpage h1 { font-size: 19px; font-weight: 700; margin: 4px 0 16px; color: var(--text); }
+  .docpage h2 { font-size: 16px; margin: 34px 0 8px; color: var(--accent); }
+  .docpage h2:first-of-type { margin-top: 0; }
+  .docpage h3 { font-size: 13px; margin: 18px 0 6px; color: var(--text); text-transform: uppercase; letter-spacing: .04em; }
+  .docpage p { margin-bottom: 10px; color: var(--text); line-height: 1.6; }
+  .docpage p.dim { color: var(--text-dim); font-size: 13px; }
+  .docpage blockquote {
+    border-left: 3px solid var(--accent); margin: 12px 0; padding: 4px 0 4px 14px;
+    color: var(--text-dim); font-style: italic; font-size: 13.5px;
+  }
+  .docpage a { color: var(--accent); }
+  .docpage code, .docpage pre { font-family: var(--font-display); font-size: 12.5px; }
+  .docpage code { background: var(--accent-dim); color: var(--text); padding: 2px 5px; border-radius: 4px; }
+  .docpage pre {
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; overflow-x: auto; margin: 10px 0 16px; color: var(--text);
+  }
+  .docpage .endpoint {
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; margin-bottom: 16px;
+  }
+  .docpage .endpoint .path {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--accent);
+    display: block; margin-bottom: 6px; word-break: break-all;
+  }
+  .docpage .method {
+    display: inline-block; font-family: var(--font-display); font-size: 10px; font-weight: 700;
+    color: var(--good); border: 1px solid var(--good); border-radius: 4px; padding: 1px 6px;
+    margin-right: 8px; vertical-align: middle;
+  }
+  .docpage table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 12.5px; }
+  .docpage th, .docpage td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .docpage th { color: var(--text-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .docpage td code { font-size: 11.5px; }
+  .docpage .provider {
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 18px 6px; margin-bottom: 20px;
+  }
+  .docpage .provider-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 16px; }
+  .docpage .provider-links a {
+    font-family: var(--font-display); font-size: 11px; background: var(--accent-dim);
+    padding: 4px 9px; border-radius: 5px; text-decoration: none;
+  }
+  .docpage .provider-links a:hover { background: var(--bg-panel-hover); }
+  .docpage .note {
+    background: var(--accent-dim); border-radius: 8px; padding: 12px 14px; font-size: 12.5px;
+    color: var(--text-dim); margin: 10px 0 16px;
+  }
+
   .empty-state {
     text-align: center;
     color: var(--text-dim);
@@ -857,7 +919,7 @@
           <button class="export-btn" id="hist-export-pdf-btn" onclick="downloadHistorialPdf()" data-i18n="hist_export_pdf">Descargar PDF (reporte)</button>
         </div>
       </div>
-      <p class="hist-info-text" id="hist-info-text" data-i18n-html="hist_info_text_html">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a></p>
+      <p class="hist-info-text" id="hist-info-text" data-i18n-html="hist_info_text_html">La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="?tab=api#necesitas-el-historial-completo-de-un-sensor" onclick="return goToTab(event,'api','necesitas-el-historial-completo-de-un-sensor')">¿Necesitás el historial completo?</a></p>
       <div class="param-filter" id="hist-param-filter"></div>
       <div id="tabla-wrap"><div class="loader">—</div></div>
     </div>
@@ -927,14 +989,14 @@
         Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.
       </p>
       <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p2">
-        Arquitectura: varios disparadores automáticos (un Worker de Cloudflare y GitHub Actions, con un respaldo externo) consultan la API de PurpleAir cada 15 minutos y guardan los datos en Cloudflare D1; un Worker expone una <a href="api.html" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos.
+        Arquitectura: varios disparadores automáticos (un Worker de Cloudflare y GitHub Actions, con un respaldo externo) consultan la API de PurpleAir cada 15 minutos y guardan los datos en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,'api')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos.
         Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.
       </p>
       <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p3">
         Ing. Luciano Lamaita — docente de Física y Química en Saladillo, Buenos Aires — más proyectos en <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>
       </p>
       <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p4">
-        <a href="creditos.html" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.
+        <a href="?tab=creditos" onclick="return goToTab(event,'creditos')" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.
       </p>
       <div class="acerca-attrib">
         <div class="acerca-attrib-label" data-i18n="acerca_attrib_label">Redes y programas de los que este proyecto participa</div>
@@ -953,6 +1015,113 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="section docpage" id="tab-api">
+    <div class="docpage-nav">
+      <a href="?tab=actuales" class="docpage-back" onclick="return goToTab(event,'actuales')">&larr; <span data-i18n="docpage_back">Volver al portal</span></a>
+    </div>
+    <h1 data-i18n="api_title">API pública</h1>
+    <p data-i18n-html="api_intro">Esta es la API pública de solo lectura que ya usa <code>app.lemeit.ar/aq</code> para mostrar los datos de la red de sensores de calidad del aire (PurpleAir y AirGradient) en instituciones educativas de la Provincia de Buenos Aires. Cualquiera puede consumirla directamente, sin registro ni token: es de lectura, CORS abierto, y devuelve los mismos datos ambientales que ya son públicos en el portal.</p>
+    <p class="dim">Base URL: <code>https://api.lemeit.ar/aq</code></p>
+
+    <h2 data-i18n="api_h2_sensores">GET /api/sensores</h2>
+    <div class="endpoint">
+      <span class="path"><span class="method">GET</span>/api/sensores</span>
+      <p class="dim" data-i18n="api_p_sensores">Metadata de todos los sensores activos: nombre, institución, latitud/longitud, proveedor (purpleair / airgradient).</p>
+      <pre>curl "https://api.lemeit.ar/aq/api/sensores"</pre>
+    </div>
+
+    <h2 data-i18n="api_h2_ultimas">GET /api/ultimas</h2>
+    <div class="endpoint">
+      <span class="path"><span class="method">GET</span>/api/ultimas</span>
+      <p class="dim" data-i18n="api_p_ultimas">Última lectura registrada de cada sensor, con su metadata.</p>
+      <pre>curl "https://api.lemeit.ar/aq/api/ultimas"</pre>
+    </div>
+
+    <h2 data-i18n="api_h2_historico">GET /api/historico/:sensor_index</h2>
+    <div class="endpoint">
+      <span class="path"><span class="method">GET</span>/api/historico/:sensor_index</span>
+      <p class="dim" data-i18n-html="api_p_historico">Serie histórica de lecturas de un sensor puntual (el <code>sensor_index</code> se obtiene de <code>/api/sensores</code> o <code>/api/ultimas</code>).</p>
+      <table>
+        <tr><th data-i18n="api_th_parametro">Parámetro</th><th data-i18n="api_th_descripcion">Descripción</th></tr>
+        <tr><td><code>range</code></td><td data-i18n-html="api_td_range">Ventana relativa: <code>24h</code> (default), <code>7d</code> o <code>30d</code>. Se ignora si se manda <code>desde</code> y/o <code>hasta</code>.</td></tr>
+        <tr><td><code>desde</code></td><td data-i18n-html="api_td_desde">Fecha/hora UTC de inicio, formato <code>YYYY-MM-DD</code> o <code>YYYY-MM-DD HH:MM:SS</code>. Rango absoluto en vez de relativo a "ahora".</td></tr>
+        <tr><td><code>hasta</code></td><td data-i18n-html="api_td_hasta">Fecha/hora UTC de fin, mismo formato que <code>desde</code>.</td></tr>
+        <tr><td><code>limit</code></td><td data-i18n="api_td_limit">Tope de filas devueltas. Default 3000, máximo 20000.</td></tr>
+        <tr><td><code>formato</code></td><td data-i18n-html="api_td_formato"><code>csv</code> para descargar un archivo CSV en vez de JSON (ver más abajo).</td></tr>
+      </table>
+      <pre>curl "https://api.lemeit.ar/aq/api/historico/12345?range=7d"
+
+curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-08-15"</pre>
+    </div>
+
+    <h2 data-i18n="api_h2_csv">Descargar como CSV</h2>
+    <p data-i18n-html="api_p_csv">Los tres endpoints aceptan <code>&formato=csv</code> y devuelven el mismo contenido en CSV, con encabezado, listo para abrir en Excel o Google Sheets:</p>
+    <pre>curl -O -J "https://api.lemeit.ar/aq/api/historico/12345?range=30d&formato=csv"</pre>
+
+    <h2 id="necesitas-el-historial-completo-de-un-sensor" data-i18n="api_h2_historial_completo">¿Necesitás el historial completo de un sensor?</h2>
+    <p class="dim" data-i18n-html="api_p_historial_completo">Cada pedido a <code>/api/historico</code> devuelve como máximo 20.000 filas (3000 por defecto). Para un sensor con varios meses de datos, descargalo en tramos con <code>desde</code>/<code>hasta</code> (por ejemplo, un pedido por mes) y unís los CSV. Si necesitás todo de una sola vez, contactate a <a href="mailto:info@lemeit.ar">info@lemeit.ar</a>.</p>
+
+    <h2 data-i18n="api_h2_notas">Notas</h2>
+    <p class="dim" data-i18n-html="api_p_notas">No hace falta API key ni registro: los datos son de carácter ambiental y ya son públicos en el portal. La API tiene un uso moderado de todos modos — evitá consultas en loop muy frecuentes. Los timestamps se guardan y devuelven en UTC. Si vas a reutilizar estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq">app.lemeit.ar/aq</a> — Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires.</p>
+  </div>
+
+  <div class="section docpage" id="tab-creditos">
+    <div class="docpage-nav">
+      <a href="?tab=actuales" class="docpage-back" onclick="return goToTab(event,'actuales')">&larr; <span data-i18n="docpage_back">Volver al portal</span></a>
+    </div>
+    <h1 data-i18n="creditos_title">Fuentes, datos y licencias</h1>
+    <p data-i18n="creditos_intro">Monitoreo Ambiental Escolar existe gracias al hardware y los datos de referencia de otros proyectos — algunos nos donaron equipos, otros publican los datos que usamos como contexto. Esta página deja explícito qué se usa de cada uno, bajo qué licencia, y cómo pensamos usar (y devolver) esos datos nosotros. No es un documento legal formal — es una nota de transparencia, escrita para que cualquiera (incluidos los propios proveedores) entienda de un vistazo qué hacemos con lo que nos dieron.</p>
+
+    <h2 data-i18n="creditos_h2_purpleair">PurpleAir</h2>
+    <div class="provider">
+      <p data-i18n-html="creditos_purpleair_p1"><a href="https://www.purpleair.com" target="_blank">purpleair.com</a> fabrica los sensores <strong>PurpleAir Flex</strong> que forman el núcleo de esta red. Nacieron en 2015, cuando su fundador, Adrian Dybwad, quiso medir el polvo que levantaba una cantera cerca de su casa en Draper, Utah, y no encontró nada que no costara miles de dólares:</p>
+      <blockquote data-i18n="creditos_purpleair_quote1">"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."</blockquote>
+      <p data-i18n="creditos_purpleair_p2">De ahí salió un sensor de bajo costo pensado para que cualquiera pudiera responderse esa misma pregunta. La filosofía se mantiene hoy:</p>
+      <blockquote data-i18n="creditos_purpleair_quote2">"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."</blockquote>
+      <h3 data-i18n="creditos_h3_como_se_usan">Cómo se usan acá</h3>
+      <p data-i18n-html="creditos_purpleair_uso">Los <strong>5 sensores PurpleAir Flex</strong> de la red fueron una donación de <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (convocatoria de mitad de 2024), a partir de una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda. Los datos se consultan cada 15 minutos vía la API oficial de PurpleAir (<code>api.purpleair.com</code>) y se guardan en una base propia (Cloudflare D1) para poder ofrecer historial e informes — PurpleAir solo retiene ventanas cortas de datos en su propia plataforma.<br><br>Desde que PurpleAir empezó a cobrar por el acceso a su API, ese acceso ya no es gratuito por defecto — hoy se costea con créditos propios del autor. Se está gestionando con PurpleAir un acceso sin cargo para este proyecto puntual, por tratarse de un uso educativo y por haber recibido los sensores como donación. Los 5 sensores también pueden consultarse directamente desde el <a href="https://map.purpleair.com" target="_blank">mapa público de PurpleAir</a>.</p>
+      <h3 data-i18n="creditos_h3_licencia">Licencia</h3>
+      <p class="dim" data-i18n-html="creditos_purpleair_licencia">Los datos del mapa y de la API en tiempo real de PurpleAir se publican bajo su propia <a href="https://www.purpleair.com/license" target="_blank">licencia de datos</a> (uso no comercial, con atribución). Este proyecto es enteramente educativo y sin fines de lucro, y cita a PurpleAir como fuente en cada tarjeta de sensor y en el pie de página del sitio. Para el texto completo y vigente, la referencia es siempre la página de licencia enlazada abajo.</p>
+      <div class="provider-links">
+        <a href="https://www.purpleair.com/about" target="_blank" data-i18n="creditos_purpleair_link_quienes">Quiénes son</a>
+        <a href="https://www.purpleair.com/license" target="_blank" data-i18n="creditos_purpleair_link_licencia">Licencia de datos</a>
+        <a href="https://www.purpleair.com/policies/terms-of-service" target="_blank" data-i18n="creditos_purpleair_link_terminos">Términos de servicio</a>
+        <a href="https://www.purpleair.com/policies/privacy-policy" target="_blank" data-i18n="creditos_purpleair_link_privacidad">Privacidad</a>
+      </div>
+    </div>
+
+    <h2 data-i18n="creditos_h2_airgradient">AirGradient</h2>
+    <div class="provider">
+      <p data-i18n-html="creditos_airgradient_p1"><a href="https://www.airgradient.com" target="_blank">airgradient.com</a> fabrica los sensores <strong>Open Air</strong> que suman a la red la medición de CO2, VOC y NOx además de material particulado. Es hardware y firmware abierto: publican diseños y código bajo licencia <strong>CC BY-SA 4.0</strong>, e invitan explícitamente a modificarlos.</p>
+      <p data-i18n="creditos_airgradient_p2">Tienen una postura fuerte sobre a quién le pertenecen los datos de calidad de aire:</p>
+      <blockquote data-i18n="creditos_airgradient_quote1">"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — sitio de AirGradient</blockquote>
+      <p data-i18n-html="creditos_airgradient_p3">Su CEO, Achim Haug, lo plantea incluso en términos éticos: restringir la propiedad de los datos es <em>"wrong and against humanity's best interests"</em>, aunque una empresa pueda seguir siendo rentable sosteniendo datos abiertos. Tienen hasta un <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">quiz interactivo</a> para ayudar a detectar letra chica restrictiva en los términos de otros fabricantes.</p>
+      <h3 data-i18n="creditos_h3_como_se_usan">Cómo se usan acá</h3>
+      <p data-i18n-html="creditos_airgradient_uso">Los <strong>2 sensores AirGradient Open Air</strong> de la red están activos, hoy conectados en un domicilio particular a modo de prueba mientras se define en qué instituciones se instalan. Los datos se consultan por API propia de AirGradient y se guardan en la misma base D1 que PurpleAir, con el campo <code>proveedor</code> distinguiendo el origen.<br><br>Al estar dados de alta en el ecosistema de AirGradient, los dos sensores ya son visibles también en su <a href="https://map.airgradient.com" target="_blank">mapa público</a> — sin necesidad de ningún paso extra de nuestra parte.</p>
+      <h3 data-i18n="creditos_h3_licencia">Licencia</h3>
+      <p class="dim" data-i18n-html="creditos_airgradient_licencia">El hardware y firmware de AirGradient son <strong>CC BY-SA 4.0</strong> (código abierto, uso y modificación libres con atribución). Los datos que sus propios monitores generan quedan bajo control de quien los opera — en este caso, del proyecto — que decide si publicarlos. Acá se publican en la API propia de Monitoreo Ambiental Escolar, con la misma filosofía de datos abiertos que promueve AirGradient.</p>
+      <div class="provider-links">
+        <a href="https://www.airgradient.com/privacy-policy/" target="_blank" data-i18n="creditos_airgradient_link_privacidad">Privacidad</a>
+        <a href="https://www.airgradient.com/terms-conditions/" target="_blank" data-i18n="creditos_airgradient_link_terminos">Términos y condiciones</a>
+        <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank" data-i18n="creditos_airgradient_link_quiz">Quiz de propiedad de datos</a>
+      </div>
+    </div>
+
+    <h2 data-i18n="creditos_h2_openaq">OpenAQ</h2>
+    <div class="provider">
+      <p data-i18n-html="creditos_openaq_p1"><a href="https://openaq.org" target="_blank">openaq.org</a> es una organización sin fines de lucro cuya misión es abrir el acceso a datos de calidad de aire a nivel mundial — en sus propias palabras, "fights air inequality by opening up air quality data". No venden datos ni información de usuarios, y sostienen la plataforma con una postura similar a la de AirGradient: el dato ambiental es un bien público.</p>
+      <h3 data-i18n="creditos_h3_como_se_usan">Cómo se usan acá</h3>
+      <p data-i18n-html="creditos_openaq_uso">Hoy OpenAQ es sobre todo una referencia de diseño y de filosofía de proyecto — no hay una integración activa de datos entre Monitoreo Ambiental Escolar y OpenAQ todavía. AirGradient ofrece la opción de publicar los datos de sus monitores en OpenAQ (queda a elección del operador); es algo a evaluar a futuro para los 2 sensores AirGradient de la red.<br><br>Para explorar datos de calidad de aire a nivel global, OpenAQ ofrece su propio visor público: <a href="https://explore.openaq.org" target="_blank">explore.openaq.org</a>.</p>
+      <div class="provider-links">
+        <a href="https://openaq.org/privacy/" target="_blank" data-i18n="creditos_openaq_link_privacidad">Privacidad</a>
+        <a href="https://openaq.org/terms/" target="_blank" data-i18n="creditos_openaq_link_terminos">Términos</a>
+      </div>
+    </div>
+
+    <h2 data-i18n="creditos_h2_datos_propios">Los datos que genera este proyecto</h2>
+    <p data-i18n-html="creditos_datos_propios_p">Siguiendo la misma filosofía de PurpleAir, AirGradient y OpenAQ, los datos que Monitoreo Ambiental Escolar genera y publica (metadata de sensores, lecturas históricas) están disponibles sin autenticación ni registro a través de la <a href="?tab=api" onclick="return goToTab(event,'api')">API pública</a> del proyecto — de lectura, CORS abierto, pensada para que cualquiera la consuma directo. Si reutilizás estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a>.</p>
   </div>
 
 </main>
@@ -1008,7 +1177,7 @@
       range_custom: "Rango de fechas…",
       hist_export_csv: "Descargar CSV",
       hist_export_pdf: "Descargar PDF (reporte)",
-      hist_info_text_html: 'La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">¿Necesitás el historial completo?</a>',
+      hist_info_text_html: 'La descarga trae lo filtrado en pantalla, con un tope de 20.000 filas — para más rango, usá el selector de fechas de arriba. <a href="?tab=api#necesitas-el-historial-completo-de-un-sensor" onclick="return goToTab(event,\'api\',\'necesitas-el-historial-completo-de-un-sensor\')">¿Necesitás el historial completo?</a>',
       param_filter_label: "Parámetros a mostrar:",
       tabla_col_fecha: "Fecha / hora",
       loader_cargando: "Cargando...",
@@ -1031,12 +1200,69 @@
       mapa_capa_nox: "Capa: NOx",
       acerca_panel_title: "Acerca de este proyecto",
       acerca_p1: 'Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.',
-      acerca_p2: 'Arquitectura: varios disparadores automáticos (un Worker de Cloudflare y GitHub Actions, con un respaldo externo) consultan la API de PurpleAir cada 15 minutos y guardan los datos en Cloudflare D1; un Worker expone una <a href="api.html" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
+      acerca_p2: 'Arquitectura: varios disparadores automáticos (un Worker de Cloudflare y GitHub Actions, con un respaldo externo) consultan la API de PurpleAir cada 15 minutos y guardan los datos en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
       acerca_p3: 'Ing. Luciano Lamaita — docente de Física y Química en Saladillo, Buenos Aires — más proyectos en <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
-      acerca_p4: '<a href="creditos.html" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.',
+      acerca_p4: '<a href="?tab=creditos" onclick="return goToTab(event,\'creditos\')" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.',
       acerca_attrib_label: "Redes y programas de los que este proyecto participa",
       openaq_ambassador_title: "OpenAQ — el autor es Embajador Comunitario desde 2023",
       footer_extra: 'datos de <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
+
+      // ── Docpage sections: API pública y Créditos (antes api.html/creditos.html) ──
+      docpage_back: "Volver al portal",
+      api_title: "API pública",
+      api_intro: `Esta es la API pública de solo lectura que ya usa <code>app.lemeit.ar/aq</code> para mostrar los datos de la red de sensores de calidad del aire (PurpleAir y AirGradient) en instituciones educativas de la Provincia de Buenos Aires. Cualquiera puede consumirla directamente, sin registro ni token: es de lectura, CORS abierto, y devuelve los mismos datos ambientales que ya son públicos en el portal.`,
+      api_h2_sensores: "GET /api/sensores",
+      api_p_sensores: "Metadata de todos los sensores activos: nombre, institución, latitud/longitud, proveedor (purpleair / airgradient).",
+      api_h2_ultimas: "GET /api/ultimas",
+      api_p_ultimas: "Última lectura registrada de cada sensor, con su metadata.",
+      api_h2_historico: "GET /api/historico/:sensor_index",
+      api_p_historico: `Serie histórica de lecturas de un sensor puntual (el <code>sensor_index</code> se obtiene de <code>/api/sensores</code> o <code>/api/ultimas</code>).`,
+      api_th_parametro: "Parámetro",
+      api_th_descripcion: "Descripción",
+      api_td_range: `Ventana relativa: <code>24h</code> (default), <code>7d</code> o <code>30d</code>. Se ignora si se manda <code>desde</code> y/o <code>hasta</code>.`,
+      api_td_desde: `Fecha/hora UTC de inicio, formato <code>YYYY-MM-DD</code> o <code>YYYY-MM-DD HH:MM:SS</code>. Rango absoluto en vez de relativo a "ahora".`,
+      api_td_hasta: `Fecha/hora UTC de fin, mismo formato que <code>desde</code>.`,
+      api_td_limit: "Tope de filas devueltas. Default 3000, máximo 20000.",
+      api_td_formato: `<code>csv</code> para descargar un archivo CSV en vez de JSON (ver más abajo).`,
+      api_h2_csv: "Descargar como CSV",
+      api_p_csv: `Los tres endpoints aceptan <code>&formato=csv</code> y devuelven el mismo contenido en CSV, con encabezado, listo para abrir en Excel o Google Sheets:`,
+      api_h2_historial_completo: "¿Necesitás el historial completo de un sensor?",
+      api_p_historial_completo: `Cada pedido a <code>/api/historico</code> devuelve como máximo 20.000 filas (3000 por defecto). Para un sensor con varios meses de datos, descargalo en tramos con <code>desde</code>/<code>hasta</code> (por ejemplo, un pedido por mes) y unís los CSV. Si necesitás todo de una sola vez, contactate a <a href="mailto:info@lemeit.ar">info@lemeit.ar</a>.`,
+      api_h2_notas: "Notas",
+      api_p_notas: `No hace falta API key ni registro: los datos son de carácter ambiental y ya son públicos en el portal. La API tiene un uso moderado de todos modos — evitá consultas en loop muy frecuentes. Los timestamps se guardan y devuelven en UTC. Si vas a reutilizar estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq">app.lemeit.ar/aq</a> — Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires.`,
+
+      creditos_title: "Fuentes, datos y licencias",
+      creditos_intro: "Monitoreo Ambiental Escolar existe gracias al hardware y los datos de referencia de otros proyectos — algunos nos donaron equipos, otros publican los datos que usamos como contexto. Esta página deja explícito qué se usa de cada uno, bajo qué licencia, y cómo pensamos usar (y devolver) esos datos nosotros. No es un documento legal formal — es una nota de transparencia, escrita para que cualquiera (incluidos los propios proveedores) entienda de un vistazo qué hacemos con lo que nos dieron.",
+      creditos_h2_purpleair: "PurpleAir",
+      creditos_purpleair_p1: `<a href="https://www.purpleair.com" target="_blank">purpleair.com</a> fabrica los sensores <strong>PurpleAir Flex</strong> que forman el núcleo de esta red. Nacieron en 2015, cuando su fundador, Adrian Dybwad, quiso medir el polvo que levantaba una cantera cerca de su casa en Draper, Utah, y no encontró nada que no costara miles de dólares:`,
+      creditos_purpleair_quote1: `"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."`,
+      creditos_purpleair_p2: "De ahí salió un sensor de bajo costo pensado para que cualquiera pudiera responderse esa misma pregunta. La filosofía se mantiene hoy:",
+      creditos_purpleair_quote2: `"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."`,
+      creditos_h3_como_se_usan: "Cómo se usan acá",
+      creditos_purpleair_uso: `Los <strong>5 sensores PurpleAir Flex</strong> de la red fueron una donación de <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (convocatoria de mitad de 2024), a partir de una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda. Los datos se consultan cada 15 minutos vía la API oficial de PurpleAir (<code>api.purpleair.com</code>) y se guardan en una base propia (Cloudflare D1) para poder ofrecer historial e informes — PurpleAir solo retiene ventanas cortas de datos en su propia plataforma.<br><br>Desde que PurpleAir empezó a cobrar por el acceso a su API, ese acceso ya no es gratuito por defecto — hoy se costea con créditos propios del autor. Se está gestionando con PurpleAir un acceso sin cargo para este proyecto puntual, por tratarse de un uso educativo y por haber recibido los sensores como donación. Los 5 sensores también pueden consultarse directamente desde el <a href="https://map.purpleair.com" target="_blank">mapa público de PurpleAir</a>.`,
+      creditos_h3_licencia: "Licencia",
+      creditos_purpleair_licencia: `Los datos del mapa y de la API en tiempo real de PurpleAir se publican bajo su propia <a href="https://www.purpleair.com/license" target="_blank">licencia de datos</a> (uso no comercial, con atribución). Este proyecto es enteramente educativo y sin fines de lucro, y cita a PurpleAir como fuente en cada tarjeta de sensor y en el pie de página del sitio. Para el texto completo y vigente, la referencia es siempre la página de licencia enlazada abajo.`,
+      creditos_purpleair_link_quienes: "Quiénes son",
+      creditos_purpleair_link_licencia: "Licencia de datos",
+      creditos_purpleair_link_terminos: "Términos de servicio",
+      creditos_purpleair_link_privacidad: "Privacidad",
+      creditos_h2_airgradient: "AirGradient",
+      creditos_airgradient_p1: `<a href="https://www.airgradient.com" target="_blank">airgradient.com</a> fabrica los sensores <strong>Open Air</strong> que suman a la red la medición de CO2, VOC y NOx además de material particulado. Es hardware y firmware abierto: publican diseños y código bajo licencia <strong>CC BY-SA 4.0</strong>, e invitan explícitamente a modificarlos.`,
+      creditos_airgradient_p2: "Tienen una postura fuerte sobre a quién le pertenecen los datos de calidad de aire:",
+      creditos_airgradient_quote1: `"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — sitio de AirGradient`,
+      creditos_airgradient_p3: `Su CEO, Achim Haug, lo plantea incluso en términos éticos: restringir la propiedad de los datos es <em>"wrong and against humanity's best interests"</em>, aunque una empresa pueda seguir siendo rentable sosteniendo datos abiertos. Tienen hasta un <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">quiz interactivo</a> para ayudar a detectar letra chica restrictiva en los términos de otros fabricantes.`,
+      creditos_airgradient_uso: `Los <strong>2 sensores AirGradient Open Air</strong> de la red están activos, hoy conectados en un domicilio particular a modo de prueba mientras se define en qué instituciones se instalan. Los datos se consultan por API propia de AirGradient y se guardan en la misma base D1 que PurpleAir, con el campo <code>proveedor</code> distinguiendo el origen.<br><br>Al estar dados de alta en el ecosistema de AirGradient, los dos sensores ya son visibles también en su <a href="https://map.airgradient.com" target="_blank">mapa público</a> — sin necesidad de ningún paso extra de nuestra parte.`,
+      creditos_airgradient_licencia: `El hardware y firmware de AirGradient son <strong>CC BY-SA 4.0</strong> (código abierto, uso y modificación libres con atribución). Los datos que sus propios monitores generan quedan bajo control de quien los opera — en este caso, del proyecto — que decide si publicarlos. Acá se publican en la API propia de Monitoreo Ambiental Escolar, con la misma filosofía de datos abiertos que promueve AirGradient.`,
+      creditos_airgradient_link_privacidad: "Privacidad",
+      creditos_airgradient_link_terminos: "Términos y condiciones",
+      creditos_airgradient_link_quiz: "Quiz de propiedad de datos",
+      creditos_h2_openaq: "OpenAQ",
+      creditos_openaq_p1: `<a href="https://openaq.org" target="_blank">openaq.org</a> es una organización sin fines de lucro cuya misión es abrir el acceso a datos de calidad de aire a nivel mundial — en sus propias palabras, "fights air inequality by opening up air quality data". No venden datos ni información de usuarios, y sostienen la plataforma con una postura similar a la de AirGradient: el dato ambiental es un bien público.`,
+      creditos_openaq_uso: `Hoy OpenAQ es sobre todo una referencia de diseño y de filosofía de proyecto — no hay una integración activa de datos entre Monitoreo Ambiental Escolar y OpenAQ todavía. AirGradient ofrece la opción de publicar los datos de sus monitores en OpenAQ (queda a elección del operador); es algo a evaluar a futuro para los 2 sensores AirGradient de la red.<br><br>Para explorar datos de calidad de aire a nivel global, OpenAQ ofrece su propio visor público: <a href="https://explore.openaq.org" target="_blank">explore.openaq.org</a>.`,
+      creditos_openaq_link_privacidad: "Privacidad",
+      creditos_openaq_link_terminos: "Términos",
+      creditos_h2_datos_propios: "Los datos que genera este proyecto",
+      creditos_datos_propios_p: `Siguiendo la misma filosofía de PurpleAir, AirGradient y OpenAQ, los datos que Monitoreo Ambiental Escolar genera y publica (metadata de sensores, lecturas históricas) están disponibles sin autenticación ni registro a través de la <a href="?tab=api" onclick="return goToTab(event,'api')">API pública</a> del proyecto — de lectura, CORS abierto, pensada para que cualquiera la consuma directo. Si reutilizás estos datos públicamente, agradecemos que menciones como fuente a <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a>.`,
 
       // ── Tarjetas educativas por parámetro (ⓘ en Historial/Gráfico y AQI) ──
       // Contenido propio, redactado acá, citando fuentes públicas (OMS, EPA,
@@ -1169,7 +1395,7 @@
       range_custom: "Date range…",
       hist_export_csv: "Download CSV",
       hist_export_pdf: "Download PDF (report)",
-      hist_info_text_html: 'The download includes what\'s filtered on screen, capped at 20,000 rows — for a wider range, use the date selector above. <a href="api.html#necesitas-el-historial-completo-de-un-sensor" target="_blank">Need the complete history?</a>',
+      hist_info_text_html: 'The download includes what\'s filtered on screen, capped at 20,000 rows — for a wider range, use the date selector above. <a href="?tab=api#necesitas-el-historial-completo-de-un-sensor" onclick="return goToTab(event,\'api\',\'necesitas-el-historial-completo-de-un-sensor\')">Need the complete history?</a>',
       param_filter_label: "Parameters to show:",
       tabla_col_fecha: "Date / time",
       loader_cargando: "Loading...",
@@ -1192,12 +1418,69 @@
       mapa_capa_nox: "Layer: NOx",
       acerca_panel_title: "About this project",
       acerca_p1: 'A network of <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> sensors installed in educational institutions and homes across Buenos Aires Province — a pilot project in the Saladillo and 25 de Mayo districts — measuring particulate matter (PM2.5/PM10) and other parameters in real time, as part of an environmental monitoring and education initiative.',
-      acerca_p2: 'Architecture: several automated triggers (a Cloudflare Worker and GitHub Actions, with an external backup) poll the PurpleAir API every 15 minutes and store the data in Cloudflare D1; a Worker exposes its own public <a href="api.html" style="color:var(--accent)">REST API</a>, which this dashboard consumes and which anyone can also use to pull the data. It\'s one of three sibling environmental projects: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (weather), this one (air quality), and <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (water quality). Technical documentation for all three is at <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
+      acerca_p2: 'Architecture: several automated triggers (a Cloudflare Worker and GitHub Actions, with an external backup) poll the PurpleAir API every 15 minutes and store the data in Cloudflare D1; a Worker exposes its own public <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">REST API</a>, which this dashboard consumes and which anyone can also use to pull the data. It\'s one of three sibling environmental projects: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (weather), this one (air quality), and <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (water quality). Technical documentation for all three is at <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
       acerca_p3: 'Luciano Lamaita, engineer — physics and chemistry teacher in Saladillo, Buenos Aires — more projects at <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
-      acerca_p4: '<a href="creditos.html" style="color:var(--accent)">Sources, data and licenses</a> — where this project\'s sensors and reference data come from, and under what terms they\'re used.',
+      acerca_p4: '<a href="?tab=creditos" onclick="return goToTab(event,\'creditos\')" style="color:var(--accent)">Sources, data and licenses</a> — where this project\'s sensors and reference data come from, and under what terms they\'re used.',
       acerca_attrib_label: "Networks and programs this project takes part in",
       openaq_ambassador_title: "OpenAQ — the author has been a Community Ambassador since 2023",
       footer_extra: 'data from <a href="https://www.purpleair.com" target="_blank">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank">AirGradient</a>',
+
+      // ── Docpage sections: public API and Credits (formerly api.html/creditos.html) ──
+      docpage_back: "Back to portal",
+      api_title: "Public API",
+      api_intro: `This is the public, read-only API that <code>app.lemeit.ar/aq</code> already uses to show data from the air quality sensor network (PurpleAir and AirGradient) in educational institutions of Buenos Aires Province. Anyone can consume it directly, no registration or token needed: it's read-only, CORS is open, and it returns the same environmental data that's already public on the portal.`,
+      api_h2_sensores: "GET /api/sensores",
+      api_p_sensores: "Metadata for all active sensors: name, institution, latitude/longitude, provider (purpleair / airgradient).",
+      api_h2_ultimas: "GET /api/ultimas",
+      api_p_ultimas: "Each sensor's most recent reading, with its metadata.",
+      api_h2_historico: "GET /api/historico/:sensor_index",
+      api_p_historico: `Historical series of readings for a single sensor (the <code>sensor_index</code> comes from <code>/api/sensores</code> or <code>/api/ultimas</code>).`,
+      api_th_parametro: "Parameter",
+      api_th_descripcion: "Description",
+      api_td_range: `Relative window: <code>24h</code> (default), <code>7d</code> or <code>30d</code>. Ignored if <code>desde</code> and/or <code>hasta</code> are sent.`,
+      api_td_desde: `UTC start date/time, format <code>YYYY-MM-DD</code> or <code>YYYY-MM-DD HH:MM:SS</code>. An absolute range instead of relative to "now".`,
+      api_td_hasta: `UTC end date/time, same format as <code>desde</code>.`,
+      api_td_limit: "Cap on rows returned. Default 3000, max 20000.",
+      api_td_formato: `<code>csv</code> to download a CSV file instead of JSON (see below).`,
+      api_h2_csv: "Download as CSV",
+      api_p_csv: `All three endpoints accept <code>&formato=csv</code> and return the same content as CSV, with a header row, ready to open in Excel or Google Sheets:`,
+      api_h2_historial_completo: "Need a sensor's complete history?",
+      api_p_historial_completo: `Each request to <code>/api/historico</code> returns at most 20,000 rows (3000 by default). For a sensor with several months of data, download it in chunks with <code>desde</code>/<code>hasta</code> (for example, one request per month) and merge the CSVs. If you need everything at once, get in touch at <a href="mailto:info@lemeit.ar">info@lemeit.ar</a>.`,
+      api_h2_notas: "Notes",
+      api_p_notas: `No API key or registration needed: the data is environmental in nature and already public on the portal. That said, the API expects moderate use — avoid tight polling loops. Timestamps are stored and returned in UTC. If you reuse this data publicly, we'd appreciate a mention of <a href="https://app.lemeit.ar/aq">app.lemeit.ar/aq</a> as the source — an air quality sensor network in educational institutions of Buenos Aires Province.`,
+
+      creditos_title: "Sources, data and licenses",
+      creditos_intro: "School Air Quality Monitoring exists thanks to the hardware and reference data of other projects — some donated equipment, others publish the data we use as context. This page spells out what we use from each one, under what license, and how we intend to use (and give back) that data ourselves. It's not a formal legal document — it's a transparency note, written so that anyone (including the providers themselves) can see at a glance what we do with what they gave us.",
+      creditos_h2_purpleair: "PurpleAir",
+      creditos_purpleair_p1: `<a href="https://www.purpleair.com" target="_blank">purpleair.com</a> makes the <strong>PurpleAir Flex</strong> sensors that form the core of this network. They started in 2015, when founder Adrian Dybwad wanted to measure the dust a quarry was kicking up near his home in Draper, Utah, and couldn't find anything to buy that didn't cost thousands of dollars:`,
+      creditos_purpleair_quote1: `"I was curious and wanted to know how much dust was blowing in. But there wasn't anything I could buy to see."`,
+      creditos_purpleair_p2: "That's how a low-cost sensor was born, meant for anyone to answer that same question for themselves. The philosophy holds today:",
+      creditos_purpleair_quote2: `"PurpleAir is about the community. We're people worldwide with a common desire to know what we're breathing."`,
+      creditos_h3_como_se_usan: "How they're used here",
+      creditos_purpleair_uso: `The network's <strong>5 PurpleAir Flex sensors</strong> were a donation from <a href="https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771" target="_blank">PurpleAir Collective</a> (mid-2024 call), following a needs proposal submitted by the author — the project placed 2nd in that round. Data is polled every 15 minutes via PurpleAir's official API (<code>api.purpleair.com</code>) and stored in our own database (Cloudflare D1) to offer history and reports — PurpleAir only retains short data windows on its own platform.<br><br>Since PurpleAir started charging for API access, that access is no longer free by default — today it's paid for out of the author's own credits. A no-cost arrangement for this specific project is being worked out with PurpleAir, given it's an educational use and the sensors were received as a donation. The 5 sensors can also be checked directly on PurpleAir's <a href="https://map.purpleair.com" target="_blank">public map</a>.`,
+      creditos_h3_licencia: "License",
+      creditos_purpleair_licencia: "PurpleAir's map and real-time API data are published under their own <a href=\"https://www.purpleair.com/license\" target=\"_blank\">data license</a> (non-commercial use, with attribution). This project is entirely educational and non-profit, and credits PurpleAir as a source on every sensor card and in the site's footer. For the complete, current text, the license page linked below is always the reference.",
+      creditos_purpleair_link_quienes: "About them",
+      creditos_purpleair_link_licencia: "Data license",
+      creditos_purpleair_link_terminos: "Terms of service",
+      creditos_purpleair_link_privacidad: "Privacy",
+      creditos_h2_airgradient: "AirGradient",
+      creditos_airgradient_p1: `<a href="https://www.airgradient.com" target="_blank">airgradient.com</a> makes the <strong>Open Air</strong> sensors that add CO2, VOC and NOx measurement to the network, on top of particulate matter. It's open hardware and firmware: they publish designs and code under a <strong>CC BY-SA 4.0</strong> license, and explicitly invite people to modify them.`,
+      creditos_airgradient_p2: "They take a strong stance on who owns air quality data:",
+      creditos_airgradient_quote1: `"Always read the fine print on data ownership. Choose monitors where YOU own the data and can share it freely." — AirGradient's site`,
+      creditos_airgradient_p3: `Their CEO, Achim Haug, frames it even in ethical terms: restricting data ownership is <em>"wrong and against humanity's best interests,"</em> even though a company can still be profitable while keeping data open. They even have an <a href="https://www.airgradient.com/aq-data-ownership-quiz/" target="_blank">interactive quiz</a> to help spot restrictive fine print in other manufacturers' terms.`,
+      creditos_airgradient_uso: `The network's <strong>2 AirGradient Open Air sensors</strong> are active, currently connected at a private home as a trial while it's decided which institutions will host them. Data is polled via AirGradient's own API and stored in the same D1 database as PurpleAir's, with the <code>proveedor</code> field distinguishing the source.<br><br>Since both are registered in AirGradient's ecosystem, they're already visible on AirGradient's <a href="https://map.airgradient.com" target="_blank">public map</a> too — with no extra step needed on our end.`,
+      creditos_airgradient_licencia: "AirGradient's hardware and firmware are <strong>CC BY-SA 4.0</strong> (open source, free use and modification with attribution). The data their monitors generate stays under the control of whoever operates them — in this case, the project — which decides whether to publish it. Here it's published on School Air Quality Monitoring's own API, following the same open-data philosophy AirGradient promotes.",
+      creditos_airgradient_link_privacidad: "Privacy",
+      creditos_airgradient_link_terminos: "Terms and conditions",
+      creditos_airgradient_link_quiz: "Data ownership quiz",
+      creditos_h2_openaq: "OpenAQ",
+      creditos_openaq_p1: `<a href="https://openaq.org" target="_blank">openaq.org</a> is a non-profit whose mission is to open up access to air quality data worldwide — in their own words, it "fights air inequality by opening up air quality data." They don't sell data or user information, and sustain the platform with a stance similar to AirGradient's: environmental data is a public good.`,
+      creditos_openaq_uso: `Today OpenAQ is mostly a design and project-philosophy reference — there's no active data integration between School Air Quality Monitoring and OpenAQ yet. AirGradient offers the option of publishing its monitors' data to OpenAQ (up to the operator to decide); it's something to evaluate down the line for the network's 2 AirGradient sensors.<br><br>To explore air quality data worldwide, OpenAQ offers its own public viewer: <a href="https://explore.openaq.org" target="_blank">explore.openaq.org</a>.`,
+      creditos_openaq_link_privacidad: "Privacy",
+      creditos_openaq_link_terminos: "Terms",
+      creditos_h2_datos_propios: "The data this project generates",
+      creditos_datos_propios_p: `Following the same philosophy as PurpleAir, AirGradient and OpenAQ, the data School Air Quality Monitoring generates and publishes (sensor metadata, historical readings) is available without authentication or registration through the project's <a href="?tab=api" onclick="return goToTab(event,'api')">public API</a> — read-only, CORS open, meant for anyone to consume directly. If you reuse this data publicly, we'd appreciate a mention of <a href="https://app.lemeit.ar/aq" target="_blank">app.lemeit.ar/aq</a> as the source.`,
 
       // ── Per-parameter educational cards (ⓘ in Historial/Gráfico and AQI) ──
       // Own content, written here, citing public sources (WHO, EPA, AQLI) —
@@ -2915,6 +3198,40 @@
     if (id === "mapa") cargarMapa();
   }
 
+  // Navegación in-app hacia las "docpage sections" (API pública, Créditos —
+  // antes api.html/creditos.html como páginas separadas). No tienen botón
+  // propio en la barra de navegación: se llega solo desde los links que ya
+  // existen (panel "Acerca de", ayuda de Historial). El href="?tab=..." real
+  // que dejamos en el <a> hace que ctrl/cmd/shift-click o click del medio
+  // sigan abriendo en pestaña nueva con normalidad (no interceptamos esos).
+  function goToTab(ev, id, anchorId) {
+    if (ev && (ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.button === 1)) return true;
+    if (ev) ev.preventDefault();
+    showTab(id, null);
+    history.pushState(null, "", "?tab=" + id + (anchorId ? "#" + anchorId : ""));
+    if (anchorId) {
+      setTimeout(() => {
+        const el = document.getElementById(anchorId);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 60);
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+    return false;
+  }
+
+  // Al volver atrás desde una docpage section con el botón del navegador,
+  // reflejamos el cambio de URL en la UI (si no, showTab no se vuelve a
+  // llamar y queda mostrada la sección vieja).
+  window.addEventListener("popstate", () => {
+    const tab = new URLSearchParams(location.search).get("tab");
+    if (tab === "api" || tab === "creditos") {
+      showTab(tab, null);
+    } else {
+      showTab("actuales", document.querySelector('.nav-btn[onclick*="actuales"]'));
+    }
+  });
+
   const APP_VERSION = "v1.0.15";
 
   // Footer compartido (lemeit-common.js, fuera de este repo): se re-invoca
@@ -2953,6 +3270,22 @@
     || new URLSearchParams(location.search).has("pwa");
   if (isPwaLaunch) {
     showTab("actuales", document.querySelector('.nav-btn[onclick*="actuales"]'));
+  }
+
+  // Docpage deep-link bootstrap: ?tab=api o ?tab=creditos abre esas secciones
+  // directo al cargar — para que sigan siendo linkeables/bookmarkeables igual
+  // que cuando eran archivos separados (api.html, creditos.html). Se evalúa
+  // después del bootstrap de PWA para que, si ambos aplicaran, el tab pedido
+  // por URL gane.
+  const bootTab = new URLSearchParams(location.search).get("tab");
+  if (bootTab === "api" || bootTab === "creditos") {
+    showTab(bootTab, null);
+    if (location.hash) {
+      setTimeout(() => {
+        const el = document.getElementById(location.hash.slice(1));
+        if (el) el.scrollIntoView({ block: "start" });
+      }, 60);
+    }
   }
 
   if ("serviceWorker" in navigator) {
