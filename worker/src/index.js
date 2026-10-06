@@ -410,8 +410,10 @@ export default {
       }
 
       if (path === "/api/ultimas") {
+        // NUEVO: se agregan s.codigo y s.fecha_instalacion (migration_008).
         const { results } = await env.DB.prepare(
-          `SELECT l.*, s.nombre, s.institucion, s.latitud, s.longitud, s.proveedor
+          `SELECT l.*, s.nombre, s.institucion, s.latitud, s.longitud, s.proveedor,
+                  s.codigo, s.fecha_instalacion
            FROM v_ultima_lectura l
            JOIN sensores s ON s.sensor_index = l.sensor_index`
         ).all();
