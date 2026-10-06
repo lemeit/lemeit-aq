@@ -12,8 +12,12 @@ CREATE TABLE IF NOT EXISTS sensores (
     fecha_instalacion TEXT,               -- ISO8601, opcional
     notas TEXT,
     proveedor TEXT NOT NULL DEFAULT 'purpleair',  -- 'purpleair' | 'airgradient' | futuro 'clarity'
-    serial_externo TEXT                   -- serial real del fabricante (AirGradient), para reconocer el sensor entre corridas
+    serial_externo TEXT,                  -- serial real del fabricante (AirGradient), para reconocer el sensor entre corridas
+    codigo TEXT                           -- NUEVO: código propio Aire Escolar, ej. AE-01 (ver migration_008)
 );
+
+-- NUEVO: el código es único, pero se permite NULL en sensores sin código.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sensores_codigo ON sensores (codigo);
 
 -- Serie temporal de lecturas. Una fila por consulta a la API por sensor.
 CREATE TABLE IF NOT EXISTS lecturas (
