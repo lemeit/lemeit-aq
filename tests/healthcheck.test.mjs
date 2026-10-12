@@ -83,6 +83,8 @@ test('cobertura por proveedor y reportes de fixtures sanitizados',()=>{
 });
 test('CLI inválido sale 1 y offline sale 0',()=>{
   const env = { ...process.env }; delete env.NODE_TEST_CONTEXT;
+  // Los fixtures CLI no deben escribir resultados simulados al resumen operativo.
+  delete env.GITHUB_STEP_SUMMARY;
   assert.equal(spawnSync(process.execPath,['scripts/healthcheck.mjs','--desconocido','x'],{env}).status,1);
   assert.equal(spawnSync(process.execPath,['scripts/healthcheck.mjs','--offline','--output','work/test-report.json'],{env}).status,0);
 });
@@ -125,4 +127,3 @@ test('rutas confirmadas comprueban gateway y conservan exclusiones operativas', 
   assert.ok(calls.every(x=>config.staticGatewayRoutesConfirmed.includes(x)));
   assert.equal(r.checks.find(x=>x.id==='d1').status,'SKIP');
 });
-
