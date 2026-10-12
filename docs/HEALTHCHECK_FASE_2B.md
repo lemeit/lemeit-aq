@@ -1,3 +1,5 @@
+> Estado vigente: [fase 2C](HEALTHCHECK_FASE_2C.md) permite exclusivamente el stub estático `/aq/api` con evidencia y autorización actual. El bloqueo y las restricciones de publicación descritos abajo son históricos.
+
 # Healthcheck: fase 2B con destino bloqueado
 
 Fecha: 2026-10-12 (Argentina). Propuesta para PR correctivo; no fusionar ni desplegar.

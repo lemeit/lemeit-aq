@@ -6,16 +6,17 @@ import { readFile } from 'node:fs/promises';
 import { request, runHealthcheck } from '../scripts/healthcheck-lib.mjs';
 const config = JSON.parse(await readFile(new URL('../healthcheck.config.json', import.meta.url)));
 
-test('308 real hacia /aq/api permanece bloqueado y el JSON identifica solo el destino conocido', async () => {
+test('308 hacia /aq/api confirmado llega a 200 sin ejecutar contenido', async () => {
   const calls = [];
   const report = await runHealthcheck({...config, dns:[], endpoints:[config.endpoints[1]], network:{...config.network,retries:0}}, {
     nodeVersion:'22.23.3', transport:async url => {
       calls.push(url.pathname);
-      return {status:308, headers:{location:'/aq/api'}, durationMs:1};
+      return url.pathname === '/aq/api.html' ? {status:308, headers:{location:'/aq/api'}, durationMs:1} : {status:200, headers:{'content-type':'text/html'}, durationMs:1};
     }
   });
-  assert.deepEqual(calls,['/aq/api.html']);
-  assert.deepEqual(report.checks.find(c=>c.id==='api-docs'), {id:'api-docs',status:'FAIL',message:'DESTINATION',blockedDestination:'/aq/api',redirectStatus:308});
+  assert.deepEqual(calls,['/aq/api.html','/aq/api']);
+  assert.equal(report.checks.find(c=>c.id==='api-docs').status,'PASS');
+  assert.equal(report.checks.find(c=>c.id==='api-docs').redirects,1);
   assert.equal(report.counts.SKIP,12);
 });
 
@@ -59,3 +60,4 @@ test('ausencia real de HSTS y CSP conserva WARN y expiración ausente conserva W
   assert.equal(report.checks.find(c=>c.id==='pages:headers').message,'Cabeceras ausentes o distintas: strict-transport-security, content-security-policy');
   assert.equal(report.checks.find(c=>c.id==='pages:expiry').status,'WARN');
 });
+
