@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: CONTROL: PurpleAir sintético → SQLite → API → AQI conserva PM/canales y convierte °F
+ok 1 - CONTROL: PurpleAir sintético → SQLite → API → AQI conserva PM/canales y convierte °F
+  ---
+  duration_ms: 100.634714
+  type: 'test'
+  ...
+# Subtest: ACEPTACIÓN AQ-01: décimas, interpolación e inválidos
+ok 2 - ACEPTACIÓN AQ-01: décimas, interpolación e inválidos
+  ---
+  duration_ms: 0.621186
+  type: 'test'
+  ...
+# Subtest: ACEPTACIÓN AQ-01: extremos EPA vigentes hasta 500
+ok 3 - ACEPTACIÓN AQ-01: extremos EPA vigentes hasta 500
+  ---
+  duration_ms: 1.024249
+  type: 'test'
+  ...
+# Subtest: AQ-10: dedupe conserva primera lectura pero guardados vuelve a ser 1
+ok 4 - AQ-10: dedupe conserva primera lectura pero guardados vuelve a ser 1
+  ---
+  duration_ms: 4.442089
+  type: 'test'
+  ...
+# Subtest: VALIDACIÓN: PurpleAir sin timestamp se ignora y se informa guardado
+ok 5 - VALIDACIÓN: PurpleAir sin timestamp se ignora y se informa guardado
+  ---
+  duration_ms: 3.100014
+  type: 'test'
+  ...
+# Subtest: VALIDACIÓN: PM negativa, texto y humedad fuera de rango entran en D1
+ok 6 - VALIDACIÓN: PM negativa, texto y humedad fuera de rango entran en D1
+  ---
+  duration_ms: 5.266401
+  type: 'test'
+  ...
+# Subtest: VALIDACIÓN: el Worker no vuelve a aplicar SENSOR_INDEXES al payload
+ok 7 - VALIDACIÓN: el Worker no vuelve a aplicar SENSOR_INDEXES al payload
+  ---
+  duration_ms: 4.878723
+  type: 'test'
+  ...
+# Subtest: CONTROL: orden de fields y campos opcionales faltantes
+ok 8 - CONTROL: orden de fields y campos opcionales faltantes
+  ---
+  duration_ms: 3.357636
+  type: 'test'
+  ...
+# Subtest: AQ-02: dos seriales concurrentes reciben mismo ID y mezclan historial
+ok 9 - AQ-02: dos seriales concurrentes reciben mismo ID y mezclan historial
+  ---
+  duration_ms: 2.418174
+  type: 'test'
+  ...
+# Subtest: AQ-02: esquema permite duplicar proveedor/serial
+ok 10 - AQ-02: esquema permite duplicar proveedor/serial
+  ---
+  duration_ms: 2.275221
+  type: 'test'
+  ...
+# Subtest: AQ-02: fallback locationId fusiona cuentas sin serial
+ok 11 - AQ-02: fallback locationId fusiona cuentas sin serial
+  ---
+  duration_ms: 4.697525
+  type: 'test'
+  ...
+# Subtest: AQ-12: filtro ausente permite todo; filtro presente descarta ubicación
+ok 12 - AQ-12: filtro ausente permite todo; filtro presente descarta ubicación
+  ---
+  duration_ms: 3.516025
+  type: 'test'
+  ...
+# Subtest: NORMALIZACIÓN: AirGradient elige pm02 y temperatura/humedad Compensated
+ok 13 - NORMALIZACIÓN: AirGradient elige pm02 y temperatura/humedad Compensated
+  ---
+  duration_ms: 2.512775
+  type: 'test'
+  ...
+# Subtest: AQ-10: AirGradient sin timestamp cuenta guardado sin lectura
+ok 14 - AQ-10: AirGradient sin timestamp cuenta guardado sin lectura
+  ---
+  duration_ms: 2.570127
+  type: 'test'
+  ...
+# Subtest: AQ-11: token fallido queda oculto en ok:true de AirGradient
+ok 15 - AQ-11: token fallido queda oculto en ok:true de AirGradient
+  ---
+  duration_ms: 5.118528
+  type: 'test'
+  ...
+# Subtest: TIMESTAMP: offset queda sin normalizar, misma fecha duplica y UI invalida
+ok 16 - TIMESTAMP: offset queda sin normalizar, misma fecha duplica y UI invalida
+  ---
+  duration_ms: 2.163574
+  type: 'test'
+  ...
+# Subtest: TIMESTAMP: texto inválido se persiste y gana MAX(timestamp)
+ok 17 - TIMESTAMP: texto inválido se persiste y gana MAX(timestamp)
+  ---
+  duration_ms: 1.4148
+  type: 'test'
+  ...
+# Subtest: AQ-04: sensores excluye inactivo pero ultimas lo devuelve
+ok 18 - AQ-04: sensores excluye inactivo pero ultimas lo devuelve
+  ---
+  duration_ms: 7.629984
+  type: 'test'
+  ...
+# Subtest: AQ-03: limit=-1 devuelve 3001 filas; texto y fracción se aceptan
+ok 19 - AQ-03: limit=-1 devuelve 3001 filas; texto y fracción se aceptan
+  ---
+  duration_ms: 2335.004502
+  type: 'test'
+  ...
+# Subtest: AQ-07: hasta fecha excluye incluso medianoche del último día
+ok 20 - AQ-07: hasta fecha excluye incluso medianoche del último día
+  ---
+  duration_ms: 7.753537
+  type: 'test'
+  ...
+# Subtest: AQ-05: endpoint documentado llama solo a PurpleAir; scheduled a ambos
+ok 21 - AQ-05: endpoint documentado llama solo a PurpleAir; scheduled a ambos
+  ---
+  duration_ms: 12.061067
+  type: 'test'
+  ...
+# Subtest: AQ-11: scheduled no registra resultados ok:false
+ok 22 - AQ-11: scheduled no registra resultados ok:false
+  ---
+  duration_ms: 4.034708
+  type: 'test'
+  ...
+# Subtest: AQ-09: mapa colorea igual una lectura reciente y otra antigua
+ok 23 - AQ-09: mapa colorea igual una lectura reciente y otra antigua
+  ---
+  duration_ms: 3.218643
+  type: 'test'
+  ...
+# Subtest: AQ-09: fallo de red no vuelve a renderizar ni envejece cards
+ok 24 - AQ-09: fallo de red no vuelve a renderizar ni envejece cards
+  ---
+  duration_ms: 3.108192
+  type: 'test'
+  ...
+# Subtest: AQ-08: Python preserva valores pero sobrescribe nombre manual (HTTP bloqueado)
+ok 25 - AQ-08: Python preserva valores pero sobrescribe nombre manual (HTTP bloqueado)
+  ---
+  duration_ms: 95.200881
+  type: 'test'
+  ...
+# Subtest: AQ-08: Worker conserva nombre manual frente a nueva ingesta
+ok 26 - AQ-08: Worker conserva nombre manual frente a nueva ingesta
+  ---
+  duration_ms: 5.060264
+  type: 'test'
+  ...
+# Subtest: FRESCURA: timestamp futuro se considera fresco
+ok 27 - FRESCURA: timestamp futuro se considera fresco
+  ---
+  duration_ms: 1.170622
+  type: 'test'
+  ...
+# Subtest: API/UI: error HTTP de historial se muestra como sin datos
+ok 28 - API/UI: error HTTP de historial se muestra como sin datos
+  ---
+  duration_ms: 2.689622
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2674.631832

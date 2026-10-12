@@ -1,5 +1,5 @@
-// Auditoría de comportamiento vigente: PASS reproduce un defecto o un control,
-// no certifica que la aplicación esté corregida. Fixtures íntegramente sintéticos.
+// AQ-01: pruebas de aceptación de la corrección. Los demás PASS reproducen
+// defectos pendientes o controles; no certifican su corrección. Fixtures sintéticos.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -22,6 +22,7 @@ function uiFunction(name) {
   return html.slice(start, end);
 }
 const ui = vm.createContext({});
+vm.runInContext(html.slice(html.indexOf('  const PM25_AQI_BREAKPOINTS ='), html.indexOf('  const AQI_CATEGORIES =')), ui);
 vm.runInContext(['pm25ToAqi','toBsAs','minutosSinDato','isStale'].map(uiFunction).join('\n') + '\nconst STALE_MINUTES=25;', ui);
 const aqi = ui.pm25ToAqi;
 function db() {
@@ -53,16 +54,16 @@ test('CONTROL: PurpleAir sintético → SQLite → API → AQI conserva PM/canal
   assert.equal(rows[0].pm2_5,12.05); assert.equal(rows[0].temperatura,20);
   assert.equal(rows[0].pm2_5_a,10);assert.equal(rows[0].pm2_5_b,14);
   assert.equal(rows[0].pm2_5_10min,11);assert.equal(rows[0].pm2_5_60min,9);
-  assert.equal(rows[0].timestamp,'2026-10-12 22:00:00');assert.equal(aqi(rows[0].pm2_5),300);
+  assert.equal(rows[0].timestamp,'2026-10-12 22:00:00');assert.equal(aqi(rows[0].pm2_5),56);
   const csv=await (await api(env,'/api/ultimas?formato=csv')).text();assert.match(csv,/12.05/);
   sqlite.close();
 });
-test('AQ-01: huecos, negativos, NaN e infinito producen AQI 300',()=>{
-  for(const v of [12.05,35.45,55.45,150.45,-1,NaN,Infinity])assert.equal(aqi(v),300,String(v));
-  assert.equal(aqi(null),null);assert.equal(aqi(12),50);assert.equal(aqi(12.1),51);
+test('ACEPTACIÓN AQ-01: décimas, interpolación e inválidos',()=>{
+  for(const [pm,expected] of [[12.05,56],[35.45,100],[55.45,150],[150.45,226]]) assert.equal(aqi(pm),expected);
+  for(const value of [-1,NaN,Infinity,-Infinity,null,undefined,'12.05',true]) assert.equal(aqi(value),null);
 });
-test('AQ-01: puntos EPA vigentes y extremo alto no coinciden',()=>{
-  for(const [pm,expected] of [[9,50],[9.1,51],[125.4,200],[225.4,300],[325.4,500]])assert.notEqual(aqi(pm),expected);
+test('ACEPTACIÓN AQ-01: extremos EPA vigentes hasta 500',()=>{
+  for(const [pm,expected] of [[0,0],[9,50],[9.1,51],[35.4,100],[35.5,101],[55.4,150],[55.5,151],[125.4,200],[125.5,201],[225.4,300],[225.5,301],[325.4,500]]) assert.equal(aqi(pm),expected);
 });
 test('AQ-10: dedupe conserva primera lectura pero guardados vuelve a ser 1',async()=>{
   const {sqlite,env}=db();await fixtureFetch(()=>mod.ingest(env),pa());

@@ -58,6 +58,8 @@
     --moderate: #D9A441;
     --unhealthy-sg: #D9691F;
     --unhealthy: #D9736F;
+    --very-unhealthy: #B987C1;
+    --hazardous: #D9799C;
     --font-display: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
     --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
@@ -76,6 +78,8 @@
     --moderate: #A6720A;
     --unhealthy-sg: #9B3D00;
     --unhealthy: #A33131;
+    --very-unhealthy: #8F3F97;
+    --hazardous: #7E0023;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -425,6 +429,10 @@
   .card-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .09em; color: var(--text-dim); margin-bottom: 6px; }
   .card-val { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1; }
   .card-unit { font-family: var(--font-display); font-size: 10px; color: var(--text-dim); margin-left: 2px; }
+
+  function formatPm25(pm) {
+    return pm25ToAqi(pm) === null ? "—" : String(pm);
+  }
 
   /* ── MAPA ── */
   #mapa-container { height: 400px; width: 100%; position: relative; z-index: 1; }
@@ -895,6 +903,7 @@
 </div>
 
 <main>
+  <p class="muted" style="margin-bottom:12px;font-size:12px" data-i18n="aqi_sample_note">Indicador de una muestra PM2.5 en escala EPA; no es AQI diario ni NowCast. Período de la muestra no verificado.</p>
 
   <div class="section" id="tab-actuales">
     <div class="grid" id="sensor-grid"></div>
@@ -966,7 +975,7 @@
       <div class="chart-hdr" style="padding:12px 14px 0">
         <h2 data-i18n="mapa_titulo">Mapa de sensores</h2>
         <select class="sel" id="sel-mapa-param" onchange="cargarMapa()">
-          <option value="aqi" data-i18n="mapa_capa_aqi">Capa: AQI</option>
+          <option value="aqi" data-i18n="mapa_capa_aqi">Capa: indicador PM2.5 (EPA)</option>
           <option value="pm2_5" data-i18n="mapa_capa_pm2_5">Capa: PM2.5</option>
           <option value="temperatura" data-i18n="mapa_capa_temperatura">Capa: Temperatura</option>
           <option value="humedad" data-i18n="mapa_capa_humedad">Capa: Humedad</option>
@@ -1190,7 +1199,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       zoom_hint: "🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom",
       channel_toggle_label: "Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)",
       mapa_titulo: "Mapa de sensores",
-      mapa_capa_aqi: "Capa: AQI",
+      mapa_capa_aqi: "Capa: indicador PM2.5 (EPA)",
       mapa_capa_pm2_5: "Capa: PM2.5",
       mapa_capa_temperatura: "Capa: Temperatura",
       mapa_capa_humedad: "Capa: Humedad",
@@ -1312,23 +1321,26 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
         </ul>`,
       info_nox_sources_html: 'Fuentes: <a href="https://www.epa.gov/no2-pollution/basic-information-about-no2" target="_blank">US EPA — Información básica sobre NO2</a> · <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">OMS — Guías de calidad del aire</a>',
 
-      info_aqi_title: "Índice de calidad del aire (AQI)",
+      info_aqi_title: "Indicador PM2.5 en escala EPA",
       info_aqi_body_html: `
-        <p>Una forma de resumir varios contaminantes (sobre todo PM2.5) en un solo número fácil de interpretar — pensado para comunicar el riesgo al público en general, no para uso científico de precisión.</p>
+        <p>Indicador derivado de la muestra de PM2.5 recibida, usando los tramos EPA/AirNow. <strong>No es AQI diario ni NowCast.</strong> El período efectivo de esa muestra no está verificado; no se presupone un promedio horario ni de 24 horas.</p><p>Se trunca PM2.5 a una décima, se interpola y se redondea el índice. Entradas inválidas se muestran sin dato. Por encima del último tramo se extrapola con su pendiente. Los índices superiores a 500 se muestran como &gt;500, con categoría peligrosa y aguja saturada; un cálculo no representable queda sin dato.</p>
         <ul>
           <li>Cada tramo tiene un color y una categoría (Buena, Moderada, Grupos sensibles, No saludable...) — el detalle completo está en la ficha de cada sensor.</li>
           <li>Distintos países usan escalas de AQI algo distintas (EPA de EE.UU., India, China...) — esta red usa la escala de la <strong>EPA de EE.UU.</strong>, la más difundida internacionalmente.</li>
           <li>Un AQI "Moderado" no es necesariamente seguro para todos: asmáticos, niños, adultos mayores o embarazadas pueden verse afectados antes que la población general.</li>
           <li>Sirve como primer vistazo rápido — para un análisis más fino conviene mirar el valor de PM2.5 en µg/m³ directamente.</li>
         </ul>`,
-      info_aqi_sources_html: 'Fuentes: <a href="https://www.airnow.gov/aqi/aqi-basics/" target="_blank">US EPA — AQI Basics</a>',
+      info_aqi_sources_html: 'Fuente: <a href="https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf" target="_blank">EPA/AirNow — TAD, tabla 6 y sección IV</a>',
 
-      aqi_label: "Índice de calidad de aire (AQI)",
+      aqi_label: "Indicador PM2.5 · escala EPA",
+      aqi_sample_note: "Indicador de una muestra PM2.5 en escala EPA; no es AQI diario ni NowCast. Período de la muestra no verificado.",
       aqi_sin_dato: "Sin dato",
       aqi_buena: "Buena",
       aqi_moderada: "Moderada",
       aqi_grupos_sensibles: "Grupos sensibles",
       aqi_no_saludable: "No saludable",
+      aqi_muy_no_saludable: "Muy no saludable",
+      aqi_peligrosa: "Peligrosa",
       aqi_sin_datos_card: "Sin datos",
       card_actualizado: "Actualizado {fecha} (ARG)",
       card_stale_warning: "⚠ Sin datos nuevos hace más de {min} min — el sensor podría estar desconectado",
@@ -1348,7 +1360,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       param_voc: "VOC",
       param_co2: "CO2",
       param_nox: "NOx",
-      param_aqi: "AQI",
+      param_aqi: "Indicador EPA",
       unit_index: "índice",
 
       compare_titulo: "Comparando {n} sitio{plural} — {label}",
@@ -1408,7 +1420,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       zoom_hint: "🔍 Drag on the chart to zoom · mouse wheel to zoom in/out · pinch to zoom on touch · Ctrl+drag to pan while zoomed",
       channel_toggle_label: "Show A/B channels separately (for selected PM1.0/PM2.5/PM10)",
       mapa_titulo: "Sensor map",
-      mapa_capa_aqi: "Layer: AQI",
+      mapa_capa_aqi: "Layer: PM2.5 indicator (EPA)",
       mapa_capa_pm2_5: "Layer: PM2.5",
       mapa_capa_temperatura: "Layer: Temperature",
       mapa_capa_humedad: "Layer: Humidity",
@@ -1530,23 +1542,26 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
         </ul>`,
       info_nox_sources_html: 'Sources: <a href="https://www.epa.gov/no2-pollution/basic-information-about-no2" target="_blank">US EPA — Basic Information about NO2</a> · <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">WHO — Air quality guidelines</a>',
 
-      info_aqi_title: "Air Quality Index (AQI)",
+      info_aqi_title: "PM2.5 indicator on the EPA scale",
       info_aqi_body_html: `
-        <p>A way of summarizing several pollutants (mainly PM2.5) into a single, easy-to-read number — meant to communicate risk to the general public, not for precise scientific use.</p>
+        <p>Indicator derived from the received PM2.5 sample using EPA/AirNow breakpoints. <strong>This is not daily AQI or NowCast.</strong> The sample period has not been verified; no hourly or 24-hour average is assumed.</p><p>PM2.5 is truncated to one decimal, interpolated, and the index is rounded. Invalid inputs show no data. Above the last breakpoint, its slope is extrapolated. Indices above 500 display &gt;500 with a hazardous category and a saturated needle; an unrepresentable calculation shows no data.</p>
         <ul>
           <li>Each band has a color and a category (Good, Moderate, Sensitive groups, Unhealthy...) — the full detail is on each sensor's card.</li>
           <li>Different countries use somewhat different AQI scales (US EPA, India, China...) — this network uses the <strong>US EPA</strong> scale, the most widely used internationally.</li>
           <li>A "Moderate" AQI isn't necessarily safe for everyone: people with asthma, children, older adults or pregnant people can be affected before the general population is.</li>
           <li>It's a useful quick glance — for finer analysis, it's better to look at the PM2.5 value in µg/m³ directly.</li>
         </ul>`,
-      info_aqi_sources_html: 'Sources: <a href="https://www.airnow.gov/aqi/aqi-basics/" target="_blank">US EPA — AQI Basics</a>',
+      info_aqi_sources_html: 'Source: <a href="https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf" target="_blank">EPA/AirNow — TAD, table 6 and section IV</a>',
 
-      aqi_label: "Air Quality Index (AQI)",
+      aqi_label: "PM2.5 indicator · EPA scale",
+      aqi_sample_note: "Single PM2.5 sample indicator on the EPA scale; not daily AQI or NowCast. Sample period unverified.",
       aqi_sin_dato: "No data",
       aqi_buena: "Good",
       aqi_moderada: "Moderate",
       aqi_grupos_sensibles: "Sensitive groups",
       aqi_no_saludable: "Unhealthy",
+      aqi_muy_no_saludable: "Very unhealthy",
+      aqi_peligrosa: "Hazardous",
       aqi_sin_datos_card: "No data",
       card_actualizado: "Updated {fecha} (ARG)",
       card_stale_warning: "⚠ No new data for over {min} min — the sensor may be offline",
@@ -1566,7 +1581,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       param_voc: "VOC",
       param_co2: "CO2",
       param_nox: "NOx",
-      param_aqi: "AQI",
+      param_aqi: "EPA indicator",
       unit_index: "index",
 
       compare_titulo: "Comparing {n} site{plural} — {label}",
@@ -1845,12 +1860,23 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     return getSelectedChartParams()[0];
   }
 
-  const AQI_BANDS = [
-    { from: 0, to: 50, color: "rgba(143,181,107,0.10)" },
-    { from: 50, to: 100, color: "rgba(217,164,65,0.08)" },
-    { from: 100, to: 150, color: "rgba(217,105,31,0.08)" },
-    { from: 150, to: 300, color: "rgba(217,115,111,0.08)" },
+  // EPA/AirNow, TAD mayo 2026, tabla 6/sección IV. Solo concentración PM2.5.
+  // Estos tramos no convierten una muestra en AQI diario ni en NowCast.
+  const PM25_AQI_BREAKPOINTS = [
+    [0, 9.0, 0, 50], [9.1, 35.4, 51, 100], [35.5, 55.4, 101, 150],
+    [55.5, 125.4, 151, 200], [125.5, 225.4, 201, 300], [225.5, 325.4, 301, 500],
   ];
+  const AQI_CATEGORIES = [
+    { max: 50, key: "aqi_buena", colorVar: "--good", bg: "rgba(143,181,107,0.12)" },
+    { max: 100, key: "aqi_moderada", colorVar: "--moderate", bg: "rgba(217,164,65,0.12)" },
+    { max: 150, key: "aqi_grupos_sensibles", colorVar: "--unhealthy-sg", bg: "rgba(217,105,31,0.12)" },
+    { max: 200, key: "aqi_no_saludable", colorVar: "--unhealthy", bg: "rgba(217,115,111,0.12)" },
+    { max: 300, key: "aqi_muy_no_saludable", colorVar: "--very-unhealthy", bg: "rgba(143,63,151,0.12)" },
+    { max: 500, key: "aqi_peligrosa", colorVar: "--hazardous", bg: "rgba(126,0,35,0.12)" },
+  ];
+  const AQI_BANDS = AQI_CATEGORIES.map((category, i) => ({
+    from: i ? AQI_CATEGORIES[i - 1].max : 0, to: category.max, color: category.bg,
+  }));
 
   const aqiBandsPlugin = {
     id: "aqiBands",
@@ -1864,7 +1890,8 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       if (!yScale) return;
       ctx.save();
       AQI_BANDS.forEach((band) => {
-        const yFrom = yScale.getPixelForValue(pm25FromAqi(band.to));
+        const upper = band.to === 500 ? Math.max(pm25FromAqi(500), yScale.max) : pm25FromAqi(band.to);
+        const yFrom = yScale.getPixelForValue(upper);
         const yTo = yScale.getPixelForValue(pm25FromAqi(band.from));
         ctx.fillStyle = band.color;
         ctx.fillRect(chartArea.left, yFrom, chartArea.right - chartArea.left, yTo - yFrom);
@@ -1874,17 +1901,14 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   };
 
   function pm25FromAqi(aqi) {
-    // Inverso aproximado de pm25ToAqi, solo para dibujar las bandas de fondo
-    const breakpoints = [
-      [0, 12, 0, 50], [12.1, 35.4, 51, 100], [35.5, 55.4, 101, 150],
-      [55.5, 150.4, 151, 200], [150.5, 250.4, 201, 300],
-    ];
-    for (const [cLo, cHi, iLo, iHi] of breakpoints) {
+    // Inversa continua para límites del gráfico; no reconstruye una muestra.
+    if (typeof aqi !== "number" || !Number.isInteger(aqi) || aqi < 0 || aqi > 500) return null;
+    for (const [cLo, cHi, iLo, iHi] of PM25_AQI_BREAKPOINTS) {
       if (aqi >= iLo && aqi <= iHi) {
-        return ((cHi - cLo) / (iHi - iLo)) * (aqi - iLo) + cLo;
+        return cLo + ((cHi - cLo) * (aqi - iLo)) / (iHi - iLo);
       }
     }
-    return 250;
+    return null;
   }
 
   function toBsAs(timestampStr) {
@@ -1926,15 +1950,13 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   // ── GAUGE (velocímetro) de AQI ──
-  // Bandas de igual ancho angular (45° c/u) para que se lean fácil, como un
+  // Seis bandas de igual ancho angular (30° c/u) para que se lean fácil, como un
   // velocímetro de auto — la aguja interpola dentro de la banda según el
   // valor real, pero los límites de color quedan parejos visualmente.
-  const AQI_GAUGE_BANDS = [
-    { min: 0, max: 50, angleStart: 180, colorVar: "--good" },
-    { min: 50, max: 100, angleStart: 135, colorVar: "--moderate" },
-    { min: 100, max: 150, angleStart: 90, colorVar: "--unhealthy-sg" },
-    { min: 150, max: 300, angleStart: 45, colorVar: "--unhealthy" },
-  ];
+  const AQI_GAUGE_BANDS = AQI_CATEGORIES.map((category, i) => ({
+    min: i ? AQI_CATEGORIES[i - 1].max : 0, max: category.max,
+    angleStart: 180 - i * 30, colorVar: category.colorVar,
+  }));
 
   function polarToCartesian(cx, cy, r, angleDeg) {
     const rad = (angleDeg * Math.PI) / 180;
@@ -1948,12 +1970,12 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   function aqiGaugeNeedleAngle(aqi) {
-    if (aqi == null) return 180; // sin dato: aguja al mínimo
-    const v = Math.max(0, Math.min(300, aqi));
+    if (typeof aqi !== "number" || !Number.isFinite(aqi) || aqi < 0) return 180;
+    const v = Math.min(500, aqi);
     for (const b of AQI_GAUGE_BANDS) {
       if (v <= b.max) {
         const frac = (v - b.min) / (b.max - b.min);
-        return b.angleStart - frac * 45;
+        return b.angleStart - frac * 30;
       }
     }
     return 0;
@@ -1968,13 +1990,14 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const cs = getComputedStyle(document.documentElement);
     const bands = AQI_GAUGE_BANDS.map((b) => {
       const color = cs.getPropertyValue(b.colorVar).trim();
-      return `<path d="${gaugeArcPath(cx, cy, r, b.angleStart, b.angleStart - 45)}" stroke="${color}" stroke-width="${sw}" fill="none" stroke-linecap="butt"/>`;
+      return `<path d="${gaugeArcPath(cx, cy, r, b.angleStart, b.angleStart - 30)}" stroke="${color}" stroke-width="${sw}" fill="none" stroke-linecap="butt"/>`;
     }).join("");
     const needleAngle = aqiGaugeNeedleAngle(aqi);
     const tip = polarToCartesian(cx, cy, r - sw / 2 - 8, needleAngle);
     const needleColor = cs.getPropertyValue("--text-dim").trim();
-    const valueText = aqi != null ? aqi : "—";
-    const color = valueColor || cs.getPropertyValue("--text").trim();
+    const valueText = formatAqi(aqi);
+    const valid = typeof aqi === "number" && Number.isFinite(aqi) && aqi >= 0;
+    const color = valid ? (valueColor || cs.getPropertyValue("--text").trim()) : needleColor;
     return `
       <svg class="aqi-gauge-svg" viewBox="0 0 200 130" aria-hidden="true">
         ${bands}
@@ -1985,26 +2008,35 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   function aqiInfo(aqi) {
-    if (aqi == null) return { label: t("aqi_sin_dato"), color: "var(--text-dim)", bg: "transparent" };
-    if (aqi <= 50) return { label: t("aqi_buena"), color: "var(--good)", bg: "rgba(143,181,107,0.12)" };
-    if (aqi <= 100) return { label: t("aqi_moderada"), color: "var(--moderate)", bg: "rgba(217,164,65,0.12)" };
-    if (aqi <= 150) return { label: t("aqi_grupos_sensibles"), color: "var(--unhealthy-sg)", bg: "rgba(217,105,31,0.12)" };
-    return { label: t("aqi_no_saludable"), color: "var(--unhealthy)", bg: "rgba(217,115,111,0.12)" };
+    if (typeof aqi !== "number" || !Number.isFinite(aqi) || aqi < 0) {
+      return { label: t("aqi_sin_dato"), color: "var(--text-dim)", bg: "transparent" };
+    }
+    const category = AQI_CATEGORIES.find((c) => aqi <= c.max) || AQI_CATEGORIES[AQI_CATEGORIES.length - 1];
+    return { label: t(category.key), color: `var(${category.colorVar})`, bg: category.bg };
   }
 
   function pm25ToAqi(pm) {
-    // Aproximación EPA simplificada por tramos
-    if (pm == null) return null;
-    const breakpoints = [
-      [0, 12, 0, 50], [12.1, 35.4, 51, 100], [35.5, 55.4, 101, 150],
-      [55.5, 150.4, 151, 200], [150.5, 250.4, 201, 300],
-    ];
-    for (const [cLo, cHi, iLo, iHi] of breakpoints) {
-      if (pm >= cLo && pm <= cHi) {
-        return Math.round(((iHi - iLo) / (cHi - cLo)) * (pm - cLo) + iLo);
-      }
+    // No coerción de texto, booleanos o faltantes; la muestra debe ser numérica.
+    if (typeof pm !== "number" || !Number.isFinite(pm) || pm < 0) return null;
+    if (pm < 0.1) return 0;
+    // La representación decimal evita floor(pm * 10) en fronteras exactas.
+    // A partir de 1e21 la precisión de Number no conserva décimas.
+    let concentration = pm;
+    if (pm < 1e21) {
+      const [whole, decimals = ""] = String(pm).split(".");
+      concentration = (Number(whole) * 10 + Number(decimals[0] || 0)) / 10;
     }
-    return 300;
+    const band = PM25_AQI_BREAKPOINTS.find(([cLo, cHi]) => concentration >= cLo && concentration <= cHi)
+      || PM25_AQI_BREAKPOINTS[PM25_AQI_BREAKPOINTS.length - 1];
+    const [cLo, cHi, iLo, iHi] = band;
+    // EPA TAD tabla 6, nota 4: por encima de 500 usar la misma pendiente.
+    const index = Math.round(iLo + ((concentration - cLo) / (cHi - cLo)) * (iHi - iLo));
+    return Number.isFinite(index) ? index : null;
+  }
+
+  function formatAqi(aqi) {
+    if (typeof aqi !== "number" || !Number.isFinite(aqi) || aqi < 0) return "—";
+    return aqi > 500 ? ">500" : String(aqi);
   }
 
   /* ── MAPA ── */
@@ -2065,7 +2097,8 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const def = MAPA_PARAMS[param];
     const val = def.get(s);
     if (val == null) return "—";
-    if (param === "aqi") return `AQI ${val}`;
+    if (param === "aqi") return `${t("param_aqi")} ${formatAqi(val)}`;
+    if (param === "pm2_5" && pm25ToAqi(val) === null) return "—";
     return `${val}${unitSuffix(def)}`;
   }
 
@@ -2074,11 +2107,9 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     if (!legend) return;
     const def = MAPA_PARAMS[param];
     if (param === "aqi" || param === "pm2_5") {
-      legend.innerHTML = `
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--good)"></span>${t("aqi_buena")}</span>
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--moderate)"></span>${t("aqi_moderada")}</span>
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--unhealthy-sg)"></span>${t("aqi_grupos_sensibles")}</span>
-        <span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(--unhealthy)"></span>${t("aqi_no_saludable")}</span>`;
+      legend.innerHTML = AQI_CATEGORIES.map((category) =>
+        `<span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(${category.colorVar})"></span>${t(category.key)}</span>`
+      ).join("");
       return;
     }
     if (!domain) {
@@ -2180,7 +2211,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
         .addTo(mapaInst)
         .bindPopup(`
           <strong style="font-family:monospace">${nombre}</strong><br>
-          PM2.5: ${s.pm2_5 ?? "—"} µg/m³ · AQI ${aqi ?? "—"} (${info.label})<br>
+          PM2.5: ${formatPm25(s.pm2_5)} µg/m³ · ${t("param_aqi")} ${formatAqi(aqi)} (${info.label})<br>
           <small style="color:#888">${formatBsAsFull(s.timestamp)}</small>
         `)
         .on("click", () => flipMapaCard(s.sensor_index, nombre));
@@ -2300,7 +2331,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
             <div class="aqi-label">${t("aqi_label")}${infoIconHtml("aqi")}</div>
             <div class="metrics-row">
               <div class="metric">
-                <div class="metric-value">${s.pm2_5 ?? "—"} µg/m³</div>
+                <div class="metric-value">${formatPm25(s.pm2_5)} µg/m³</div>
                 <div class="metric-label">${t("param_pm2_5")}</div>
               </div>
               <div class="metric">
