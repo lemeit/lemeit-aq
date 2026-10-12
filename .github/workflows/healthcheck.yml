@@ -1,0 +1,29 @@
+name: Diagnóstico AQ
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '17 9 * * *'
+permissions:
+  contents: read
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pruebas offline
+        run: node tests/healthcheck.test.mjs
+      - name: Diagnóstico permitido
+        if: always()
+        run: node scripts/healthcheck.mjs
+      - name: Conservar reporte sanitizado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: healthcheck-results
+          path: healthcheck-results/healthcheck.json
+          retention-days: 14
+          if-no-files-found: error
