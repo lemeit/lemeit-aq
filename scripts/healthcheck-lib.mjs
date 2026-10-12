@@ -81,10 +81,19 @@ export async function runHealthcheck(config, { transport = request, resolveDns =
     finally { clearTimeout(timer); }
   }
   for (const endpoint of [...(config.endpoints || []), ...(config.services || [])]) {
-    if (offline || config.pagesRoutingConfirmed !== true) { add(endpoint.id, 'SKIP', 'Sin confirmación operativa de ruta Pages independiente del Worker; no se realiza HTTP'); continue; }
+    if (offline) { add(endpoint.id, 'SKIP', 'Modo offline: no se realiza HTTP'); continue; }
     if (!endpoint.url) { add(endpoint.id, 'SKIP', 'Servicio sin URL configurada'); continue; }
     try {
-      const result = await probe(endpoint, config.network, transport);
+      const confirmed = config.staticGatewayRoutesConfirmed || [];
+      const initial = pagesUrl(endpoint.url);
+      if (!Array.isArray(confirmed) || !confirmed.includes(initial.href)) {
+        add(endpoint.id, 'SKIP', 'Ruta sin confirmación de gateway estático y origen Pages; no se realiza HTTP'); continue;
+      }
+      const guardedTransport = (url, timeoutMs) => {
+        if (!confirmed.includes(pagesUrl(url.href).href)) throw new Error('UNCONFIRMED_ROUTE');
+        return transport(url, timeoutMs);
+      };
+      const result = await probe(endpoint, config.network, guardedTransport);
       const expected = (endpoint.statuses || [200]).includes(result.status);
       const reachable = (endpoint.reachableStatuses || []).includes(result.status);
       const typeOK = !endpoint.contentType || String(result.headers['content-type'] || '').includes(endpoint.contentType);
@@ -101,7 +110,7 @@ export async function runHealthcheck(config, { transport = request, resolveDns =
         add(`${endpoint.id}:headers`, missing.length ? 'WARN' : 'PASS', missing.length ? `Cabeceras ausentes o distintas: ${missing.join(', ')}` : 'Cabeceras relevantes presentes');
       }
     } catch (error) {
-      const known = ['TIMEOUT', 'REDIRECT_LOOP', 'REDIRECT_LIMIT_OR_LOCATION', 'REDIRECT_ORIGIN'];
+      const known = ['TIMEOUT', 'REDIRECT_LOOP', 'REDIRECT_LIMIT_OR_LOCATION', 'REDIRECT_ORIGIN', 'DESTINATION', 'UNCONFIRMED_ROUTE'];
       const codes = ['ENOTFOUND', 'EAI_AGAIN', 'ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT', 'CERT_HAS_EXPIRED', 'ERR_TLS_CERT_ALTNAME_INVALID', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'];
       add(endpoint.id, endpoint.critical ? 'FAIL' : 'WARN', known.includes(error.message) ? error.message : codes.includes(error.code) ? `Error de conexión/TLS: ${error.code}` : 'No se pudo validar conexión HTTPS, certificado o configuración');
     }
@@ -116,3 +125,4 @@ export function summary(report) {
   const escape = value => String(value).replaceAll('|', '\\|').replace(/[\r\n]/g, ' ');
   return `## Healthcheck: ${report.status}\n\n${Object.entries(report.counts).map(([key, value]) => `${key}: ${value}`).join(' · ')}\n\n| Comprobación | Estado | Resultado |\n| --- | --- | --- |\n${report.checks.map(check => `| ${escape(check.id)} | ${check.status} | ${escape(check.message)} |`).join('\n')}\n`;
 }
+

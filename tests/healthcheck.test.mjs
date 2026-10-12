@@ -84,3 +84,43 @@ test('CLI inválido sale 1 y offline sale 0',()=>{
   assert.equal(spawnSync(process.execPath,['scripts/healthcheck.mjs','--desconocido','x'],{env}).status,1);
   assert.equal(spawnSync(process.execPath,['scripts/healthcheck.mjs','--offline','--output','work/test-report.json'],{env}).status,0);
 });
+
+test('indicador antiguo no habilita HTTP y API permanece SKIP', async () => {
+  let calls = 0;
+  const r = await runHealthcheck({...config, staticGatewayRoutesConfirmed: [], pagesRoutingConfirmed: true, dns: []},
+    {nodeVersion:'22.0.0', transport:async()=>{calls++; return response();}});
+  assert.equal(calls, 0);
+  assert.equal(r.checks.find(x=>x.id==='pages').status,'SKIP');
+  for (const id of ['api:sensores','freshness','d1','ingestion','cron']) assert.equal(r.checks.find(x=>x.id===id).status,'SKIP');
+});
+test('confirmación de una ruta no habilita otra ni una redirección', async () => {
+  const calls = [];
+  const r = await runHealthcheck({...config, dns:[], staticGatewayRoutesConfirmed:['https://app.lemeit.ar/aq']},
+    {nodeVersion:'22.0.0', transport:async url=>{calls.push(url.href); return response(301,{location:'/aq/'});}});
+  assert.ok(calls.every(x=>x==='https://app.lemeit.ar/aq'));
+  assert.equal(r.checks.find(x=>x.id==='pages').message,'UNCONFIRMED_ROUTE');
+  assert.equal(r.checks.find(x=>x.id==='api-docs').status,'SKIP');
+});
+for (const location of ['/aq/api', 'https://evil.example/', '//api.lemeit.ar/aq/api/sensores', '/aq/api.html?private=x']) {
+  test('bloquea destino no autorizado antes del transporte: '+location, async () => {
+    const calls = [];
+    const r = await runHealthcheck({...config,dns:[],endpoints:[config.endpoints[1]]},
+      {nodeVersion:'22.0.0', transport:async url=>{calls.push(url.href);return response(301,{location});}});
+    assert.ok(calls.every(x=>x===config.endpoints[1].url));
+    assert.equal(r.checks.find(x=>x.id==='api-docs').status,'FAIL');
+    assert.ok(!JSON.stringify(r).includes('private'));
+  });
+}
+test('rutas confirmadas comprueban gateway y conservan exclusiones operativas', async () => {
+  const calls = [];
+  const r = await runHealthcheck({...config,dns:[]},{nodeVersion:'22.0.0',transport:async url=>{
+    calls.push(url.href);
+    return url.pathname==='/aq' ? response(301,{location:'/aq/'}) : response(200,{'x-content-type-options':'nosniff','strict-transport-security':'max-age=1','content-security-policy':"default-src 'self'",'referrer-policy':'no-referrer'});
+  }});
+  assert.equal(r.checks.find(x=>x.id==='pages').status,'PASS');
+  assert.equal(r.checks.find(x=>x.id==='pages:headers').status,'PASS');
+  assert.equal(r.checks.find(x=>x.id==='pages').redirects,1);
+  assert.ok(calls.every(x=>config.staticGatewayRoutesConfirmed.includes(x)));
+  assert.equal(r.checks.find(x=>x.id==='d1').status,'SKIP');
+});
+
