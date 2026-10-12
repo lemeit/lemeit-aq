@@ -122,4 +122,3 @@ completa; FAIL por destino bloqueado indica alcance incompleto.
 Reversión: restaurar los cuatro archivos desde SHA base. No hay datos que revertir.
 Toda publicación o reversión remota requiere comprobar disparadores antes del push.
 
-
