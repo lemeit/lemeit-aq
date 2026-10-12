@@ -76,5 +76,14 @@ HSTS/CSP quedan para corrección separada. No declarar salud de ingesta/frescura
 Próximos temas: AQ-03 límites API, AQ-04 inactivos y AQ-06 XSS según PLAN_MEJORAS;
 AQI e identidad AirGradient siguen pendientes de sus propias verificaciones.
 
-Integración y Actions pendientes al preparar este documento; registrar resultado
-remoto verificado en este documento antes de cerrar la fase.
+## Verificación remota previa a integración
+
+PR [#7](https://github.com/lemeit/lemeit-aq/pull/7), rama `feat/healthcheck-phase2c`.
+Actions [38317388422](https://github.com/lemeit/lemeit-aq/actions/runs/38317388422)
+sobre `6231874bff93ae874f94d53b0e7a898807b96d07`: success, Node 22.23.3,
+47/47 PASS, diagnóstico 9 PASS / 2 WARN / 0 FAIL / 12 SKIP. Artefacto sanitizado
+`11776957159`, carga exitosa. Todos los pasos del job completados correctamente.
+Pages confirmó push `0e633317` skipped, registro `86e3e3d2-aac6-439e-b0e3-6df3b550819c`;
+producción permaneció en `48a1dc8a`. La comparación remota confirma exactamente
+8 archivos scripts/tests/docs/config del diagnóstico; frontend/Worker/D1/workflows intactos.
+Se autoriza integración bajo el alcance del usuario; verificar main tras fusionar.
