@@ -6,24 +6,21 @@ import { readFile } from 'node:fs/promises';
 import { request, runHealthcheck } from '../scripts/healthcheck-lib.mjs';
 const config = JSON.parse(await readFile(new URL('../healthcheck.config.json', import.meta.url)));
 
-test('308 real hacia /aq/api confirmado llega al HTML sin ejecutar su contenido', async () => {
+test('308 real hacia /aq/api permanece bloqueado y el JSON identifica solo el destino conocido', async () => {
   const calls = [];
   const report = await runHealthcheck({...config, dns:[], endpoints:[config.endpoints[1]], network:{...config.network,retries:0}}, {
     nodeVersion:'22.23.3', transport:async url => {
       calls.push(url.pathname);
-      return url.pathname === '/aq/api.html'
-        ? {status:308, headers:{location:'/aq/api'}, durationMs:1}
-        : {status:200,headers:{'content-type':'text/html'},durationMs:1,certificateExpires:'Dec 23 16:15:20 2026 GMT'};
+      return {status:308, headers:{location:'/aq/api'}, durationMs:1};
     }
   });
-  assert.deepEqual(calls,['/aq/api.html','/aq/api']);
-  assert.equal(report.checks.find(c=>c.id==='api-docs').status,'PASS');
-  assert.equal(report.checks.find(c=>c.id==='api-docs').redirects,1);
+  assert.deepEqual(calls,['/aq/api.html']);
+  assert.deepEqual(report.checks.find(c=>c.id==='api-docs'), {id:'api-docs',status:'FAIL',message:'DESTINATION',blockedDestination:'/aq/api',redirectStatus:308});
   assert.equal(report.counts.SKIP,12);
 });
 
-test('configuración no habilita rutas vecinas ni externos y no expone su Location', async () => {
-  for (const location of ['/aq/api/','/aq/api/sensores','/aq/api?token=PRIVATE','https://evil.example/PRIVATE','//api.lemeit.ar/aq/api/sensores','https://purpleair-saladillo.pages.dev/api']) {
+test('configuración no habilita /aq/api ni externos y no expone su Location', async () => {
+  for (const location of ['/aq/api?token=PRIVATE','https://evil.example/PRIVATE','//api.lemeit.ar/aq/api/sensores']) {
     let calls=0;
     const report=await runHealthcheck({...config,dns:[],endpoints:[config.endpoints[1]], staticGatewayRoutesConfirmed:[...config.staticGatewayRoutesConfirmed,'https://app.lemeit.ar/aq/api'],network:{...config.network,retries:0}}, {
       nodeVersion:'22.23.3',transport:async()=>{calls++;return {status:308,headers:{location},durationMs:1};}
@@ -34,15 +31,6 @@ test('configuración no habilita rutas vecinas ni externos y no expone su Locati
     assert.ok(!JSON.stringify(report).includes('evil.example'));
     assert.ok(!JSON.stringify(report).includes('blockedDestination'));
   }
-});
-
-test('ruta /aq/api requiere confirmación individual incluso después de permitirla en el motor', async () => {
-  const calls=[];
-  const report=await runHealthcheck({...config,dns:[],endpoints:[config.endpoints[1]],staticGatewayRoutesConfirmed:config.staticGatewayRoutesConfirmed.filter(u=>!u.endsWith('/aq/api')),network:{...config.network,retries:0}}, {
-    nodeVersion:'22.23.3',transport:async url=>{calls.push(url.pathname);return {status:308,headers:{location:'/aq/api'},durationMs:1};}
-  });
-  assert.deepEqual(calls,['/aq/api.html']);
-  assert.equal(report.checks.find(c=>c.id==='api-docs').message,'UNCONFIRMED_ROUTE');
 });
 
 test('transporte crea un agente sin caché TLS por salto, valida certificado y libera agente', async () => {

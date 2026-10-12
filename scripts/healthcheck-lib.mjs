@@ -13,7 +13,7 @@ export function publicUrl(value) {
 // Lista cerrada: ninguna configuración puede convertir el diagnóstico en un GET de API.
 export function pagesUrl(value) {
   const url = publicUrl(value);
-  if (url.hostname !== 'app.lemeit.ar' || !['/aq', '/aq/', '/aq/api.html', '/aq/api'].includes(url.pathname)) throw new Error('DESTINATION');
+  if (url.hostname !== 'app.lemeit.ar' || !['/aq', '/aq/', '/aq/api.html'].includes(url.pathname)) throw new Error('DESTINATION');
   return url;
 }
 
@@ -53,7 +53,17 @@ export async function probe(endpoint, options, transport = request) {
         durationMs += response.durationMs;
         if ([301, 302, 303, 307, 308].includes(response.status)) {
           if (!response.headers.location || redirects.length >= options.maxRedirects) throw new Error('REDIRECT_LIMIT_OR_LOCATION');
-          const next = pagesUrl(new URL(response.headers.location, current).href);
+          const candidate = new URL(response.headers.location, current);
+          let next;
+          try { next = pagesUrl(candidate.href); }
+          catch (error) {
+            // Solo conservar este destino conocido; nunca URLs o queries arbitrarias.
+            if (error.message === 'DESTINATION' && candidate.href === 'https://app.lemeit.ar/aq/api') {
+              error.blockedDestination = '/aq/api';
+              error.redirectStatus = response.status;
+            }
+            throw error;
+          }
           if (next.origin !== initial.origin && !(endpoint.allowedOrigins || []).includes(next.origin)) throw new Error('REDIRECT_ORIGIN');
           redirects.push({ status: response.status, from: current.href, to: next.href });
           current = next;
@@ -115,7 +125,9 @@ export async function runHealthcheck(config, { transport = request, resolveDns =
     } catch (error) {
       const known = ['TIMEOUT', 'REDIRECT_LOOP', 'REDIRECT_LIMIT_OR_LOCATION', 'REDIRECT_ORIGIN', 'DESTINATION', 'UNCONFIRMED_ROUTE'];
       const codes = ['ENOTFOUND', 'EAI_AGAIN', 'ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT', 'CERT_HAS_EXPIRED', 'ERR_TLS_CERT_ALTNAME_INVALID', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'];
-      add(endpoint.id, endpoint.critical ? 'FAIL' : 'WARN', known.includes(error.message) ? error.message : codes.includes(error.code) ? `Error de conexión/TLS: ${error.code}` : 'No se pudo validar conexión HTTPS, certificado o configuración');
+      const blocked = error.message === 'DESTINATION' && error.blockedDestination === '/aq/api'
+        ? { blockedDestination: '/aq/api', redirectStatus: error.redirectStatus } : {};
+      add(endpoint.id, endpoint.critical ? 'FAIL' : 'WARN', known.includes(error.message) ? error.message : codes.includes(error.code) ? `Error de conexión/TLS: ${error.code}` : 'No se pudo validar conexión HTTPS, certificado o configuración', blocked);
     }
   }
   for (const id of ['api:sensores', 'api:ultimas', 'api:historico', 'json', 'freshness']) add(id, 'SKIP', 'GET público inserta visitas en D1; prohibido modificar D1. Validadores solo con fixtures');

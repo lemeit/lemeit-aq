@@ -1,8 +1,8 @@
 # Diagnóstico AQ — fase 2A
 
-> Actualización 2026-10-12: [fase 2B](HEALTHCHECK_FASE_2B.md) confirma la ruta
+> Actualización 2026-10-12: [fase 2B](HEALTHCHECK_FASE_2B.md) mantiene bloqueada la ruta
 > estática exacta `/aq/api` y corrige la obtención del certificado TLS. Las
-> referencias a esa ruta prohibida y a pruebas pendientes abajo son históricas.
+> referencias históricas deben interpretarse según el alcance vigente de fase 2B.
 
 Fecha de preparación: 2026-10-11; exclusión autorizada: 2026-10-12 (Argentina).
 Base revalidada: main 2f37864576b8ed7d152f9c36aa2d3d9184047884.

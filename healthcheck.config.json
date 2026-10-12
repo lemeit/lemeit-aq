@@ -1,6 +1,6 @@
 {
   "node": { "minimumMajor": 22, "recommendedMajor": 22 },
-  "staticGatewayRoutesConfirmed": ["https://app.lemeit.ar/aq", "https://app.lemeit.ar/aq/", "https://app.lemeit.ar/aq/api.html", "https://app.lemeit.ar/aq/api"],
+  "staticGatewayRoutesConfirmed": ["https://app.lemeit.ar/aq", "https://app.lemeit.ar/aq/", "https://app.lemeit.ar/aq/api.html"],
   "dns": ["app.lemeit.ar", "api.lemeit.ar"],
   "network": { "timeoutMs": 10000, "retries": 1, "maxRedirects": 2, "warnResponseMs": 3000, "warnExpiryDays": 30 },
   "securityHeaders": { "x-content-type-options": "nosniff", "strict-transport-security": null, "content-security-policy": null, "referrer-policy": null },
@@ -9,4 +9,3 @@
     { "id": "api-docs", "url": "https://app.lemeit.ar/aq/api.html", "statuses": [200], "contentType": "text/html", "critical": true, "security": true }
   ]
 }
-
