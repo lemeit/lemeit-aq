@@ -1,4 +1,5 @@
 import test from 'node:test';
+import './healthcheck-phase2b.test.mjs';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
@@ -101,7 +102,7 @@ test('confirmación de una ruta no habilita otra ni una redirección', async () 
   assert.equal(r.checks.find(x=>x.id==='pages').message,'UNCONFIRMED_ROUTE');
   assert.equal(r.checks.find(x=>x.id==='api-docs').status,'SKIP');
 });
-for (const location of ['/aq/api', 'https://evil.example/', '//api.lemeit.ar/aq/api/sensores', '/aq/api.html?private=x']) {
+for (const location of ['/aq/api/', 'https://evil.example/', '//api.lemeit.ar/aq/api/sensores', '/aq/api.html?private=x']) {
   test('bloquea destino no autorizado antes del transporte: '+location, async () => {
     const calls = [];
     const r = await runHealthcheck({...config,dns:[],endpoints:[config.endpoints[1]]},
@@ -123,4 +124,3 @@ test('rutas confirmadas comprueban gateway y conservan exclusiones operativas', 
   assert.ok(calls.every(x=>config.staticGatewayRoutesConfirmed.includes(x)));
   assert.equal(r.checks.find(x=>x.id==='d1').status,'SKIP');
 });
-
