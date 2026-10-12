@@ -87,3 +87,27 @@ Pages confirmó push `0e633317` skipped, registro `86e3e3d2-aac6-439e-b0e3-6df3b
 producción permaneció en `48a1dc8a`. La comparación remota confirma exactamente
 8 archivos scripts/tests/docs/config del diagnóstico; frontend/Worker/D1/workflows intactos.
 Se autoriza integración bajo el alcance del usuario; verificar main tras fusionar.
+
+
+## Cierre operativo verificado
+
+PR #7 fusionado en `a14164fa283d95e9b471c559d85edd35d40ae549`.
+Pages automático completado correctamente, deployment `77909acb-fbb7-464a-8e57-a0e5c7657871`.
+Actions [38317617746](https://github.com/lemeit/lemeit-aq/actions/runs/38317617746) en main:
+47/47 PASS, Node 22.23.3, diagnóstico 9 PASS / 2 WARN / 0 FAIL / 12 SKIP,
+job y carga de JSON sanitizado exitosos. Estado del diagnóstico: WARN sin FAIL;
+HSTS/CSP separados, cobertura operativa omitida expresamente.
+
+La revisión visual detectó que las pruebas CLI heredaban GITHUB_STEP_SUMMARY:
+el FAIL simulado por argumento inválido y el PASS offline se agregaban al resumen
+real, aunque las pruebas y diagnóstico fueran correctos. El ajuste de cierre elimina
+esa variable únicamente de procesos fixture. Reproducción local: con la variable
+apuntando a un archivo de control, las 47 pruebas pasan sin crear ese archivo.
+Aceptación: resumen de Actions muestra solo el diagnóstico operativo, ningún FAIL
+simulado; el JSON y el motor no cambian.
+
+Rama de cierre `feat/healthcheck-phase2c-close` excluida de previews mediante API y
+relectura antes de crearla; exclusiones anteriores intactas. PR de cierre limitado
+al harness de pruebas y este registro. Sitio/Worker/D1/workflows sin modificaciones.
+Healthcheck queda resuelto dentro de su alcance estático; las tareas AQ-01 a AQ-21
+de PLAN_MEJORAS no se dan por corregidas. Próximo trabajo: AQ-03 límites de API.
