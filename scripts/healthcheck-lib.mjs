@@ -13,7 +13,7 @@ export function publicUrl(value) {
 // Lista cerrada: ninguna configuración puede convertir el diagnóstico en un GET de API.
 export function pagesUrl(value) {
   const url = publicUrl(value);
-  if (url.hostname !== 'app.lemeit.ar' || !['/aq', '/aq/', '/aq/api.html'].includes(url.pathname)) throw new Error('DESTINATION');
+  if (url.hostname !== 'app.lemeit.ar' || !['/aq', '/aq/', '/aq/api.html', '/aq/api'].includes(url.pathname)) throw new Error('DESTINATION');
   return url;
 }
 
@@ -21,7 +21,10 @@ export function request(url, timeoutMs) {
   pagesUrl(url.href);
   return new Promise((resolve, reject) => {
     const started = performance.now();
-    const req = https.get(url, { rejectUnauthorized: true, headers: { 'user-agent': 'Infrastructure-Healthcheck/1.0' } }, res => {
+    // Cada salto requiere certificado propio: una sesión TLS reanudada puede
+    // devolver {} en getPeerCertificate(). No compartir sesiones ni sockets.
+    const agent = new https.Agent({ keepAlive: false, maxCachedSessions: 0 });
+    const req = https.get(url, { agent, rejectUnauthorized: true, headers: { 'user-agent': 'Infrastructure-Healthcheck/1.0' } }, res => {
       const certificate = res.socket?.getPeerCertificate() || {};
       const result = { status: res.statusCode, headers: res.headers,
         durationMs: Math.round(performance.now() - started),
@@ -30,7 +33,7 @@ export function request(url, timeoutMs) {
       resolve(result);
     });
     const timer = setTimeout(() => req.destroy(new Error('TIMEOUT')), timeoutMs);
-    req.once('close', () => clearTimeout(timer));
+    req.once('close', () => { clearTimeout(timer); agent.destroy(); });
     req.once('error', reject);
   });
 }
@@ -125,4 +128,3 @@ export function summary(report) {
   const escape = value => String(value).replaceAll('|', '\\|').replace(/[\r\n]/g, ' ');
   return `## Healthcheck: ${report.status}\n\n${Object.entries(report.counts).map(([key, value]) => `${key}: ${value}`).join(' · ')}\n\n| Comprobación | Estado | Resultado |\n| --- | --- | --- |\n${report.checks.map(check => `| ${escape(check.id)} | ${check.status} | ${escape(check.message)} |`).join('\n')}\n`;
 }
-
