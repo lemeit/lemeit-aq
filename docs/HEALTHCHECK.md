@@ -1,3 +1,5 @@
+> Estado vigente: [fase 2C](HEALTHCHECK_FASE_2C.md) permite exclusivamente el stub estático `/aq/api` con evidencia y autorización actual. El bloqueo y las restricciones de publicación descritos abajo son históricos.
+
 # Diagnóstico AQ — fase 2A
 
 > Actualización 2026-10-12: [fase 2B](HEALTHCHECK_FASE_2B.md) mantiene bloqueada la ruta
@@ -119,4 +121,5 @@ hasta revisar la nueva implementación. WARN de cabeceras no acredita seguridad
 completa; FAIL por destino bloqueado indica alcance incompleto.
 Reversión: restaurar los cuatro archivos desde SHA base. No hay datos que revertir.
 Toda publicación o reversión remota requiere comprobar disparadores antes del push.
+
 

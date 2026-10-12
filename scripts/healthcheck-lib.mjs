@@ -4,7 +4,7 @@ import { lookup } from 'node:dns/promises';
 // Adaptado de lemeit/previa PR #3; no recoge cuerpos ni cabeceras crudas.
 export function publicUrl(value) {
   const url = new URL(value);
-  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.port) {
+  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.port || /[?#]/.test(value)) {
     throw new Error('URL pública HTTPS sin credenciales ni parámetros requerida');
   }
   return url;
@@ -13,7 +13,7 @@ export function publicUrl(value) {
 // Lista cerrada: ninguna configuración puede convertir el diagnóstico en un GET de API.
 export function pagesUrl(value) {
   const url = publicUrl(value);
-  if (url.hostname !== 'app.lemeit.ar' || !['/aq', '/aq/', '/aq/api.html'].includes(url.pathname)) throw new Error('DESTINATION');
+  if (value !== url.href || url.hostname !== 'app.lemeit.ar' || !['/aq', '/aq/', '/aq/api.html', '/aq/api'].includes(url.pathname)) throw new Error('DESTINATION');
   return url;
 }
 
@@ -140,3 +140,4 @@ export function summary(report) {
   const escape = value => String(value).replaceAll('|', '\\|').replace(/[\r\n]/g, ' ');
   return `## Healthcheck: ${report.status}\n\n${Object.entries(report.counts).map(([key, value]) => `${key}: ${value}`).join(' · ')}\n\n| Comprobación | Estado | Resultado |\n| --- | --- | --- |\n${report.checks.map(check => `| ${escape(check.id)} | ${check.status} | ${escape(check.message)} |`).join('\n')}\n`;
 }
+

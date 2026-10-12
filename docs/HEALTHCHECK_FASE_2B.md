@@ -1,3 +1,5 @@
+> Estado vigente: [fase 2C](HEALTHCHECK_FASE_2C.md) permite exclusivamente el stub estático `/aq/api` con evidencia y autorización actual. El bloqueo y las restricciones de publicación descritos abajo son históricos.
+
 # Healthcheck: fase 2B con destino bloqueado
 
 Fecha: 2026-10-12 (Argentina). Propuesta para PR correctivo; no fusionar ni desplegar.
@@ -29,3 +31,4 @@ Revertir el futuro commit de corrección recupera el comportamiento anterior; no
 Pages revalidado en esta sesión: Custom branches, inclusión *, exclusiones feat/healthcheck-phase2a y feat/healthcheck-phase2b. Sin Deploy Hooks. GitHub Pages deshabilitado; lista de webhooks vacía. Workflows versionados sin push/pull_request. Gateway muestra Builds / Git repository / Connect: sin repositorio conectado.
 
 GitHub Apps: ChatGPT Codex Connector, Cloudflare Workers and Pages y Ona integrations. Tras reautenticación, Ona muestra No projects en el Workspace 345 de Luciano Lamaita y automatizaciones no disponibles en el plan actual. Worker API muestra Builds / Git repository / Connect: sin Git conectado. No se modificaron disparadores. Main tiene seis commits por delante de la auditoría y cero por detrás; Worker, D1 y frontend sin cambios en esa comparación.
+
