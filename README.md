@@ -8,6 +8,10 @@ Es uno de tres proyectos de monitoreo ambiental que comparten la misma infraestr
 
 📚 Documentación técnica completa, guías de uso de la API y bitácora de los tres portales: [wiki.lemeit.ar](https://wiki.lemeit.ar).
 
+## Diagnóstico
+
+Diagnóstico independiente y pruebas offline sin dependencias: [docs/HEALTHCHECK.md](docs/HEALTHCHECK.md). La API y frescura en producción se omiten porque cada GET público escribe visitas en D1.
+
 ## Sensores
 
 Cada sensor físico se registra en la tabla `sensores` (nombre, institución, coordenadas, estado activo/inactivo, proveedor), independiente de la serie de lecturas — así se pueden dar de baja o agregar sensores sin perder el historial. El listado de instituciones vivas se administra desde ahí, no está hardcodeado en el dashboard.

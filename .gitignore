@@ -1,2 +1,4 @@
 .wrangler/
 node_modules/
+healthcheck-results/
+work/
