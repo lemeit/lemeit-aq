@@ -35,4 +35,13 @@ except sqlite3.OperationalError as error:
 else:
     raise AssertionError('schema completo + migration_004 debería duplicar columna')
 print('PASS: valores Python, dedupe, divergencia nombre y esquema/migración reproducidos sin HTTP')
+db.execute("INSERT INTO sensores(sensor_index,nombre,proveedor,serial_externo) VALUES(900001,'AG','airgradient','fixture-AG')")
+try:
+    module.upsert_sensor_metadata(900001, 'PA collision', 0, 0)
+except sqlite3.IntegrityError:
+    pass
+else:
+    raise AssertionError('AQ-02: Python debe rechazar ID AirGradient antes de insertar lectura')
+assert db.execute("SELECT proveedor FROM sensores WHERE sensor_index=900001").fetchone()[0] == 'airgradient'
+print('PASS AQ-02: colisión Python rechazada sin cambiar identidad')
 db.close()

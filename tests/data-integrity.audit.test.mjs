@@ -90,21 +90,28 @@ test('CONTROL: orden de fields y campos opcionales faltantes',async()=>{
   await fixtureFetch(()=>mod.ingest(env),f);
   const r=sqlite.prepare('SELECT pm2_5,pm1_0 FROM lecturas').get();assert.equal(r.pm2_5,12.05);assert.equal(r.pm1_0,null);sqlite.close();
 });
-test('AQ-02: dos seriales concurrentes reciben mismo ID y mezclan historial',async()=>{
-  const {sqlite,env}=db();const [a,b]=await Promise.all([mod.getOrAssignSensorIndex(env,'fixture-A'),mod.getOrAssignSensorIndex(env,'fixture-B')]);assert.equal(a,b);
-  await mod.upsertAirGradientSensor(env,a,'fixture-A',ag());await mod.insertAirGradientLectura(env,a,ag());
-  await mod.upsertAirGradientSensor(env,b,'fixture-B',ag());await mod.insertAirGradientLectura(env,b,ag({timestamp:'2026-10-12T22:15:00Z'}));
-  assert.equal(sqlite.prepare('SELECT serial_externo FROM sensores').get().serial_externo,'fixture-B');
-  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM lecturas WHERE sensor_index=?').get(a).n,2);sqlite.close();
+test('ACEPTACIÓN AQ-02: concurrencia separa seriales y conserva historial',async()=>{
+  const {sqlite,env}=db();
+  const [a,b,c]=await Promise.all(['fixture-A','fixture-B','fixture-A'].map(s=>mod.getOrAssignSensorIndex(env,s)));
+  assert.notEqual(a,b);assert.equal(a,c);
+  await mod.insertAirGradientLectura(env,a,ag());
+  await mod.insertAirGradientLectura(env,b,ag({pm02:99}));
+  assert.equal(sqlite.prepare('SELECT pm2_5 FROM lecturas WHERE sensor_index=?').get(a).pm2_5,8);
+  assert.equal(sqlite.prepare('SELECT pm2_5 FROM lecturas WHERE sensor_index=?').get(b).pm2_5,99);
+  sqlite.close();
 });
-test('AQ-02: esquema permite duplicar proveedor/serial',()=>{
-  const {sqlite}=db();sqlite.exec("INSERT INTO sensores(sensor_index,nombre,proveedor,serial_externo) VALUES(1,'a','airgradient','fixture'),(2,'b','airgradient','fixture')");
-  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,2);sqlite.close();
+test('ACEPTACIÓN AQ-02: base rechaza duplicar serial y cambiar identidad',()=>{
+  const {sqlite}=db();sqlite.exec("INSERT INTO sensores(sensor_index,nombre,proveedor,serial_externo) VALUES(1,'a','airgradient','fixture')");
+  assert.throws(()=>sqlite.exec("INSERT INTO sensores(sensor_index,nombre,proveedor,serial_externo) VALUES(2,'b','airgradient','fixture')"));
+  assert.throws(()=>sqlite.exec("UPDATE sensores SET serial_externo='otro' WHERE sensor_index=1"));
+  sqlite.close();
 });
-test('AQ-02: fallback locationId fusiona cuentas sin serial',async()=>{
+test('ACEPTACIÓN AQ-02: cuentas sin serial no escriben identidades ni lecturas',async()=>{
   const {sqlite,env}=db();env.AIRGRADIENT_TOKEN_OPENAQ='fixture-A';env.AIRGRADIENT_TOKEN_SALADILLO='fixture-B';
   const r=await fixtureFetch(()=>mod.ingestAirGradient(env),[ag({serialno:null})]);
-  assert.equal(r.guardados,2);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,1);sqlite.close();
+  assert.equal(r.ok,false);assert.equal(r.guardados,0);assert.equal(r.errores.length,2);
+  assert.match(r.errores[0],/OpenAQ Ambassadors/);assert.match(r.errores[1],/Saladillo/);
+  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,0);sqlite.close();
 });
 test('AQ-12: filtro ausente permite todo; filtro presente descarta ubicación',async()=>{
   const {sqlite,env}=db();env.AIRGRADIENT_TOKEN_OPENAQ='fixture';
@@ -192,4 +199,51 @@ test('API/UI: error HTTP de historial se muestra como sin datos',async()=>{
   const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{innerHTML:'',value:'24h'});return elements.get(id);}
   const ctx=vm.createContext({currentSensorIndex:101,API_BASE:'https://fixture.invalid',histQueryParams:()=> 'range=24h',document:{getElementById:el},t:x=>x,fetch:async()=>new Response(JSON.stringify({error:'fixture D1 error'}),{status:500})});
   vm.runInContext(uiFunction('loadHistorialTable'),ctx);await ctx.loadHistorialTable();assert.match(el('tabla-wrap').innerHTML,/loader_sin_datos/);
+});
+
+// Aceptación adicional AQ-02; no cambia las reproducciones de otros hallazgos.
+test('AQ-02: IDs existentes, metadata manual e historial permanecen',async()=>{
+ const {sqlite,env}=db();
+ sqlite.exec("INSERT INTO sensores(sensor_index,nombre,institucion,activo,proveedor,serial_externo) VALUES(900050,'Manual','Escuela fixture',0,'airgradient','fixture-A'); INSERT INTO lecturas(sensor_index,timestamp,pm2_5) VALUES(900050,'2026-10-01 00:00:00',3)");
+ const id=await mod.getOrAssignSensorIndex(env,'fixture-A',ag());assert.equal(id,900050);
+ await mod.upsertAirGradientSensor(env,id,'fixture-A',ag());
+ const row=sqlite.prepare('SELECT * FROM sensores').get();assert.equal(row.nombre,'Manual');assert.equal(row.institucion,'Escuela fixture');assert.equal(row.activo,0);
+ assert.equal(sqlite.prepare('SELECT pm2_5 FROM lecturas').get().pm2_5,3);sqlite.close();
+});
+test('AQ-02: mismo serial en ambas cuentas mantiene una identidad',async()=>{
+ const {sqlite,env}=db();env.AIRGRADIENT_TOKEN_OPENAQ='fixture-A';env.AIRGRADIENT_TOKEN_SALADILLO='fixture-B';
+ await fixtureFetch(()=>mod.ingestAirGradient(env),[ag()]);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,1);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM lecturas').get().n,1);sqlite.close();
+});
+test('AQ-02: location igual con seriales distintos separa cuentas',async()=>{
+ const {sqlite,env}=db();env.AIRGRADIENT_TOKEN_OPENAQ='fixture-A';env.AIRGRADIENT_TOKEN_SALADILLO='fixture-B';
+ await fixtureFetch(()=>mod.ingestAirGradient(env),url=>new Response(JSON.stringify([ag({serialno:String(url).includes('fixture-A')?'fixture-A':'fixture-B'})])));
+ assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,2);sqlite.close();
+});
+test('AQ-02: reserva evita IDs PurpleAir y ambos upserts rechazan colisión',async()=>{
+ const {sqlite,env}=db();sqlite.exec("INSERT INTO sensores(sensor_index,nombre) VALUES(900100,'PA')");
+ const id=await mod.getOrAssignSensorIndex(env,'fixture-A');assert.equal(id,900101);
+ await assert.rejects(()=>mod.upsertAirGradientSensor(env,900100,'fixture-B',ag()));
+ const r=await fixtureFetch(()=>mod.ingest(env),pa({sensor_index:id}));assert.equal(r.ok,false);assert.equal(r.guardados,0);
+ assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM lecturas').get().n,0);sqlite.close();
+});
+test('AQ-02: sin índice obligatorio no reserva ni escribe',async()=>{
+ const {sqlite,env}=db();sqlite.exec('DROP INDEX idx_sensores_airgradient_serial');
+ await assert.rejects(()=>mod.getOrAssignSensorIndex(env,'fixture-A'));
+ assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,0);sqlite.close();
+});
+test('AQ-02: migración conserva filas y se detiene ante duplicados',()=>{
+ const migration=fs.readFileSync('d1/migration_009_airgradient_identity.sql','utf8');
+ for(const duplicate of [false,true]){
+  const sqlite=new DatabaseSync(':memory:');sqlite.exec(fs.readFileSync('d1/schema.sql','utf8').split('-- AQ-02: aplicar')[0]);
+  sqlite.exec("INSERT INTO sensores(sensor_index,nombre,proveedor,serial_externo) VALUES(900010,'Manual','airgradient','fixture-A'); INSERT INTO lecturas(sensor_index,timestamp,pm2_5) VALUES(900010,'2026-10-01 00:00:00',3)");
+  if(duplicate)sqlite.exec("INSERT INTO sensores(sensor_index,nombre,proveedor,serial_externo) VALUES(900020,'Otro','airgradient','fixture-A')");
+  const before=sqlite.prepare('SELECT * FROM sensores ORDER BY sensor_index').all();
+  if(duplicate)assert.throws(()=>sqlite.exec(migration));else sqlite.exec(migration);
+  assert.deepEqual(sqlite.prepare('SELECT * FROM sensores ORDER BY sensor_index').all(),before);
+  assert.equal(sqlite.prepare('SELECT pm2_5 FROM lecturas').get().pm2_5,3);sqlite.close();
+ }
+});
+test('AQ-02: serial ausente, vacío o con espacios se rechaza',async()=>{
+ const {sqlite,env}=db();for(const serial of [undefined,null,'','  ',7,' fixture-A '])await assert.rejects(()=>mod.getOrAssignSensorIndex(env,serial));
+ assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM sensores').get().n,0);sqlite.close();
 });
