@@ -165,7 +165,7 @@ async function fetchAirGradientData(env) {
       if (resp.ok) {
         const data = await resp.json();
         if (Array.isArray(data)) {
-          todasLasLocations = todasLasLocations.concat(data);
+          todasLasLocations = todasLasLocations.concat(data.map(loc => ({...loc, cuentaOrigen: item.name})));
         }
       } else {
         console.error(`Error en token ${item.name} (${resp.status})`);
@@ -178,19 +178,26 @@ async function fetchAirGradientData(env) {
   return todasLasLocations;
 }
 
-async function getOrAssignSensorIndex(env, serial) {
+async function getOrAssignSensorIndex(env, serial, loc = {}) {
+  if (typeof serial !== 'string' || !serial.trim() || serial !== serial.trim()) {
+    throw new Error('Serial físico ausente o ambiguo; no se usa locationId como identidad');
+  }
+  // Reserva dentro de una sola sentencia. El índice UNIQUE es obligatorio:
+  // sin migration_009, el ON CONFLICT falla antes de escribir.
+  await env.DB.prepare(
+    `INSERT INTO sensores (sensor_index, nombre, proveedor, serial_externo)
+     SELECT MAX(COALESCE(MAX(sensor_index), 900000), 900000) + 1, ?, 'airgradient', ?
+     FROM sensores WHERE 1
+     ON CONFLICT(serial_externo) WHERE proveedor = 'airgradient' AND serial_externo IS NOT NULL
+     DO NOTHING`
+  ).bind(loc.locationName || serial, serial).run();
   const existente = await env.DB.prepare(
     `SELECT sensor_index FROM sensores WHERE serial_externo = ? AND proveedor = 'airgradient'`
   )
     .bind(serial)
     .first();
-  if (existente) return existente.sensor_index;
-
-  const fila = await env.DB.prepare(
-    `SELECT COALESCE(MAX(sensor_index), 900000) + 1 AS siguiente
-     FROM sensores WHERE proveedor = 'airgradient'`
-  ).first();
-  return fila.siguiente;
+  if (!existente || !Number.isSafeInteger(existente.sensor_index)) throw new Error('Identidad no representable');
+  return existente.sensor_index;
 }
 
 async function upsertAirGradientSensor(env, sensorIndex, serial, loc) {
@@ -200,8 +207,8 @@ async function upsertAirGradientSensor(env, sensorIndex, serial, loc) {
      VALUES (?, ?, ?, ?, 'airgradient', ?)
      ON CONFLICT(sensor_index) DO UPDATE SET
        latitud = excluded.latitud,
-       longitud = excluded.longitud,
-       serial_externo = excluded.serial_externo`
+       longitud = excluded.longitud
+     WHERE sensores.proveedor = 'airgradient' AND sensores.serial_externo = excluded.serial_externo`
   )
     .bind(sensorIndex, nombreDefault, loc.latitude ?? null, loc.longitude ?? null, serial)
     .run();
@@ -259,14 +266,14 @@ async function ingestAirGradient(env) {
   let guardados = 0;
   const errores = [];
   for (const loc of locations) {
-    const serial = loc.serialno || String(loc.locationId);
+    const serial = loc.serialno;
     try {
-      const sensorIndex = await getOrAssignSensorIndex(env, serial);
+      const sensorIndex = await getOrAssignSensorIndex(env, serial, loc);
       await upsertAirGradientSensor(env, sensorIndex, serial, loc);
       await insertAirGradientLectura(env, sensorIndex, loc);
       guardados++;
     } catch (err) {
-      errores.push(`AirGradient ${serial}: ${err.message}`);
+      errores.push(`AirGradient ${loc.cuentaOrigen}, location ${loc.locationId}: ${err.message}`);
     }
   }
   return { ok: errores.length === 0, guardados, total: locations.length, errores };

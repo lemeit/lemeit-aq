@@ -93,7 +93,7 @@ dejar un sensor registrado sin lectura; reintentar conserva identidad.
 
 ## Publicación y coordinación
 
-La PR [#11](https://github.com/lemeit/lemeit-aq/pull/11) está publicada, abierta y sin merge. HEAD verificado el 13 de octubre de 2026: `7dfb0425a1efe4cc72a21c0719bfb265df669e5e`; main: `8638fe671c9590c3715fca496ed562035637ee82`. La exclusión de previews de su rama fue acreditada por el titular (ver abajo). Esto no acredita exclusión de otras ramas. Los workflows versionados no reaccionan a push/pull_request. Este documento describe el código propuesto en esa PR; añadirlo a main no incorpora la corrección. La evidencia TAP citada pertenece a la PR #11, no a esta rama documental. Cierre offline y procedimiento futuro: [validación local](AQ02_VALIDACION_LOCAL_D1.md) y [plan operativo](AQ02_PLAN_DESPLIEGUE.md).
+La PR [#11](https://github.com/lemeit/lemeit-aq/pull/11) está publicada, abierta y sin merge. HEAD al publicarse el 13 de octubre de 2026: `7dfb0425a1efe4cc72a21c0719bfb265df669e5e`; base original: `8638fe671c9590c3715fca496ed562035637ee82`. La exclusión de previews de su rama fue acreditada por el titular (ver abajo). Esto no acredita exclusión de otras ramas. Los workflows versionados no reaccionan a push/pull_request. Este documento acompaña el código propuesto en la PR #11. La documentación incorporada previamente a main por la PR #12 no aplicó la corrección de código ni la migración. La evidencia TAP citada pertenece a la PR #11. Cierre offline y procedimiento futuro: [validación local](AQ02_VALIDACION_LOCAL_D1.md) y [plan operativo](AQ02_PLAN_DESPLIEGUE.md).
 
 No hay herramienta de ejecución en Codex Cloud existente en esta sesión;
 se trabajó sobre clon local aislado del main remoto. La validación Cloud sigue

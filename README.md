@@ -254,3 +254,15 @@ Notas para retomar en próximas sesiones de desarrollo (no son parte de la funci
 
 Datos: cortesía de la red comunitaria de sensores [PurpleAir](https://www.purpleair.com), uso educativo/informativo.
 Código: MIT.
+
+
+## AQ-02: propuesta de identidad AirGradient (13 de octubre de 2026)
+
+La rama `fix/aq-02-airgradient-identity` prepara reserva atómica del ID y unicidad
+por serial físico, conservando IDs e historial existentes. Requiere la migración
+009 aprobada y aplicada antes de desplegar el Worker. Sin serial se rechaza la
+entrada: `locationId` no identifica hardware y puede repetirse entre cuentas.
+El origen de cuenta se conserva en memoria para errores; no se guarda el token.
+El filtro global de ubicaciones mantiene su comportamiento actual (AQ-12 pendiente).
+No se afirma integración ni despliegue de esta propuesta. Ver
+[decisión, aceptación y operación](docs/AQ02_CORRECCION.md).
