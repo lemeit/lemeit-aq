@@ -1338,6 +1338,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       aqi_muy_no_saludable: "Muy no saludable",
       aqi_peligrosa: "Peligrosa",
       aqi_sin_datos_card: "Sin datos",
+      card_measurement_note: "Este indicador se calcula a partir de la última medición de PM2.5 del sensor. No representa el promedio del día.",
       card_actualizado: "Actualizado {fecha} (ARG)",
       card_stale_warning: "⚠ Sin datos nuevos hace más de {min} min — el sensor podría estar desconectado",
       card_flip_hint: "toca para ver el gráfico ⟳",
@@ -1559,6 +1560,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       aqi_muy_no_saludable: "Very unhealthy",
       aqi_peligrosa: "Hazardous",
       aqi_sin_datos_card: "No data",
+      card_measurement_note: "This indicator is calculated from the sensor’s latest PM2.5 measurement. It does not represent the daily average.",
       card_actualizado: "Updated {fecha} (ARG)",
       card_stale_warning: "⚠ No new data for over {min} min — the sensor may be offline",
       card_flip_hint: "tap to see the chart ⟳",
@@ -2329,6 +2331,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
               ${aqiGaugeSvg(stale ? null : aqi, info.color)}
             </div>
             <div class="aqi-label">${t("aqi_label")}${infoIconHtml("aqi")}</div>
+            <p class="card-sub">${t("card_measurement_note")}</p>
             <div class="metrics-row">
               <div class="metric">
                 <div class="metric-value">${formatPm25(s.pm2_5)} µg/m³</div>
