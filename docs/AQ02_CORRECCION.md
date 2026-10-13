@@ -1,14 +1,37 @@
-# AQ-02 — Identidad AirGradient: propuesta y aceptación offline
+# AQ-02 — Identidad AirGradient: código fusionado y operación no verificada
 
-13 de octubre de 2026, Argentina. Rama local: `fix/aq-02-airgradient-identity`.
-Base main: `8638fe671c9590c3715fca496ed562035637ee82`, PR #10 fusionado,
+Registro original de preparación, 13 de octubre de 2026, Argentina. Rama: `fix/aq-02-airgradient-identity`.
+Base main original de PR #11: `8638fe671c9590c3715fca496ed562035637ee82`, PR #10 fusionado,
 head de PR #10: `3ec199c98bcc2bf39626476fc19cda03496a734a`.
 Referencia inicial: `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`.
-Comparación: 25 archivos, 2187 líneas agregadas, 64 eliminadas. Worker, D1,
-ingesta Python y workflow de ingesta siguen iguales a la referencia; AQ-01
+Comparación histórica de esa base con la referencia: 25 archivos, 2187 líneas agregadas, 64 eliminadas. Worker, D1,
+ingesta Python y workflow de ingesta eran iguales a la referencia en esa base; AQ-01
 cambió el dashboard. No se infieren correcciones a partir de chats.
 
-## Evidencia de despliegue
+## Estado verificado de código y límites operativos
+
+La [PR #11](https://github.com/lemeit/lemeit-aq/pull/11) figura **MERGED** en GitHub.
+Merge SHA/main verificado: `8d85f9eeac3f2955ebde4f4c5885dab3eb0637dc`.
+Fecha de fusión: `2026-10-13T23:03:22Z` (13 de octubre, 20:03:22 Argentina).
+Worker, schema y archivo de migración 009 de esa PR están integrados en main.
+
+La aplicación de `d1/migration_009_airgradient_identity.sql` a D1 remota y el
+despliegue/versión efectiva del Worker **no están verificados**. No se los declara
+aplicados ni se presume que estén ausentes. Un merge, un check de Pages o la
+presencia del SQL en Git no acreditan la operación D1 ni el despliegue Worker.
+No se ejecutaron consultas productivas, migraciones, ingestas ni despliegues para
+esta actualización documental. El orden operativo autorizado sigue siendo:
+comprobar estado real y respaldo; si corresponde, aprobar/aplicar 009; confirmar
+restricciones; aprobar despliegue Worker. No repetir migración sin esa revisión.
+
+Esta corrección documental fue contrastada con GitHub PR #11 y Git remoto main.
+La descripción de su PR independiente registrará publicación; no cambia código,
+SQL, disparadores ni configuración. Se revisaron PR abiertas: ninguna al preparar
+este cambio. El usuario autorizó expresamente los previews automáticos de Pages al publicar
+las dos PR de este encargo; no se exige exclusión ni se cambia configuración.
+Esta autorización no cubre merge, Worker, D1, ingestas ni operaciones productivas.
+
+## Evidencia histórica de Pages (no acredita D1/Worker AQ-02)
 
 GitHub check Cloudflare Pages `115247005894`, asociado al HEAD, informa
 `success / Deployed successfully`, 13/10/2026 07:21:11 Argentina.
@@ -28,7 +51,7 @@ para el HEAD están vacíos; check-runs sí contiene Pages success.
 
 ## Defecto y decisión
 
-Las reproducciones de main demostraron asignación separada MAX+1, duplicados
+Las reproducciones del main de partida demostraron asignación separada MAX+1, duplicados
 de serial admitidos y colisión de cuentas sin serial. Se convierten en aceptación.
 Se usa un INSERT SELECT único para reservar el ID, tomando máximo de todos los
 proveedores y piso 900000. El índice UNIQUE parcial de serial AirGradient arbitra
@@ -93,13 +116,23 @@ dejar un sensor registrado sin lectura; reintentar conserva identidad.
 
 ## Publicación y coordinación
 
-La PR [#11](https://github.com/lemeit/lemeit-aq/pull/11) está publicada, abierta y sin merge. HEAD al publicarse el 13 de octubre de 2026: `7dfb0425a1efe4cc72a21c0719bfb265df669e5e`; base original: `8638fe671c9590c3715fca496ed562035637ee82`. La exclusión de previews de su rama fue acreditada por el titular (ver abajo). Esto no acredita exclusión de otras ramas. Los workflows versionados no reaccionan a push/pull_request. Este documento acompaña el código propuesto en la PR #11. La documentación incorporada previamente a main por la PR #12 no aplicó la corrección de código ni la migración. La evidencia TAP citada pertenece a la PR #11. Cierre offline y procedimiento futuro: [validación local](AQ02_VALIDACION_LOCAL_D1.md) y [plan operativo](AQ02_PLAN_DESPLIEGUE.md).
+La PR [#11](https://github.com/lemeit/lemeit-aq/pull/11) se publicó con HEAD
+`7dfb0425a1efe4cc72a21c0719bfb265df669e5e`, base original
+`8638fe671c9590c3715fca496ed562035637ee82`, y luego fue fusionada con el SHA
+registrado arriba. La exclusión de previews de su rama fue acreditada por el
+titular; no acredita otras ramas. Los workflows versionados no reaccionan a
+push/pull_request. La PR #12 incorporó previamente documentación, sin aplicar
+código ni migración; la PR #11 sí integró después código y SQL en Git. La evidencia
+TAP citada pertenece a la validación offline de PR #11. Cierre y procedimiento:
+[validación local](AQ02_VALIDACION_LOCAL_D1.md) y [plan operativo](AQ02_PLAN_DESPLIEGUE.md).
 
-No hay herramienta de ejecución en Codex Cloud existente en esta sesión;
-se trabajó sobre clon local aislado del main remoto. La validación Cloud sigue
-pendiente. Coordinación documentada para chats 01/02/03/05; no se enviaron mensajes.
-Sin merge, deploy, migración D1, ingesta, consulta de proveedores ni cambios cron.
-Integración en main, operación D1 y despliegue requieren autorización separada.
+Durante la preparación original de PR #11 se trabajó sobre un clon local
+sin ejecución directa en Codex Cloud existente. Esta es una limitación histórica
+de esa evidencia, no una descripción del entorno actual. La operación productiva
+D1/Worker continúa sin verificar en este informe. La actualización documental
+solo lee Git/GitHub; no ejecuta merge, deploy, migración D1, ingesta, consulta de
+proveedores ni cambios cron. Toda operación productiva requiere autorización
+separada; el código fusionado no sustituye esa autorización.
 
 
 ### Condición de publicación acreditada
@@ -108,6 +141,17 @@ El titular confirmó que guardó la exclusión y aportó una captura de Pages qu
 muestra `fix/aq-02-airgradient-identity` en **Exclude Preview branches**, con
 Custom branches seleccionado e inclusión `*`. La captura y confirmación del
 usuario acreditan la condición para publicar; no constituyen lectura API de
-Cloudflare ni verificación del Worker. Se autoriza publicar rama y PR, sin merge,
-despliegue, migración D1 ni ingesta. El estado de publicación definitivo se
-registra en la PR.
+Cloudflare ni verificación del Worker. La autorización original permitió publicar esa rama y PR sin ejecutar despliegue,
+migración D1 ni ingesta. La fusión posterior se constata en el estado verificado
+arriba; no demuestra que esas operaciones productivas se hayan ejecutado.
+
+## Validación de esta actualización documental
+
+Criterios de aceptación: README y este informe describen PR #11 fusionada con
+SHA/fecha exactos; código y SQL versionados se distinguen de migración aplicada
+y Worker desplegado; la evidencia histórica y sus límites se conservan.
+Se verificaron los enlaces relativos, ausencia del estado obsoleto
+«abierta y sin merge», git diff --check y diff limitado a los dos documentos.
+No se necesitan ejecutar servicios o pruebas de producción para esta corrección.
+Reversión: retirar este commit documental mediante otra PR autorizada; no hay
+datos que restaurar. Publicar o fusionar requiere respetar los disparadores Pages.
