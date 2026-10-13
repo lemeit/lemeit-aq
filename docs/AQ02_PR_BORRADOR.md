@@ -18,7 +18,9 @@ y AQ02_ACEPTACION.tap para evidencia, límites, orden operativo y reversión.
 
 Base: 8638fe671c9590c3715fca496ed562035637ee82, PR #10 fusionado. GitHub Pages check
 informa success para esa base; acceso Cloudflare real a la cuenta del proyecto
-falla con Authentication error. Worker desplegado y preview exclusion pendientes.
+falla con Authentication error. Worker desplegado pendiente de verificar directamente.
 
-Publicación detenida hasta acreditar exclusión de previews para la rama
-fix/aq-02-airgradient-identity. Sin push, merge, migración D1, ingesta ni despliegue.
+El titular confirmó que guardó la exclusión exacta de previews para
+`fix/aq-02-airgradient-identity` y aportó captura que la muestra en Exclude Preview
+branches. Condición acreditada por el usuario; no mediante API Cloudflare.
+Se publica rama y PR para revisión. Sin merge, migración D1, ingesta ni despliegue.

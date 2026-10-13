@@ -105,3 +105,14 @@ se trabajó sobre clon local aislado del main remoto. La validación Cloud sigue
 pendiente. Coordinación documentada para chats 01/02/03/05; no se enviaron mensajes.
 Sin merge, deploy, migración D1, ingesta, consulta de proveedores ni cambios cron.
 Integración en main, operación D1 y despliegue requieren autorización separada.
+
+
+### Condición de publicación acreditada
+
+El titular confirmó que guardó la exclusión y aportó una captura de Pages que
+muestra `fix/aq-02-airgradient-identity` en **Exclude Preview branches**, con
+Custom branches seleccionado e inclusión `*`. La captura y confirmación del
+usuario acreditan la condición para publicar; no constituyen lectura API de
+Cloudflare ni verificación del Worker. Se autoriza publicar rama y PR, sin merge,
+despliegue, migración D1 ni ingesta. El estado de publicación definitivo se
+registra en la PR.
