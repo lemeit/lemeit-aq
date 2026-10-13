@@ -430,10 +430,6 @@
   .card-val { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1; }
   .card-unit { font-family: var(--font-display); font-size: 10px; color: var(--text-dim); margin-left: 2px; }
 
-  function formatPm25(pm) {
-    return pm25ToAqi(pm) === null ? "—" : String(pm);
-  }
-
   /* ── MAPA ── */
   #mapa-container { height: 400px; width: 100%; position: relative; z-index: 1; }
   @media (max-width: 640px) {
@@ -2032,6 +2028,10 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     // EPA TAD tabla 6, nota 4: por encima de 500 usar la misma pendiente.
     const index = Math.round(iLo + ((concentration - cLo) / (cHi - cLo)) * (iHi - iLo));
     return Number.isFinite(index) ? index : null;
+  }
+
+  function formatPm25(pm) {
+    return pm25ToAqi(pm) === null ? "—" : String(pm);
   }
 
   function formatAqi(aqi) {
