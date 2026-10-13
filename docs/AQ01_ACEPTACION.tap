@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: AQ-01 aceptación: todos los extremos de tabla EPA, incluidos 301–500
+ok 1 - AQ-01 aceptación: todos los extremos de tabla EPA, incluidos 301–500
+  ---
+  duration_ms: 3.120673
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: huecos originales desaparecen por truncamiento, no redondeo de PM
+ok 2 - AQ-01 aceptación: huecos originales desaparecen por truncamiento, no redondeo de PM
+  ---
+  duration_ms: 1.044886
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: interpolación y redondeo del índice
+ok 3 - AQ-01 aceptación: interpolación y redondeo del índice
+  ---
+  duration_ms: 1.562065
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: inválidos no se convierten a 300 ni a 0
+ok 4 - AQ-01 aceptación: inválidos no se convierten a 300 ni a 0
+  ---
+  duration_ms: 0.716849
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: extrapolación EPA >500, redondeo y saturación visual
+ok 5 - AQ-01 aceptación: extrapolación EPA >500, redondeo y saturación visual
+  ---
+  duration_ms: 1.814222
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: todas las décimas son monotónicas y enteras dentro de 0–500
+ok 6 - AQ-01 aceptación: todas las décimas son monotónicas y enteras dentro de 0–500
+  ---
+  duration_ms: 61.256607
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: inversa en todos los extremos y errores definidos
+ok 7 - AQ-01 aceptación: inversa en todos los extremos y errores definidos
+  ---
+  duration_ms: 7.692778
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: seis categorías y colores, sin rojo para inválidos
+ok 8 - AQ-01 aceptación: seis categorías y colores, sin rojo para inválidos
+  ---
+  duration_ms: 6.387321
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: gauge completo, numérico y neutro ante inválidos
+ok 9 - AQ-01 aceptación: gauge completo, numérico y neutro ante inválidos
+  ---
+  duration_ms: 8.976422
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: mapa, etiqueta PM, leyenda y cards usan la misma clasificación
+ok 10 - AQ-01 aceptación: mapa, etiqueta PM, leyenda y cards usan la misma clasificación
+  ---
+  duration_ms: 4.798743
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: gráfico usa inversa actual, seis bandas y extremo >escala
+ok 11 - AQ-01 aceptación: gráfico usa inversa actual, seis bandas y extremo >escala
+  ---
+  duration_ms: 1.641815
+  type: 'test'
+  ...
+# Subtest: AQ-01 aceptación: aviso bilingüe no promete AQI diario, NowCast ni período del proveedor
+ok 12 - AQ-01 aceptación: aviso bilingüe no promete AQI diario, NowCast ni período del proveedor
+  ---
+  duration_ms: 0.594429
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 137.965699
