@@ -129,6 +129,46 @@ CF_API_TOKEN=...        # con permiso D1:Edit
 
 ## Dashboard
 
+### Origen y cálculo del indicador PM2.5 (AQI)
+
+**El cálculo se hace en el navegador**, en [`index.html`](index.html), función
+`pm25ToAqi(s.pm2_5)`. El Worker y la ingesta Python guardan PM2.5 y la API
+devuelve esa concentración; no calculan ni almacenan el AQI.
+
+PurpleAir aporta `pm2.5` y AirGradient aporta `pm02`; ambos se guardan como
+`lecturas.pm2_5`, tratado como **µg/m³**. No se aplica una corrección local por
+humedad, calibración ni promedio de canales A/B. La vista `v_ultima_lectura`
+selecciona `MAX(timestamp)` por sensor y `/api/ultimas` entrega esa fila.
+El dashboard no usa `pm2_5_10min` ni `pm2_5_60min` para el indicador.
+
+La concentración se trunca a una décima y se interpola entre los extremos
+de `PM25_AQI_BREAKPOINTS`; luego `Math.round` redondea el índice al entero:
+`I = round(Ilo + (C − Clo) / (Chi − Clo) × (Ihi − Ilo))`.
+
+| PM2.5 truncado (µg/m³) | Índice |
+| --- | --- |
+| 0.0–9.0 | 0–50 |
+| 9.1–35.4 | 51–100 |
+| 35.5–55.4 | 101–150 |
+| 55.5–125.4 | 151–200 |
+| 125.5–225.4 | 201–300 |
+| 225.5–325.4 | 301–500 |
+
+Ejemplo: `12.05 µg/m³ → 12.0 → 56`. Entradas inválidas se muestran sin dato.
+Por encima de 325.4 se extrapola con la pendiente del último tramo; si el
+índice redondeado supera 500, se muestra `>500`. Fuente de la escala:
+[EPA/AirNow, TAD mayo 2026, sección IV y tabla 6](https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf).
+
+El valor deriva de la **última lectura disponible en el sistema**, no de un
+promedio del día. El código no calcula AQI diario ni NowCast, ni acredita una
+ventana de integración concreta de `pm2.5`/`pm02` del proveedor. Los rangos
+24h/7d/30d del gráfico filtran filas históricas; no cambian este cálculo.
+El timestamp procede de `last_seen` (PurpleAir) o `timestamp` (AirGradient),
+no de la hora de consulta. La UI lo interpreta como UTC y muestra hora argentina;
+la normalización AirGradient tiene limitaciones con offsets y fechas inválidas.
+
+Ver [trazabilidad técnica, timestamps, comparación con la auditoría y validación](docs/AQI_TRAZABILIDAD.md).
+
 El archivo `index.html` (raíz del repo) es un single-file HTML estático que consulta el Worker de Cloudflare vía fetch/JSON. No requiere backend propio. Deployado en Cloudflare Pages (`wrangler pages deploy`).
 
 Funcionalidad: tarjetas clickeables con el estado actual de cada sensor (AQI, PM2.5, temperatura, humedad), gráfico histórico con selector de rango (24h / 7d / 30d), overlay opcional de canales A/B del sensor (para detectar divergencia o degradación), exportación a CSV, y tema claro/oscuro persistido en `localStorage`.
