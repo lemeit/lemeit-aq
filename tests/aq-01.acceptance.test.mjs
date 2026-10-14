@@ -132,10 +132,11 @@ test('AQ-01 aceptación: gráfico usa inversa actual, seis bandas y extremo >esc
   assert.equal(colors.length,6);assert.ok(bounds.includes(9));assert.ok(bounds.includes(125.4));
   assert.ok(bounds.includes(225.4));assert.ok(bounds.includes(400));assert.ok(bounds.every(Number.isFinite));
 });
-test('AQ-01 aceptación: aviso bilingüe no promete AQI diario, NowCast ni período del proveedor', () => {
+test('AQ-01 aceptación: aviso breve bilingüe y ayuda explican última medición', () => {
   assert.match(html,/data-i18n="aqi_sample_note"/);
-  assert.match(html,/no es AQI diario ni NowCast/);
-  assert.match(html,/not daily AQI or NowCast/);
-  assert.match(html,/Sample period unverified/);
-  assert.match(html,/Período de la muestra no verificado/);
+  assert.match(html,/Este valor refleja la última medición del sensor\. No representa el promedio del día\./);
+  assert.match(html,/This value reflects the sensor’s latest measurement\. It does not represent the daily average\./);
+  assert.match(html,/Indicador calculado a partir de la última medición de PM2\.5 del sensor disponible en el sistema/);
+  assert.doesNotMatch(html,/Período de la muestra no verificado|Sample period unverified/);
+  assert.doesNotMatch(html,/<strong>No es AQI diario ni NowCast|<strong>This is not daily AQI or NowCast/);
 });

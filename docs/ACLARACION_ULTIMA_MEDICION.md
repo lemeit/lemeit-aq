@@ -1,5 +1,10 @@
 # Aclaración general del indicador: última medición, no promedio diario
 
+> Registro histórico de la PR #16. El texto y la prueba descritos debajo fueron
+> reemplazados por la aclaración breve y la trazabilidad documentadas en
+> [AQI_TRAZABILIDAD.md](AQI_TRAZABILIDAD.md). No usar estas frases históricas como
+> descripción de la interfaz propuesta actual.
+
 Base verificada: main `e42fe013d565ec67898a70609b114ad6abf1dc93`.
 Rama correctiva: `fix/aclaracion-general-indicador`.
 

@@ -9,12 +9,12 @@ root=Path(__file__).resolve().parents[1]
 now=datetime.now(timezone.utc)
 rows=[{'sensor_index':990001+i,'nombre':'Fixture '+str(i),'institucion':'Datos sintéticos','proveedor':'purpleair','pm2_5':8,'timestamp':(now-timedelta(minutes=m)).strftime('%Y-%m-%d %H:%M:%S')} for i,m in enumerate([0,120])]
 old_card='Este indicador se calcula a partir de la última medición de PM2.5 del sensor. No representa el promedio del día.'
-text_es='Indicador calculado a partir de la última medición de PM2.5 del sensor, en escala EPA. No representa el promedio del día; no es AQI diario ni NowCast. Período de la muestra no verificado.'
-text_en='Indicator calculated from the sensor’s latest PM2.5 measurement on the EPA scale. It does not represent the daily average; it is not daily AQI or NowCast. Sample period unverified.'
+text_es='Este valor refleja la última medición del sensor. No representa el promedio del día.'
+text_en='This value reflects the sensor’s latest measurement. It does not represent the daily average.'
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],headless=True)
  for baseline in [True,False]:
-  html=subprocess.run(['git','show','e42fe013d565ec67898a70609b114ad6abf1dc93:index.html'],cwd=root,capture_output=True,text=True,check=True).stdout if baseline else root.joinpath('index.html').read_text()
+  html=subprocess.run(['git','show','2b5d44b990ca573ac8251a48be87983579fccec1:index.html'],cwd=root,capture_output=True,text=True,check=True).stdout if baseline else root.joinpath('index.html').read_text()
   html=html.replace('const API_BASE = "https://api.lemeit.ar/aq";', 'const API_BASE = "http://fixture.invalid";')
   c=b.new_context(service_workers='block',viewport={'width':390,'height':844})
   requests=[]
@@ -28,15 +28,16 @@ with sync_playwright() as p:
   page.goto('http://fixture.invalid/?pwa=1',wait_until='networkidle')
   page.wait_for_function('latestSensors.length===2')
   if baseline:
-   assert page.locator('#sensor-grid').get_by_text(old_card,exact=True).count()==2
+   assert 'Período de la muestra no verificado' in page.locator('[data-i18n=aqi_sample_note]').inner_text()
    assert page.locator('[data-i18n=aqi_sample_note]').inner_text()!=text_es
-   print('Reproducción main: texto añadido a tarjetas; aclaración general previa')
+   print('Reproducción main: aviso general extenso')
   else:
    for width in [390,1440]:
     page.set_viewport_size({'width':width,'height':844})
     page.evaluate("setLang('es')")
     assert page.locator('[data-i18n=aqi_sample_note]').inner_text()==text_es
     assert page.locator('[data-i18n=aqi_sample_note]').is_visible()
+    assert 'NowCast' not in page.locator('[data-i18n=aqi_sample_note]').inner_text()
     assert page.locator('#sensor-grid').get_by_text(old_card,exact=True).count()==0
     assert page.locator('#sensor-grid p.card-sub').count()==0
     assert page.locator('#sensor-grid').get_by_text('Sin datos',exact=True).count()==1

@@ -899,7 +899,7 @@
 </div>
 
 <main>
-  <p class="muted" style="margin-bottom:12px;font-size:12px" data-i18n="aqi_sample_note">Indicador calculado a partir de la última medición de PM2.5 del sensor, en escala EPA. No representa el promedio del día; no es AQI diario ni NowCast. Período de la muestra no verificado.</p>
+  <p class="muted" style="margin-bottom:12px;font-size:12px" data-i18n="aqi_sample_note">Este valor refleja la última medición del sensor. No representa el promedio del día.</p>
 
   <div class="section" id="tab-actuales">
     <div class="grid" id="sensor-grid"></div>
@@ -1319,7 +1319,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
 
       info_aqi_title: "Indicador PM2.5 en escala EPA",
       info_aqi_body_html: `
-        <p>Indicador calculado a partir de la última medición de PM2.5 del sensor disponible en el sistema, usando los tramos EPA/AirNow. No representa el promedio del día. <strong>No es AQI diario ni NowCast.</strong> El período efectivo de esa muestra no está verificado; no se presupone un promedio horario ni de 24 horas.</p><p>Se trunca PM2.5 a una décima, se interpola y se redondea el índice. Entradas inválidas se muestran sin dato. Por encima del último tramo se extrapola con su pendiente. Los índices superiores a 500 se muestran como &gt;500, con categoría peligrosa y aguja saturada; un cálculo no representable queda sin dato.</p>
+        <p>Indicador calculado a partir de la última medición de PM2.5 del sensor disponible en el sistema, usando los tramos EPA/AirNow. No representa el promedio del día.</p><p>Se trunca PM2.5 a una décima, se interpola y se redondea el índice. Entradas inválidas se muestran sin dato. Por encima del último tramo se extrapola con su pendiente. Los índices superiores a 500 se muestran como &gt;500, con categoría peligrosa y aguja saturada; un cálculo no representable queda sin dato.</p>
         <ul>
           <li>Cada tramo tiene un color y una categoría (Buena, Moderada, Grupos sensibles, No saludable...) — el detalle completo está en la ficha de cada sensor.</li>
           <li>Distintos países usan escalas de AQI algo distintas (EPA de EE.UU., India, China...) — esta red usa la escala de la <strong>EPA de EE.UU.</strong>, la más difundida internacionalmente.</li>
@@ -1329,7 +1329,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       info_aqi_sources_html: 'Fuente: <a href="https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf" target="_blank">EPA/AirNow — TAD, tabla 6 y sección IV</a>',
 
       aqi_label: "Indicador PM2.5 · escala EPA",
-      aqi_sample_note: "Indicador calculado a partir de la última medición de PM2.5 del sensor, en escala EPA. No representa el promedio del día; no es AQI diario ni NowCast. Período de la muestra no verificado.",
+      aqi_sample_note: "Este valor refleja la última medición del sensor. No representa el promedio del día.",
       aqi_sin_dato: "Sin dato",
       aqi_buena: "Buena",
       aqi_moderada: "Moderada",
@@ -1540,7 +1540,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
 
       info_aqi_title: "PM2.5 indicator on the EPA scale",
       info_aqi_body_html: `
-        <p>Indicator calculated from the sensor’s latest PM2.5 measurement available in the system using EPA/AirNow breakpoints. It does not represent the daily average. <strong>This is not daily AQI or NowCast.</strong> The sample period has not been verified; no hourly or 24-hour average is assumed.</p><p>PM2.5 is truncated to one decimal, interpolated, and the index is rounded. Invalid inputs show no data. Above the last breakpoint, its slope is extrapolated. Indices above 500 display &gt;500 with a hazardous category and a saturated needle; an unrepresentable calculation shows no data.</p>
+        <p>Indicator calculated from the sensor’s latest PM2.5 measurement available in the system using EPA/AirNow breakpoints. It does not represent the daily average.</p><p>PM2.5 is truncated to one decimal, interpolated, and the index is rounded. Invalid inputs show no data. Above the last breakpoint, its slope is extrapolated. Indices above 500 display &gt;500 with a hazardous category and a saturated needle; an unrepresentable calculation shows no data.</p>
         <ul>
           <li>Each band has a color and a category (Good, Moderate, Sensitive groups, Unhealthy...) — the full detail is on each sensor's card.</li>
           <li>Different countries use somewhat different AQI scales (US EPA, India, China...) — this network uses the <strong>US EPA</strong> scale, the most widely used internationally.</li>
@@ -1550,7 +1550,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       info_aqi_sources_html: 'Source: <a href="https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf" target="_blank">EPA/AirNow — TAD, table 6 and section IV</a>',
 
       aqi_label: "PM2.5 indicator · EPA scale",
-      aqi_sample_note: "Indicator calculated from the sensor’s latest PM2.5 measurement on the EPA scale. It does not represent the daily average; it is not daily AQI or NowCast. Sample period unverified.",
+      aqi_sample_note: "This value reflects the sensor’s latest measurement. It does not represent the daily average.",
       aqi_sin_dato: "No data",
       aqi_buena: "Good",
       aqi_moderada: "Moderate",
