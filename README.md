@@ -14,6 +14,12 @@ Diagnóstico independiente y pruebas offline sin dependencias: [docs/HEALTHCHECK
 
 ## Sensores
 
+### Instalación en escuelas
+
+Las [guías de instalación AE-02 y las copias editables AE-01 para Escuela Lola Mora](docs/instalacion/README.md)
+están disponibles en la documentación del repositorio. El índice incluye su
+integridad y la advertencia sobre la tabla AQI histórica de los documentos.
+
 Cada sensor físico se registra en la tabla `sensores` (nombre, institución, coordenadas, estado activo/inactivo, proveedor), independiente de la serie de lecturas — así se pueden dar de baja o agregar sensores sin perder el historial. El listado de instituciones vivas se administra desde ahí, no está hardcodeado en el dashboard.
 
 **Flota PurpleAir (agosto 2026)**: el autor tiene 5 unidades PurpleAir Flex en total. Una sola está instalada y activa online hoy; las otras 4 están pendientes de instalación/configuración en distintas instituciones. Como todo el hardware es Flex (sensor de gas BME688 incluido), el campo VOC debería poblarse en todos los sensores a medida que se vayan sumando — no es una excepción de un solo sensor. Esas 4 unidades fueron una donación de [PurpleAir Collective](https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771) (convocatoria de mitad de 2024, en base a una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda).
