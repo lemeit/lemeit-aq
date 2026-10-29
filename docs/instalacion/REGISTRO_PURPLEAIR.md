@@ -18,7 +18,7 @@ No se escriben ni migran valores de `fecha_instalacion` en D1. Registrar una fec
 | AE-02 | 298701 | `f0:24:f9:c2:cf:2d` | 05/10/2026 | -35.63495676824009 | -59.7735131464144 |
 | AE-03 | 298691 | `fc:f5:c4:ae:ca:d6` | 28/10/2026 | -35.640825 | -59.778565 |
 
-Los tres se registraron como exteriores (`Outside`), públicos (`Public`), con intervalo de envío del proveedor por defecto (~90 s). Este intervalo no es la frecuencia de ingesta de LEMEIT ni modifica sus disparadores.
+Los correos de AE-01, AE-02, AE-03 y la actualización AE-00 de 2026 registran equipos como exteriores (`Outside`), públicos (`Public`), con intervalo de envío del proveedor por defecto (~90 s). Este intervalo no es la frecuencia de ingesta de LEMEIT ni modifica sus disparadores.
 
 Los correos informan que el equipo estaba online y transmitía **al momento del envío**; no acreditan conectividad actual, montaje físico ni ubicación definitiva. Las coordenadas anteriores son las declaradas al registrar el equipo, no una constatación de campo. Conservar todos sus decimales al transcribir.
 
@@ -30,9 +30,10 @@ La wiki mostraba 06/10/2026 como «Alta» de AE-01 y AE-02 sin distinguir el eve
 
 - **28/11/2023, 19:06 según el correo:** primera configuración como `saladillo_home`. Se identifica el hardware por MAC/Device ID `c8:c9:a3:f:93:af`. Ese correo no muestra sensor index; se vincula al registro posterior por la identidad física, no se inventa un índice histórico.
 - **03/12/2024, 15:34 según el correo:** confirmación de registro como `Madre Teresa High School`, sensor index **198617**, mismo Device ID. Coordenadas de ese registro escolar: **-35.66630, -59.80716**. El titular confirma que antes estuvo más de un año en su domicilio y después lo trasladó a la escuela; el intervalo entre ambos correos no prueba continuidad de funcionamiento.
+- **29/10/2026, 12:27 según el correo aportado:** nueva confirmación de registro con nombre `AE-00 | app.lemeit.ar`, mismo sensor index **198617** y Device ID `c8:c9:a3:f:93:af`. Coordenadas declaradas: **-35.6663, -59.80716**, numéricamente iguales a las del registro escolar de 2024; elevación declarada **42.3987 m**. Exterior, público, intervalo de envío por defecto (~90 s). El correo declara transmisión al momento de envío. Es un cambio de nombre/actualización de registro, no una nueva alta inicial ni una fecha de instalación física. El enlace del nombre apunta a `app.lemeit.ar` (portal general); la dirección específica de Aire Escolar es `https://app.lemeit.ar/aq/`.
 - **Instalación/reubicación futura en el lugar seleccionado:** fecha pendiente. El 03/12/2024 acredita una confirmación de registro/configuración escolar y no se impone como fecha exacta de montaje físico. AE-00 conserva su identidad al cambiar de institución o ubicación.
 
-Las coordenadas del domicilio particular, contactos personales, claves de lectura y enlaces con parámetros de acceso de los correos quedan excluidos de esta documentación pública y de las guías. Se usa la ubicación escolar declarada en 2024, sin acreditar que siga vigente. Los correos no detallan el modelo de AE-00; la captura posterior de su tarjeta PurpleAir aportada por el titular muestra **PA-II-FLEX**. Las guías usan ese modelo con dicha evidencia.
+Las coordenadas del domicilio particular, contactos personales, claves de lectura y enlaces con parámetros de acceso de los correos quedan excluidos de esta documentación pública y de las guías. Se documentan las coordenadas escolares declaradas en 2024 y confirmadas de nuevo en el registro del 29/10/2026; no acreditan montaje físico ni constatación de campo. Los correos no detallan el modelo de AE-00; la captura posterior de su tarjeta PurpleAir aportada por el titular muestra **PA-II-FLEX**. Las guías usan ese modelo con dicha evidencia.
 
 ## Mini guías
 
