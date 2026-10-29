@@ -16,14 +16,23 @@ Diagnóstico independiente y pruebas offline sin dependencias: [docs/HEALTHCHECK
 
 Cada sensor físico se registra en la tabla `sensores` (nombre, institución, coordenadas, estado activo/inactivo, proveedor), independiente de la serie de lecturas — así se pueden dar de baja o agregar sensores sin perder el historial. El listado de instituciones vivas se administra desde ahí, no está hardcodeado en el dashboard.
 
-**Flota PurpleAir (agosto 2026)**: el autor tiene 5 unidades PurpleAir Flex en total. Una sola está instalada y activa online hoy; las otras 4 están pendientes de instalación/configuración en distintas instituciones. Como todo el hardware es Flex (sensor de gas BME688 incluido), el campo VOC debería poblarse en todos los sensores a medida que se vayan sumando — no es una excepción de un solo sensor. Esas 4 unidades fueron una donación de [PurpleAir Collective](https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771) (convocatoria de mitad de 2024, en base a una propuesta de necesidad presentada por el autor — el proyecto quedó en 2° puesto de esa ronda).
+**Flota PurpleAir (actualización 28/10/2026)**: cinco unidades Flex en el inventario del titular. AE-00 (198617), AE-01 (298687, instalación física pendiente), AE-02 (298701, operativo) y AE-03 (298691, Instituto Niño Jesús, online y visible según titular); AE-04 reservado para Del Valle, sin sensor_index. D1 confirma lecturas recientes de AE-02/AE-03; AE-00/AE-01 tienen lecturas antiguas. Ver [inventario y evidencia por estación](docs/INVENTARIO_ESTACIONES.md). Cuatro unidades proceden de la donación de [PurpleAir Collective](https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771).
 
-**Flota AirGradient (agosto 2026)**: el autor tiene 3 unidades AirGradient en total, pero solo 2 corresponden a la red de Saladillo (la tercera está instalada en la UTN La Plata, otra institución/ciudad, y queda excluida del dashboard vía `AIRGRADIENT_LOCATION_IDS` — ver más abajo). De las 2 de Saladillo, una está en interior (domicilio del autor, ya reportando) y la otra (kit DIY) todavía no está instalada — la ubicación actual en el mapa es provisoria hasta que se defina dónde va a quedar montada. A diferencia de PurpleAir, AirGradient sí mide **CO2** (sensor NDIR), que se suma como parámetro nuevo en tarjetas, gráfico, mapa e historial.
+**Flota AirGradient (antecedente de agosto 2026)**: el autor tiene 3 unidades AirGradient en total, pero solo 2 corresponden a la red de Saladillo (la tercera está instalada en la UTN La Plata, otra institución/ciudad, y queda excluida del dashboard vía `AIRGRADIENT_LOCATION_IDS` — ver más abajo). De las 2 de Saladillo, una está en interior (domicilio del autor, ya reportando) y la otra (kit DIY) todavía no está instalada — la ubicación actual en el mapa es provisoria hasta que se defina dónde va a quedar montada. A diferencia de PurpleAir, AirGradient sí mide **CO2** (sensor NDIR), que se suma como parámetro nuevo en tarjetas, gráfico, mapa e historial.
+
+Estado verificado al 28/10/2026: D1 conserva AirGradient **900002 y 900003**, ambos con lecturas antiguas; no se acredita conexión actual ni instalación definitiva del kit. La descripción de agosto es histórica. Ver [inventario vigente](docs/INVENTARIO_ESTACIONES.md).
+
+## Alta PurpleAir e incidente AE-03
+
+El titular confirmó AE-03 registrado en D1 y visible en el portal. Rotate de `SENSOR_INDEXES` creó una versión nueva y faltaba promoverla. Se verificaron registro y lectura reciente con SELECT directo, sin escribir D1; la causa y visibilidad del portal son confirmaciones del titular. **AE-03 aún tiene `codigo` vacío en D1**, aunque su nombre es AE-03.
+
+Seguir el [procedimiento de alta, respaldo completo de la lista, activación y reversión](docs/OPERACION_PURPLEAIR.md). Rotar por sí solo no activó la nueva versión en este incidente; comprobar siempre el deployment efectivo. Nunca revelar secretos ni sustituir a ciegas la lista por un único índice. Toda operación productiva requiere autorización explícita.
 
 ## Arquitectura
 
 ```
-Un solo disparador activo (septiembre 2026), más dos en reserva:
+Estado histórico informado en septiembre 2026; no revalidado en este corte:
+Un solo disparador activo, más dos en reserva:
   · cron-job.org (externo)    :12 :27 :42 :57  → POST /api/ingest-ahora   [ACTIVO]
   · Cloudflare Cron Trigger   :03 :18 :33 :48  → Worker.scheduled()      [registrado, no dispara — bug de Cloudflare]
   · GitHub Actions schedule   :07 :22 :37 :52  → ingest_purpleair.py     [pausado manualmente, ver "Historia" abajo]
@@ -62,6 +71,8 @@ Además de PurpleAir, el Worker ahora ingesta datos de sensores **AirGradient** 
 **Multi-token AirGradient (agosto 2026)**: los sensores del autor están repartidos en dos organizaciones/cuentas distintas de AirGradient — "OpenAQ Ambassadors" (donación institucional) y "Saladillo" (cuenta personal). El Worker consulta ambos tokens por separado (`AIRGRADIENT_TOKEN_OPENAQ`, `AIRGRADIENT_TOKEN_SALADILLO`) y combina los resultados, en vez de depender de un único `AIRGRADIENT_API_TOKEN` (nombre usado en una versión anterior de este documento — ya no existe). Por eso, además, el `sensor_index` sintético de AirGradient se asigna buscando primero por `serial_externo` (el serial físico del hardware, único de fábrica) en vez de por `locationId` (que no es único entre las dos cuentas).
 
 ## Ingesta
+
+Los estados de disparadores descritos a continuación son antecedentes de septiembre, no una verificación operativa actual. El endpoint del cron externo invoca solo PurpleAir; la incorporación de AE-03 no cierra AQ-05 ni acredita cobertura automática de AirGradient.
 
 Los tres caminos automáticos hacen lo mismo (consultar `api.purpleair.com/v1/sensors` y guardar en D1); pueden convivir sin riesgo de duplicar **filas** (ver la nota de dedupe en "Base de datos" más abajo), pero cada uno que dispare consume su propia llamada a la API de PurpleAir — por eso, desde septiembre 2026, solo queda uno activo (ver "Pausa de GitHub Actions por costo de puntos de la API" arriba).
 
@@ -278,7 +289,7 @@ Ideas pendientes de evaluar e implementar, anotadas para no perderlas entre sesi
 - ~~**Nombres institucionales para los sensores AirGradient**~~ — se pueden corregir manualmente en la tabla `sensores` (ver "Cómo editar sensores manualmente en D1" más abajo) y quedan firmes: el `ON CONFLICT` del upsert de AirGradient nunca toca `nombre` ni `institucion` después del primer insert.
 - ~~**Logos de atribución (OpenAQ, PurpleAir, AirGradient)**~~ — implementado en agosto 2026, ver "Dashboard" arriba. Reflejarlo también en los proyectos correspondientes de profe.lemeit.ar sigue pendiente, sin apuro.
 - **Ampliar los parámetros expuestos en historial/mapa**: PurpleAir y AirGradient reportan más campos de los que hoy se muestran — promedios de PM2.5 a 10min/60min y señal WiFi (`rssi`) ya se guardan en `lecturas` pero no se exponen en la UI (sin costo de migración); conteo de partículas por tamaño (0.3–10µm, ambos proveedores) y voltaje/entrada analógica (`analog_input`, solo PurpleAir) requerirían columnas nuevas. Evaluado en agosto 2026, pendiente de decidir alcance.
-- ~~**Simplificar la triple redundancia de ingesta**~~ — implementado en septiembre 2026: se pausó el `schedule:` de GitHub Actions (quedó `workflow_dispatch` solo) y **cron-job.org** es hoy el único disparador activo, para no pagar doble en puntos de la API de PurpleAir con los 4 sensores nuevos por sumarse — ver "Pausa de GitHub Actions por costo de puntos de la API" arriba. El Cron Trigger de Cloudflare sigue registrado pero sin disparar `scheduled()`; revisar de tanto en tanto la pestaña Observability del Worker por si el bug se resuelve solo, y reactivar GitHub Actions descomentando su `schedule:` si cron-job.org llegara a fallar.
+- ~~**Simplificar la triple redundancia de ingesta**~~ — implementado en septiembre 2026: se pausó el `schedule:` de GitHub Actions (quedó `workflow_dispatch` solo) y **cron-job.org** quedó registrado entonces como único disparador activo, para no pagar doble en puntos de la API de PurpleAir ante la ampliación prevista entonces — ver "Pausa de GitHub Actions por costo de puntos de la API" arriba. El Cron Trigger de Cloudflare sigue registrado pero sin disparar `scheduled()`; revisar de tanto en tanto la pestaña Observability del Worker por si el bug se resuelve solo, y reactivar GitHub Actions descomentando su `schedule:` si cron-job.org llegara a fallar.
 
 ## Contexto institucional y proyectos futuros
 

@@ -1,5 +1,7 @@
 > Estado vigente: [fase 2C](HEALTHCHECK_FASE_2C.md) permite exclusivamente el stub estático `/aq/api` con evidencia y autorización actual. El bloqueo y las restricciones de publicación descritos abajo son históricos.
 
+> Operación 28/10/2026: ver [inventario verificado por SELECT directo](INVENTARIO_ESTACIONES.md) y [alta PurpleAir/reversión](OPERACION_PURPLEAIR.md). No usar el healthcheck público para validar AE-03 bajo restricción de solo lectura: registra visitas en D1. API y dashboard permanecen sin comprobación independiente en este corte.
+
 # Diagnóstico AQ — fase 2A
 
 > Actualización 2026-10-12: [fase 2B](HEALTHCHECK_FASE_2B.md) mantiene bloqueada la ruta

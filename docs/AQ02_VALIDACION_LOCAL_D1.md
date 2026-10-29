@@ -1,5 +1,7 @@
 # AQ-02 — Validación local de migración 009
 
+> Actualización 28/10/2026: las cantidades de este documento son fixtures históricos. El [inventario operativo verificado](INVENTARIO_ESTACIONES.md) tiene seis sensores registrados, incluido AE-03. Esta verificación no acredita la migración 009 ni el despliegue de AQ-02.
+
 Fecha: 13 de octubre de 2026, Argentina. Resultado: **aceptación offline satisfactoria; validación sobre copia productiva pendiente**.
 
 ## Estado comprobado
