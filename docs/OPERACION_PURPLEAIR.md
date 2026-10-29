@@ -43,3 +43,7 @@ No borrar AE-03, lecturas ni sensores históricos para revertir la configuració
 - Se distingue confirmación del usuario, verificación directa y controles pendientes.
 - Diff limitado a Markdown; enlaces relativos comprobados contra el árbol del repositorio; no cambios en código, workflows, schema, frecuencia ni configuración.
 - No se acredita solución de AQ-03/04/05/06, migración 009 ni despliegue del HEAD por la incorporación de AE-03.
+
+## Registro documental de fechas y coordenadas
+
+Al conservar la confirmación de PurpleAir, transcribir únicamente código, modelo, sensor_index, Device ID, fecha de alta y coordenadas declaradas. Excluir claves de lectura y credenciales. **Alta PurpleAir e instalación física son eventos diferentes**: la fecha de registro va en Observaciones de la guía; el montaje real se completa en «Fecha de instalación». No copiar automáticamente una fecha a la otra ni escribir D1 para ajustar documentación. Ver [registro de altas](instalacion/REGISTRO_PURPLEAIR.md).

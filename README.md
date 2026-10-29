@@ -14,6 +14,8 @@ Diagnóstico independiente y pruebas offline sin dependencias: [docs/HEALTHCHECK
 
 ## Sensores
 
+Fechas de **registro en PurpleAir**, Device ID y coordenadas declaradas: [registro documental](docs/instalacion/REGISTRO_PURPLEAIR.md). AE-00: alta inicial 28/11/2023 y registro escolar 03/12/2024; AE-01 y AE-02: 05/10/2026; AE-03: 28/10/2026. Son distintas de la instalación física en cada escuela, que se completa por separado.
+
 Cada sensor físico se registra en la tabla `sensores` (nombre, institución, coordenadas, estado activo/inactivo, proveedor), independiente de la serie de lecturas — así se pueden dar de baja o agregar sensores sin perder el historial. El listado de instituciones vivas se administra desde ahí, no está hardcodeado en el dashboard.
 
 **Flota PurpleAir (actualización 28/10/2026)**: cinco unidades Flex en el inventario del titular. AE-00 (198617), AE-01 (298687, instalación física pendiente), AE-02 (298701, operativo) y AE-03 (298691, Instituto Niño Jesús, online y visible según titular); AE-04 reservado para Del Valle, sin sensor_index. D1 confirma lecturas recientes de AE-02/AE-03; AE-00/AE-01 tienen lecturas antiguas. Ver [inventario y evidencia por estación](docs/INVENTARIO_ESTACIONES.md). Cuatro unidades proceden de la donación de [PurpleAir Collective](https://community.purpleair.com/t/purpleair-collective-june-july-2024/8771).

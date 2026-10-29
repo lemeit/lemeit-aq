@@ -42,3 +42,9 @@ Las auditorías, resultados TAP y fixtures históricos conservan sus cantidades 
 El entorno Codex Cloud existente no está expuesto por las herramientas de esta sesión; la revisión y el PR documental se realizan mediante el conector GitHub sobre refs exactas, sin crear otro entorno cloud.
 
 Ver [incidente, alta segura y reversión](OPERACION_PURPLEAIR.md).
+
+## Altas PurpleAir documentadas el 29/10/2026
+
+Los correos aportados por el titular respaldan AE-01 (298687) y AE-02 (298701): **05/10/2026**; AE-03 (298691): **28/10/2026**. Ver [Device ID, coordenadas declaradas y criterios de fecha](instalacion/REGISTRO_PURPLEAIR.md). Esta actualización no revalida conectividad ni altera el corte D1 anterior. El alta en PurpleAir no es la fecha de instalación física, que sigue registrándose por separado.
+
+AE-00 (198617, Device ID `c8:c9:a3:f:93:af`): correo de primera configuración como `saladillo_home` del 28/11/2023; confirmación posterior como `Madre Teresa High School` del 03/12/2024, tras el traslado informado por el titular. Ese registro escolar declara -35.66630, -59.80716; no prueba ubicación actual ni fecha exacta del montaje. La futura instalación/reubicación queda pendiente. Se omiten coordenadas del domicilio y contactos personales. Historial y evidencia en el [registro documental](instalacion/REGISTRO_PURPLEAIR.md).
