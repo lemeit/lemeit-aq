@@ -2227,7 +2227,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       }).addTo(mapaInst).on("click", () => flipMapaCard(s.sensor_index, nombre));
     });
 
-    mapaCards.innerHTML = conCoords.map((s) => {
+    mapaCards.innerHTML = sortSensorCards(conCoords).map((s) => {
       const card = document.createElement("div");
       card.className = "card";
       card.dataset.sensorIndex = s.sensor_index;
@@ -2383,6 +2383,31 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       `;
   }
 
+  // Orden de presentación únicamente; no modifica latestSensors ni la selección.
+  // Ver docs/ORDEN_TARJETAS.md para fuentes y desempates.
+  function sortSensorCards(sensors) {
+    const text = (value) => typeof value === "string" ? value.trim() : "";
+    const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+    const digits = (value) => value.replace(/^0+(?=\d)/, "");
+    const numericCompare = (a, b) => a.length - b.length || compare(a, b);
+    const key = (sensor) => {
+      const ae = /^AE-(\d+)$/.exec(text(sensor.nombre)) ||
+        /^AE-(\d+)$/.exec(text(sensor.codigo));
+      const id = String(sensor.sensor_index ?? "");
+      return { group: ae ? 0 : sensor.proveedor === "purpleair" ? 2 : 1,
+        ae: ae ? digits(ae[1]) : "", id, numericId: /^\d+$/.test(id) ? digits(id) : null };
+    };
+    return sensors.map((sensor, index) => ({ sensor, index, key: key(sensor) }))
+      .sort((a, b) => {
+        const x = a.key, y = b.key;
+        return x.group - y.group || numericCompare(x.ae, y.ae) ||
+          (x.numericId !== null && y.numericId !== null
+            ? numericCompare(x.numericId, y.numericId)
+            : x.numericId !== null ? -1 : y.numericId !== null ? 1 : compare(x.id, y.id)) ||
+          compare(x.id, y.id) || a.index - b.index;
+      }).map((entry) => entry.sensor);
+  }
+
   function renderGrid(sensors) {
     const grid = document.getElementById("sensor-grid");
     grid.innerHTML = "";
@@ -2392,7 +2417,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       return;
     }
 
-    sensors.forEach((s) => {
+    sortSensorCards(sensors).forEach((s) => {
       const card = document.createElement("div");
       card.className = "card";
       card.dataset.sensorIndex = s.sensor_index;
