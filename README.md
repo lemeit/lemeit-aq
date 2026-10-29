@@ -320,3 +320,7 @@ Sin serial se rechaza la entrada: `locationId` no identifica hardware y puede
 repetirse entre cuentas. El origen de cuenta se conserva en memoria para errores;
 no se guarda el token. El filtro global de ubicaciones mantiene su comportamiento
 actual (AQ-12 pendiente). Ver [decisión, aceptación y operación](docs/AQ02_CORRECCION.md).
+
+## Orden de tarjetas
+
+Las tarjetas priorizan AE por número usando `nombre` y, como fallback, `codigo`, sin cambiar proveedor ni selección. Los AE actuales son PurpleAir. Criterios, evidencia, pruebas offline y bloqueo de previews: [docs/ORDEN_TARJETAS.md](docs/ORDEN_TARJETAS.md).
