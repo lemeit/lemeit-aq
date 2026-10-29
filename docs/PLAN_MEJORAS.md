@@ -1,5 +1,7 @@
 # Plan de mejoras — LEMEIT · AQ
 
+> Seguimiento 28/10/2026: [inventario y corte de producción](INVENTARIO_ESTACIONES.md), [incidente AE-03 y operación segura](OPERACION_PURPLEAIR.md). El alta de AE-03 no cierra AQ-05; código de estación vacío en D1 pendiente de corrección autorizada. Mantener separados los estados históricos de esta planificación y la evidencia de cada PR.
+
 **Referencia:** [AUDITORIA_TECNICA.md](AUDITORIA_TECNICA.md), commit `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`.  
 **Fecha inicial:** 2026-10-10. **Estado de todas las tareas:** pendientes; ninguna corrección se considera implementada por este documento.
 
