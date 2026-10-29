@@ -32,7 +32,7 @@ La wiki mostraba 06/10/2026 como «Alta» de AE-01 y AE-02 sin distinguir el eve
 - **03/12/2024, 15:34 según el correo:** confirmación de registro como `Madre Teresa High School`, sensor index **198617**, mismo Device ID. Coordenadas de ese registro escolar: **-35.66630, -59.80716**. El titular confirma que antes estuvo más de un año en su domicilio y después lo trasladó a la escuela; el intervalo entre ambos correos no prueba continuidad de funcionamiento.
 - **Instalación/reubicación futura en el lugar seleccionado:** fecha pendiente. El 03/12/2024 acredita una confirmación de registro/configuración escolar y no se impone como fecha exacta de montaje físico. AE-00 conserva su identidad al cambiar de institución o ubicación.
 
-Las coordenadas del domicilio particular, contactos personales, claves de lectura y enlaces con parámetros de acceso de los correos quedan excluidos de esta documentación pública y de las guías. Se usa la ubicación escolar declarada en 2024, sin acreditar que siga vigente. El modelo específico de AE-00 no figura en estos correos: la guía indica «modelo a confirmar».
+Las coordenadas del domicilio particular, contactos personales, claves de lectura y enlaces con parámetros de acceso de los correos quedan excluidos de esta documentación pública y de las guías. Se usa la ubicación escolar declarada en 2024, sin acreditar que siga vigente. Los correos no detallan el modelo de AE-00; la captura posterior de su tarjeta PurpleAir aportada por el titular muestra **PA-II-FLEX**. Las guías usan ese modelo con dicha evidencia.
 
 ## Mini guías
 
