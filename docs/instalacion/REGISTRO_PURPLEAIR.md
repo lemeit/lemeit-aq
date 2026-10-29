@@ -30,7 +30,8 @@ La wiki mostraba 06/10/2026 como «Alta» de AE-01 y AE-02 sin distinguir el eve
 
 - **28/11/2023, 19:06 según el correo:** primera configuración como `saladillo_home`. Se identifica el hardware por MAC/Device ID `c8:c9:a3:f:93:af`. Ese correo no muestra sensor index; se vincula al registro posterior por la identidad física, no se inventa un índice histórico.
 - **03/12/2024, 15:34 según el correo:** confirmación de registro como `Madre Teresa High School`, sensor index **198617**, mismo Device ID. Coordenadas de ese registro escolar: **-35.66630, -59.80716**. El titular confirma que antes estuvo más de un año en su domicilio y después lo trasladó a la escuela; el intervalo entre ambos correos no prueba continuidad de funcionamiento.
-- **29/10/2026, 12:27 según el correo aportado:** nueva confirmación de registro con nombre `AE-00 | app.lemeit.ar`, mismo sensor index **198617** y Device ID `c8:c9:a3:f:93:af`. Coordenadas declaradas: **-35.6663, -59.80716**, numéricamente iguales a las del registro escolar de 2024; elevación declarada **42.3987 m**. Exterior, público, intervalo de envío por defecto (~90 s). El correo declara transmisión al momento de envío. Es un cambio de nombre/actualización de registro, no una nueva alta inicial ni una fecha de instalación física. El enlace del nombre apunta a `app.lemeit.ar` (portal general); la dirección específica de Aire Escolar es `https://app.lemeit.ar/aq/`.
+- **29/10/2026, 12:27 según el correo aportado:** nueva confirmación de **registro escolar en PurpleAir** con nombre `AE-00 | app.lemeit.ar`, mismo sensor index **198617** y Device ID `c8:c9:a3:f:93:af`. Coordenadas declaradas: **-35.6663, -59.80716**, numéricamente iguales a las del registro escolar de 2024; elevación declarada **42.3987 m**. Exterior, público, intervalo de envío por defecto (~90 s). El correo declara transmisión al momento de envío. Es un cambio de nombre/actualización de registro, no una nueva alta inicial ni una fecha de instalación física. El enlace del nombre apunta a `app.lemeit.ar` (portal general); la dirección específica de Aire Escolar es `https://app.lemeit.ar/aq/`.
+- **Situación física confirmada por el titular el 29/10/2026:** AE-00 permanece en su domicilio; todavía no fue llevado al lugar escolar seleccionado para esta instalación/reubicación. Las coordenadas escolares son las declaradas en PurpleAir y no representan la ubicación física actual del equipo.
 - **Instalación/reubicación futura en el lugar seleccionado:** fecha pendiente. El 03/12/2024 acredita una confirmación de registro/configuración escolar y no se impone como fecha exacta de montaje físico. AE-00 conserva su identidad al cambiar de institución o ubicación.
 
 Las coordenadas del domicilio particular, contactos personales, claves de lectura y enlaces con parámetros de acceso de los correos quedan excluidos de esta documentación pública y de las guías. Se documentan las coordenadas escolares declaradas en 2024 y confirmadas de nuevo en el registro del 29/10/2026; no acreditan montaje físico ni constatación de campo. Los correos no detallan el modelo de AE-00; la captura posterior de su tarjeta PurpleAir aportada por el titular muestra **PA-II-FLEX**. Las guías usan ese modelo con dicha evidencia.
@@ -41,16 +42,16 @@ Se mantienen diseño original y diez campos editables. Los códigos de la etique
 
 La versión imprimible conserva el pie negro en negrita. La tabla AQI heredada se conserva por fidelidad al original y es histórica; no corresponde al primer tramo actual descrito en [trazabilidad AQI](../AQI_TRAZABILIDAD.md). No usar esta incorporación documental como validación de sus indicaciones escolares.
 
-- [AE-01 - Digital Color](Mini%20Guia%20AE-01%20-%20Lola%20Mora%20-%20Digital%20Color%20-%20registro%20actualizado.pdf).
-- [AE-01 - Impresion](Mini%20Guia%20AE-01%20-%20Lola%20Mora%20-%20Impresion%20-%20registro%20actualizado.pdf).
-- [AE-02 - Digital Color](Mini%20Guia%20AE-02%20-%20Manuel%20Pardal%20-%20Digital%20Color%20-%20registro%20actualizado.pdf).
-- [AE-02 - Impresion](Mini%20Guia%20AE-02%20-%20Manuel%20Pardal%20-%20Impresion%20-%20registro%20actualizado.pdf).
-- [AE-03 - Digital Color](Mini%20Guia%20AE-03%20-%20Instituto%20Nino%20Jesus%20-%20Digital%20Color%20-%20registro%20actualizado.pdf).
-- [AE-03 - Impresion](Mini%20Guia%20AE-03%20-%20Instituto%20Nino%20Jesus%20-%20Impresion%20-%20registro%20actualizado.pdf).
+- [AE-01 - Digital Color](Mini%20Guia%20AE-01%20-%20Lola%20Mora%20-%20Digital%20Color.pdf).
+- [AE-01 - Impresion](Mini%20Guia%20AE-01%20-%20Lola%20Mora%20-%20Impresion.pdf).
+- [AE-02 - Digital Color](Mini%20Guia%20AE-02%20-%20Manuel%20Pardal%20-%20Digital%20Color.pdf).
+- [AE-02 - Impresion](Mini%20Guia%20AE-02%20-%20Manuel%20Pardal%20-%20Impresion.pdf).
+- [AE-03 - Digital Color](Mini%20Guia%20AE-03%20-%20Instituto%20Nino%20Jesus%20-%20Digital%20Color.pdf).
+- [AE-03 - Impresion](Mini%20Guia%20AE-03%20-%20Instituto%20Nino%20Jesus%20-%20Impresion.pdf).
 
-- [AE-00 - Digital Color](Mini%20Guia%20AE-00%20-%20Madre%20Teresa%20-%20Digital%20Color%20-%20registro%20actualizado.pdf).
+- [AE-00 - Digital Color](Mini%20Guia%20AE-00%20-%20Madre%20Teresa%20-%20Digital%20Color.pdf).
 
-- [AE-00 - Impresion](Mini%20Guia%20AE-00%20-%20Madre%20Teresa%20-%20Impresion%20-%20registro%20actualizado.pdf).
+- [AE-00 - Impresion](Mini%20Guia%20AE-00%20-%20Madre%20Teresa%20-%20Impresion.pdf).
 
 ## Verificación de esta actualización
 
@@ -64,4 +65,4 @@ Base AQ consultada: `2b3032976e49c5e75f2f4153f6803c522af3ecff`, 19 commits por d
 
 Usar este registro como fuente de las fechas del proveedor; [inventario](../INVENTARIO_ESTACIONES.md), README y wiki remiten aquí. Nuevos datos requieren fuente y evento identificado. No incorporar claves de lectura, tokens, contraseñas, contactos privados ni correos completos a Git o PDF.
 
-Al actualizar una guía completada, conservar los valores ya cargados por la escuela. Las nuevas copias se guardan con nombre diferente para no sobrescribir las anteriores.
+Mantener únicamente dos guías por sensor: Digital Color e Impresion, con nombres fijos y sin sufijos de versión. Las revisiones sustituyen esas copias; Git conserva el historial. Antes de actualizar una guía completada, conservar los valores ya cargados por la escuela. Se retiran las copias antiguas por instrucción explícita del titular.
