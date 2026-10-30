@@ -369,7 +369,8 @@ equivale a validar sensores ni APIs productivas.
 
 ## Leyenda compacta AQI
 
-La propuesta de [barra segmentada](docs/BARRA_AQI_MAPA.md) sustituye la lista
+La [barra segmentada](docs/BARRA_AQI_MAPA.md), [PR #26](https://github.com/lemeit/lemeit-aq/pull/26)
+fusionado y desplegado con éxito en `0f5d5bb`, sustituye la lista
 visible de círculos/categorías bajo el mapa: título **AQI · EPA**, seis colores
 existentes y límites **0/50/100/150/200/300/500+**. Gris «Sin datos recientes»
 separado de la escala, sin considerarlo categoría AQI. Se conservan información

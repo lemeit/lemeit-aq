@@ -120,3 +120,13 @@ con seis segmentos/colores y límites derivados de categorías actuales, gris
 separado y descripción accesible. No cambia marcadores, otras capas, cálculo,
 frescura ni orden. Leaflet real offline: 320/390/1440, ES/EN y temas; despliegue
 autorizado, con verificación real posterior, sin operaciones de datos.
+
+
+### Resultado verificado de la barra AQI
+
+[PR #26](https://github.com/lemeit/lemeit-aq/pull/26) fusionado en
+`0f5d5bb305a66d817ca8a3814de5606e243ee920`; Pages
+`38ea7eb2-febf-42e5-8459-8f6fb42d1c76` success, canónico con ese SHA. HTML
+estático de 190501 bytes idéntico al probado; [hash, evidencia y límites](BARRA_AQI_MAPA.md#estado-real-verificado--30102026).
+Sin cambios en otras capas ni datos. El seguimiento documental mantiene el
+mismo runtime y su canónico final se comprueba en su PR.

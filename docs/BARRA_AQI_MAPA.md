@@ -1,5 +1,29 @@
 # Leyenda AQI en barra segmentada
 
+## Estado real verificado — 30/10/2026
+
+[PR #26](https://github.com/lemeit/lemeit-aq/pull/26) fusionado con expected HEAD
+`900450c619dca75331b6fe9c370d2923d2b93dee`, sin conflictos/checks pendientes,
+mensaje explícito sin skip heredado. Main funcional:
+`0f5d5bb305a66d817ca8a3814de5606e243ee920`, árbol
+`66dd4f4d9c16d61e86cdcd678ab8fd6c633a808f`, idéntico al checkout probado.
+
+Pages deployment `38ea7eb2-febf-42e5-8459-8f6fb42d1c76`: deploy `success`,
+`is_skipped=false`, canónico con el mismo SHA. Configuración sin cambios.
+La rama omitió preview por mensaje (registro
+`087cd671-3410-4542-b523-0cfbcaccba52`), como estaba previsto.
+
+GET exclusivo del HTML estático de Pages sin ejecutar JS: **190501 bytes**
+idénticos al `index.html` probado. SHA256
+`362c096d48d4a9e13418cfa469baa67292ca3f81c86920ed66cf9b59c997d198`.
+Se verifican barra segmentada y referencia de gris fuera de escala en ese
+contenido. Sin `/api/*`, ingestas, migraciones ni escrituras D1.
+
+Este corte documenta el despliegue funcional. El seguimiento exclusivamente
+documental posterior conserva HTML/runtime; se revalida su canónico final y se
+registra el resultado en el PR. Las secciones siguientes mantienen decisión,
+pruebas y procedimiento, no una afirmación de validación de sensores productivos.
+
 ## Decisión y base
 
 El titular solicita sustituir la lista de círculos/categorías bajo el mapa
