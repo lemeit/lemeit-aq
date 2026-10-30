@@ -326,3 +326,16 @@ actual (AQ-12 pendiente). Ver [decisión, aceptación y operación](docs/AQ02_CO
 ## Orden de tarjetas
 
 Las tarjetas priorizan AE por número usando `nombre` y, como fallback, `codigo`, sin cambiar proveedor ni selección. Los AE actuales son PurpleAir. Criterios, evidencia, pruebas offline y bloqueo de previews: [docs/ORDEN_TARJETAS.md](docs/ORDEN_TARJETAS.md).
+
+## Frescura en mapa y tarjetas
+
+Propuesta AQ-09: lecturas válidas de hasta **25 minutos inclusive** conservan su
+color AQI. Al superar ese límite, o con fecha inválida/futura, el marcador pasa
+a gris y la tarjeta permanece visible con mediciones atenuadas, estado **«Sin
+datos recientes»** y última actualización. El popup conserva la fecha de última
+medición. La frescura se reevalúa localmente cada segundo y al volver a la
+pestaña, aunque falle la API/red o no termine una petición; se recupera al recibir
+una lectura reciente. No se alteran datos ni estado administrativo: falta de
+señal puede ser equipo apagado, internet o proveedor/API; una baja requiere una
+decisión explícita. Regla, reproducción, aceptación, pruebas y bloqueo de
+publicación por previews: [docs/FRESCURA_SENSORES.md](docs/FRESCURA_SENSORES.md).

@@ -268,6 +268,10 @@
     box-sizing: border-box;
   }
 
+  /* Atenuar mediciones, manteniendo estado y fecha legibles. */
+  .sensor-stale .metrics-row { opacity: .65; filter: grayscale(1); }
+  .sensor-stale { border-style: dashed; }
+
   .card-back {
     position: absolute;
     inset: 0;
@@ -873,9 +877,9 @@
   <div class="header-right">
     <div class="status">
       <div class="dot" id="dot" data-i18n-title="status_dot_title" title="Conexión con la API"></div>
-      <span id="status-online-count" data-i18n-title="status_online_title" title="Sensores en línea">–</span>
+      <span id="status-online-count" data-i18n-title="status_online_title" title="Sensores con datos recientes">–</span>
       <span id="status-offline-group" style="display:none">
-        <span class="dot error" data-i18n-title="status_offline_title" title="Sensores fuera de línea"></span><span id="status-offline-count"></span>
+        <span class="dot error" data-i18n-title="status_offline_title" title="Sensores sin datos recientes"></span><span id="status-offline-count"></span>
       </span>
     </div>
     <div class="lm-switcher" id="lm-switcher">
@@ -1168,8 +1172,8 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       header_titulo_short: "Aire Escolar",
       header_sub: "Red de sensores de calidad del aire en instituciones educativas de la Provincia de Buenos Aires",
       status_dot_title: "Conexión con la API",
-      status_online_title: "Sensores en línea",
-      status_offline_title: "Sensores fuera de línea",
+      status_online_title: "Sensores con datos recientes",
+      status_offline_title: "Sensores sin datos recientes",
       portales_btn: "Portales ⌄",
       theme_toggle_title: "Cambiar tema claro/oscuro",
       lang_toggle_title: "Switch to English",
@@ -1337,9 +1341,11 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       aqi_no_saludable: "No saludable",
       aqi_muy_no_saludable: "Muy no saludable",
       aqi_peligrosa: "Peligrosa",
-      aqi_sin_datos_card: "Sin datos",
+      aqi_sin_datos_card: "Sin datos recientes",
       card_actualizado: "Actualizado {fecha} (ARG)",
-      card_stale_warning: "⚠ Sin datos nuevos hace más de {min} min — el sensor podría estar desconectado",
+      card_stale_warning: "Sin datos recientes. Puede deberse al sensor, internet o al proveedor/API.",
+      timestamp_unknown: "Fecha no disponible",
+      last_measurement: "Última medición: {fecha} (ARG)",
       card_flip_hint: "toca para ver el gráfico ⟳",
       card_back_close: "✕ volver",
       card_back_title: "{nombre} · PM2.5 (µg/m³) · 24h",
@@ -1389,8 +1395,8 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       header_titulo_short: "School Air",
       header_sub: "Air quality sensor network in educational institutions of Buenos Aires Province",
       status_dot_title: "Connection to the API",
-      status_online_title: "Sensors online",
-      status_offline_title: "Sensors offline",
+      status_online_title: "Sensors with recent data",
+      status_offline_title: "Sensors without recent data",
       portales_btn: "Portals ⌄",
       theme_toggle_title: "Toggle light/dark theme",
       lang_toggle_title: "Cambiar a español",
@@ -1558,9 +1564,11 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       aqi_no_saludable: "Unhealthy",
       aqi_muy_no_saludable: "Very unhealthy",
       aqi_peligrosa: "Hazardous",
-      aqi_sin_datos_card: "No data",
+      aqi_sin_datos_card: "No recent data",
       card_actualizado: "Updated {fecha} (ARG)",
-      card_stale_warning: "⚠ No new data for over {min} min — the sensor may be offline",
+      card_stale_warning: "No recent data. The sensor, internet or provider/API may be unavailable.",
+      timestamp_unknown: "Date unavailable",
+      last_measurement: "Last measurement: {fecha} (ARG)",
       card_flip_hint: "tap to see the chart ⟳",
       card_back_close: "✕ back",
       card_back_title: "{nombre} · PM2.5 (µg/m³) · 24h",
@@ -1908,10 +1916,15 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   function toBsAs(timestampStr) {
-    // El timestamp viene de D1 como "YYYY-MM-DD HH:MM:SS" en UTC, sin sufijo de zona.
-    // Le agregamos "Z" para que JS lo interprete como UTC antes de convertir.
-    const iso = timestampStr.replace(" ", "T") + "Z";
-    return new Date(iso);
+    // D1 sin zona se interpreta como UTC; ISO con zona conserva su offset.
+    // Validar calendario evita normalizar silenciosamente 30 de febrero.
+    if (typeof timestampStr !== "string") return new Date(NaN);
+    const match = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})?$/.exec(timestampStr);
+    if (!match) return new Date(NaN);
+    const local = `${match[1]}T${match[2]}${match[3] || ""}`;
+    const calendar = new Date(local + "Z");
+    if (!Number.isFinite(calendar.getTime()) || calendar.toISOString().slice(0, 19) !== local.slice(0, 19)) return new Date(NaN);
+    return new Date(local + (match[4] || "Z"));
   }
 
   function formatBsAsTime(timestampStr) {
@@ -1923,8 +1936,11 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   function formatBsAsFull(timestampStr) {
-    return toBsAs(timestampStr).toLocaleString("es-AR", {
+    const date = toBsAs(timestampStr);
+    if (!Number.isFinite(date.getTime())) return t("timestamp_unknown");
+    return date.toLocaleString("es-AR", {
       timeZone: "America/Argentina/Buenos_Aires",
+      year: "numeric",
       day: "2-digit",
       month: "2-digit",
       hour: "2-digit",
@@ -1932,9 +1948,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     });
   }
 
-  // Margen sobre el cron de ingesta (corre cada 15 min): si pasó más de esto
-  // sin una lectura nueva, lo más probable es que el sensor esté
-  // desconectado (o la API de PurpleAir no lo esté reportando).
+  // Reciente: edad válida entre 0 y 25 min inclusive. No implica estado administrativo.
   const STALE_MINUTES = 25;
 
   function minutosSinDato(timestampStr) {
@@ -1942,7 +1956,32 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   function isStale(timestampStr) {
-    return minutosSinDato(timestampStr) > STALE_MINUTES;
+    const age = minutosSinDato(timestampStr);
+    return !Number.isFinite(age) || age < 0 || age > STALE_MINUTES;
+  }
+
+  // Actualización local sin fetch: conserva selección y orden.
+  // Solo reemplaza el frente cuando cambia reciente/antiguo, incluso sin respuestas.
+  let refreshMapaLayers = null;
+  function refreshSensorFreshness() {
+    let changed = false;
+    latestSensors.forEach((s) => {
+      const stale = String(isStale(s.timestamp));
+      document.querySelectorAll(`.card[data-sensor-index="${s.sensor_index}"]`).forEach((card) => {
+        const front = card.querySelector(".card-front");
+        if (!front || front.dataset.stale === stale) return;
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = buildSensorCardInner(s, "");
+        front.replaceWith(wrapper.querySelector(".card-front"));
+        changed = true;
+      });
+    });
+    const oldCount = document.getElementById("status-offline-count").textContent;
+    const staleCount = latestSensors.filter((s) => isStale(s.timestamp)).length;
+    document.getElementById("status-online-count").textContent = String(latestSensors.length - staleCount);
+    document.getElementById("status-offline-count").textContent = String(staleCount);
+    document.getElementById("status-offline-group").style.display = staleCount ? "" : "none";
+    if (refreshMapaLayers && (changed || oldCount !== String(staleCount))) refreshMapaLayers();
   }
 
   // ── GAUGE (velocímetro) de AQI ──
@@ -2070,12 +2109,13 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
 
   function computeMapaDomain(conCoords, param) {
     if (param === "aqi" || param === "pm2_5") return null; // usa bandas fijas de aqiInfo
-    const vals = conCoords.map((s) => MAPA_PARAMS[param].get(s)).filter((v) => v != null);
+    const vals = conCoords.filter((s) => !isStale(s.timestamp)).map((s) => MAPA_PARAMS[param].get(s)).filter((v) => v != null);
     if (!vals.length) return null;
     return { min: Math.min(...vals), max: Math.max(...vals) };
   }
 
   function colorForParam(s, param, domain, cs) {
+    if (isStale(s.timestamp)) return "#808080";
     if (param === "aqi" || param === "pm2_5") {
       const info = aqiInfo(pm25ToAqi(s.pm2_5));
       return cs.getPropertyValue(info.color.replace("var(", "").replace(")", "")).trim() || info.color;
@@ -2105,18 +2145,19 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   function renderMapaLegend(param, domain) {
     const legend = document.getElementById("mapa-legend");
     if (!legend) return;
+    legend.innerHTML = `<span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:#808080"></span>${t("aqi_sin_datos_card")}</span>`;
     const def = MAPA_PARAMS[param];
     if (param === "aqi" || param === "pm2_5") {
-      legend.innerHTML = AQI_CATEGORIES.map((category) =>
+      legend.innerHTML += AQI_CATEGORIES.map((category) =>
         `<span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(${category.colorVar})"></span>${t(category.key)}</span>`
       ).join("");
       return;
     }
     if (!domain) {
-      legend.innerHTML = `<span class="mapa-legend-item">${t("mapa_sin_datos_escala", { label: paramLabel(param).toLowerCase() })}</span>`;
+      legend.innerHTML += `<span class="mapa-legend-item">${t("mapa_sin_datos_escala", { label: paramLabel(param).toLowerCase() })}</span>`;
       return;
     }
-    legend.innerHTML = `
+    legend.innerHTML += `
       <span class="mapa-legend-item">${domain.min}${unitSuffix(def)}</span>
       <span class="mapa-legend-gradient"></span>
       <span class="mapa-legend-item">${domain.max}${unitSuffix(def)}</span>
@@ -2191,6 +2232,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const param = selParam.value || "aqi";
 
     if (!conCoords.length) {
+      refreshMapaLayers = null;
       mapaCards.innerHTML = `<div class="loader">${t("mapa_sin_coords")}</div>`;
       renderMapaLegend(param, null);
       return;
@@ -2199,33 +2241,50 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const domain = computeMapaDomain(conCoords, param);
     renderMapaLegend(param, domain);
 
+    const freshnessUpdates = [];
     conCoords.forEach((s) => {
-      const color = colorForParam(s, param, domain, cs);
+      let color = colorForParam(s, param, domain, cs);
       const nombre = s.institucion || s.nombre;
       const aqi = pm25ToAqi(s.pm2_5);
       const info = aqiInfo(aqi);
+      let stale = isStale(s.timestamp);
 
-      L.circleMarker([s.latitud, s.longitud], {
-        radius: 14, fillColor: color, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.85,
-      })
-        .addTo(mapaInst)
-        .bindPopup(`
+      const popupHtml = () => `
           <strong style="font-family:monospace">${nombre}</strong><br>
-          PM2.5: ${formatPm25(s.pm2_5)} µg/m³ · ${t("param_aqi")} ${formatAqi(aqi)} (${info.label})<br>
-          <small style="color:#888">${formatBsAsFull(s.timestamp)}</small>
-        `)
-        .on("click", () => flipMapaCard(s.sensor_index, nombre));
+          ${stale ? t("aqi_sin_datos_card") : `PM2.5: ${formatPm25(s.pm2_5)} µg/m³ · ${t("param_aqi")} ${formatAqi(aqi)} (${info.label})`}<br>
+          <small>${t("last_measurement", { fecha: formatBsAsFull(s.timestamp) })}</small>
+        `;
 
-      L.marker([s.latitud, s.longitud], {
-        icon: L.divIcon({
+      const labelIcon = () => L.divIcon({
           html: `<div style="font-family:monospace;font-size:11px;font-weight:700;color:${color};
                  background:${labelBg};padding:1px 4px;border-radius:3px;
                  white-space:nowrap;margin-top:-28px;margin-left:18px;cursor:pointer">
-                 ${formatParamValue(s, param)}</div>`,
+                 ${stale ? t("aqi_sin_datos_card") : formatParamValue(s, param)}</div>`,
           iconSize: [60, 20], iconAnchor: [0, 0], className: "",
-        }),
+        });
+
+      const circle = L.circleMarker([s.latitud, s.longitud], {
+        radius: 14, fillColor: color, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.85,
+      })
+        .addTo(mapaInst)
+        .bindPopup(popupHtml())
+        .on("click", () => flipMapaCard(s.sensor_index, nombre));
+
+      const label = L.marker([s.latitud, s.longitud], {
+        icon: labelIcon(),
       }).addTo(mapaInst).on("click", () => flipMapaCard(s.sensor_index, nombre));
+      freshnessUpdates.push(() => {
+        stale = isStale(s.timestamp);
+        color = colorForParam(s, param, computeMapaDomain(conCoords, param), getComputedStyle(document.documentElement));
+        circle.setStyle({ fillColor: color });
+        circle.setPopupContent(popupHtml());
+        label.setIcon(labelIcon());
+      });
     });
+    refreshMapaLayers = () => {
+      freshnessUpdates.forEach((update) => update());
+      renderMapaLegend(param, computeMapaDomain(conCoords, param));
+    };
 
     mapaCards.innerHTML = sortSensorCards(conCoords).map((s) => {
       const card = document.createElement("div");
@@ -2271,11 +2330,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       renderGrid(data);
       populateSensorSelects();
       if (document.getElementById("tab-mapa").classList.contains("active")) cargarMapa();
-      // "En línea" = reportó una lectura hace menos de STALE_MINUTES (misma
-      // regla que decide el badge "Sin datos" de cada card, ver
-      // buildSensorCardInner) — así el resumen de arriba coincide con lo que
-      // se ve abajo, en vez de contar como "activo" a un sensor que la propia
-      // grilla ya está mostrando como desconectado.
+      // Contadores de frescura de lecturas, independientes de conectividad API.
       const offlineCount = data.filter((s) => isStale(s.timestamp)).length;
       const onlineCount = data.length - offlineCount;
       // Solo el punto (verde/rojo) + el número al lado — nada de texto que
@@ -2291,8 +2346,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       }
       if (dot) { dot.classList.add("ok"); dot.classList.remove("error"); }
     } catch (err) {
-      document.getElementById("status-online-count").textContent = "–";
-      document.getElementById("status-offline-group").style.display = "none";
+      refreshSensorFreshness();
       if (dot) { dot.classList.add("error"); dot.classList.remove("ok"); }
       console.error(err);
     }
@@ -2304,10 +2358,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   function buildSensorCardInner(s, idPrefix) {
     const stale = isStale(s.timestamp);
     const aqi = pm25ToAqi(s.pm2_5);
-    // Si el sensor está desconectado (sin lecturas nuevas hace rato), no
-    // mostramos un color/etiqueta de calidad de aire "Buena/Moderada/..." —
-    // ese dato quedó viejo y ya no refleja el aire actual. En su lugar, un
-    // badge neutro (gris, --text-dim) que avisa que no hay datos recientes.
+    // Sin fecha reciente válida, no presentar un AQI histórico como actual.
     const info = stale
       ? { label: t("aqi_sin_datos_card"), color: "var(--text-dim)", bg: "transparent" }
       : aqiInfo(aqi);
@@ -2317,7 +2368,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const provBadge = PROVIDER_BADGE[s.proveedor || "purpleair"];
     return `
         <div class="card-inner">
-          <div class="card-face card-front">
+          <div class="card-face card-front${stale ? " sensor-stale" : ""}" data-stale="${stale}">
             <div class="card-top">
               <div>
                 <div class="card-name">${s.institucion || s.nombre}</div>
@@ -3353,6 +3404,9 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   applyStaticTranslations();
   buildParamToggle();
   loadSensors();
+  setInterval(refreshSensorFreshness, 1000); // reloj local independiente de la red
+  document.addEventListener("visibilitychange", refreshSensorFreshness);
+  window.addEventListener("pageshow", refreshSensorFreshness);
   setInterval(loadSensors, 5 * 60 * 1000); // refresca cada 5 min
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
