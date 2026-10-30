@@ -367,12 +367,17 @@ del merge y HTML estático idéntico al probado. Evidencia en el informe; no
 equivale a validar sensores ni APIs productivas.
 
 
-## Leyenda compacta AQI
+## Leyenda interior compacta
 
-La [barra segmentada](docs/BARRA_AQI_MAPA.md), [PR #26](https://github.com/lemeit/lemeit-aq/pull/26)
-fusionado y desplegado con éxito en `0f5d5bb`, sustituye la lista
-visible de círculos/categorías bajo el mapa: título **AQI · EPA**, seis colores
-existentes y límites **0/50/100/150/200/300/500+**. Gris «Sin datos recientes»
-separado de la escala, sin considerarlo categoría AQI. Se conservan información
-accesible, círculos de #24, frescura/orden y otras capas neutras; no se aplica
-la sugerencia de cambiarles color. Pruebas offline y capturas en el informe.
+La leyenda AQI se aloja como control Leaflet **dentro del mapa, abajo a la
+izquierda**, máximo 240 px y adaptativa, reservando espacio para atribución y
+controles. La paleta categórica conserva seis colores y límites reales
+**0/50/100/150/200/300/500+**, con segmentos iguales para legibilidad y gris
+«Sin datos recientes» separado. No ocupa todo el ancho ni deja bloque externo.
+
+Por decisión explícita posterior, las otras capas usan el naranja real del
+sitio para valores recientes y círculo vacío con borde naranja si falta ese
+parámetro; gris claro solo sin datos recientes. Sin rangos sanitarios nuevos.
+Se conservan círculos/colores AQI, popup/teclado, frescura/recuperación y orden.
+[Implementación, pruebas Leaflet reales, capturas, límites y verificación operativa](docs/CONTROL_LEYENDA_MAPA.md).
+[Barra externa anterior y evidencia de #26/#27](docs/BARRA_AQI_MAPA.md).

@@ -441,8 +441,11 @@
   }
 
   .mapa-legend {
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    padding: 10px 14px 12px; font-family: var(--font-display); font-size: 10px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+    padding: 6px 8px; width: 240px; box-sizing: border-box;
+    font-family: var(--font-display); font-size: 10px; line-height: 1.35; color: var(--text-dim);
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: 6px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.18);
   }
   .mapa-legend-item { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; }
   .mapa-legend-title { flex-basis: 100%; font-weight: 700; color: var(--text); }
@@ -453,11 +456,13 @@
   .mapa-station-icon:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; border-radius: 5px; }
   .mapa-legend-note { color: var(--text-dim); }
   .mapa-aqi-scale { flex: 1 0 100%; min-width: 0; }
-  .mapa-aqi-bar { display: grid; height: 14px; border-radius: 4px; overflow: hidden; }
+  .mapa-legend .mapa-symbol svg { width: 12px; height: 12px; }
+  .mapa-aqi-bar { display: grid; height: 10px; border-radius: 4px; overflow: hidden; }
   .mapa-aqi-segment { min-width: 0; }
-  .mapa-aqi-ticks { position: relative; height: 17px; margin-top: 4px; color: var(--text); }
+  .mapa-aqi-ticks { position: relative; height: 15px; margin-top: 3px; color: var(--text); }
   .mapa-aqi-ticks span { position: absolute; transform: translateX(-50%); font-size: 10px; }
   .mapa-aqi-ticks span:first-child { transform: none; }
+  .mapa-aqi-ticks span:nth-last-child(2) { transform: translateX(-100%); }
   .mapa-aqi-ticks span:last-child { transform: translateX(-100%); }
   .mapa-aqi-description { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%); white-space: nowrap; border: 0; }
   .mapa-no-data { flex-basis: 100%; }
@@ -993,7 +998,6 @@
         </select>
       </div>
       <div id="mapa-container"></div>
-      <div class="mapa-legend" id="mapa-legend"></div>
     </div>
     <div class="grid" style="margin-top:12px;margin-bottom:0" id="mapa-cards"></div>
   </div>
@@ -1208,6 +1212,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_titulo: "Mapa de sensores",
       mapa_capa_label: "Capa del mapa",
       mapa_aqi_descripcion: "Índice de calidad del aire (AQI · EPA)",
+      mapa_aqi_categorica: "Paleta categórica de segmentos iguales; no es una escala numérica proporcional.",
       mapa_aqi_extension: "El último tramo continúa por encima del máximo mostrado; el gris indica falta de datos recientes y no es una categoría AQI.",
       mapa_dato_reciente: "Datos recientes",
       mapa_sin_valor: "Sin valor para este parámetro",
@@ -1435,6 +1440,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_titulo: "Sensor map",
       mapa_capa_label: "Map layer",
       mapa_aqi_descripcion: "Air quality index (AQI · EPA)",
+      mapa_aqi_categorica: "Categorical palette with equal-width bands; not a proportional numeric scale.",
       mapa_aqi_extension: "The final band continues above the maximum shown; gray indicates no recent data and is not an AQI category.",
       mapa_dato_reciente: "Recent data",
       mapa_sin_valor: "No value for this parameter",
@@ -1777,6 +1783,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   let currentRows = [];
   let latestSensors = [];
   let mapaInst = null;
+  let mapaLegendControl = null;
   let mapaTileLayer = null;
 
   // ── Modo "Comparar sitios" (pestaña Gráfico): un solo parámetro, varias
@@ -2111,15 +2118,15 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     if (isStale(s.timestamp)) return { shape: "circle", color: "#C7C7C7", label: t("aqi_sin_datos_card"), state: "stale" };
     const value = MAPA_PARAMS[param].get(s);
     if (typeof value !== "number" || !Number.isFinite(value) || (param === "pm2_5" && value < 0)) {
-      return { shape: "circle", color: "var(--text-dim)", label: t("mapa_sin_valor"), state: "missing" };
+      return { shape: "circle", color: "var(--accent)", label: t("mapa_sin_valor"), state: "missing" };
     }
-    if (param !== "aqi") return { shape: "circle", color: "var(--text-dim)", label: t("mapa_dato_reciente"), state: "recent" };
+    if (param !== "aqi") return { shape: "circle", color: "var(--accent)", label: t("mapa_dato_reciente"), state: "recent" };
     const info = aqiInfo(value);
     return { shape: "circle", color: info.color, label: info.label, state: "recent" };
   }
 
   function mapaSymbolHtml(state, color) {
-    return `<span class="mapa-symbol ${state}" data-shape="circle" data-state="${state}" style="color:${color}" aria-hidden="true"><svg viewBox="0 0 32 32" fill="currentColor" stroke="var(--text-dim)" stroke-width="1" focusable="false"><circle cx="16" cy="16" r="10"/></svg></span>`;
+    return `<span class="mapa-symbol ${state}" data-shape="circle" data-state="${state}" style="color:${color}" aria-hidden="true"><svg viewBox="0 0 32 32" fill="currentColor" stroke="var(--text-dim)" stroke-width="1" focusable="false"><circle cx="16" cy="16" r="10" fill="${state === "missing" ? "none" : "currentColor"}" stroke="${state === "missing" ? "currentColor" : "var(--text-dim)"}" stroke-width="${state === "missing" ? 2 : 1}"/></svg></span>`;
   }
 
   function escapeMapaText(value) {
@@ -2151,30 +2158,51 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     return `${val}${unitSuffix(def)}`;
   }
 
+  function initMapaLegend() {
+    if (mapaLegendControl) return;
+    mapaLegendControl = L.control({ position: "bottomleft" });
+    mapaLegendControl.onAdd = () => {
+      const panel = L.DomUtil.create("div", "mapa-legend");
+      panel.id = "mapa-legend";
+      L.DomEvent.disableClickPropagation(panel);
+      L.DomEvent.disableScrollPropagation(panel);
+      return panel;
+    };
+    mapaLegendControl.addTo(mapaInst);
+    const fit = () => {
+      const panel = mapaLegendControl.getContainer();
+      const credits = mapaInst.attributionControl?.getContainer();
+      panel.style.width = `${Math.max(0, Math.min(240, mapaInst.getContainer().clientWidth - 20))}px`;
+      // Reservar la altura real de atribución también cuando ocupa dos líneas.
+      panel.style.marginBottom = `${(credits?.offsetHeight || 14) + 8}px`;
+    };
+    mapaInst.on("resize", fit);
+    fit();
+  }
+
   function renderMapaLegend(param) {
     const legend = document.getElementById("mapa-legend");
     if (!legend) return;
     const item = (state, color, label) => `<span class="mapa-legend-item">${mapaSymbolHtml(state, color)}<span>${label}</span></span>`;
     if (param === "aqi") {
       const limits = [0, ...AQI_CATEGORIES.map((category) => category.max)];
-      const maximum = limits[limits.length - 1];
-      const widths = AQI_CATEGORIES.map((category, index) => `${category.max - limits[index]}fr`).join(" ");
+      const widths = `repeat(${AQI_CATEGORIES.length}, minmax(0, 1fr))`;
       const ranges = AQI_CATEGORIES.map((category, index) => `${t(category.key)}: ${index ? limits[index] + 1 : 0}–${category.max}`).join(". ");
       legend.innerHTML = `<div class="mapa-legend-title">${t("param_aqi")}</div>
         <div class="mapa-aqi-scale" role="img" aria-label="${t("mapa_aqi_descripcion")}" aria-describedby="mapa-aqi-ranges">
           <div class="mapa-aqi-bar" aria-hidden="true" style="grid-template-columns:${widths}">
             ${AQI_CATEGORIES.map((category) => `<span class="mapa-aqi-segment" data-aqi-max="${category.max}" style="background:var(${category.colorVar})"></span>`).join("")}
           </div>
-          <div class="mapa-aqi-ticks" aria-hidden="true">${limits.map((limit, index) => `<span style="left:${limit / maximum * 100}%">${limit}${index === limits.length - 1 ? "+" : ""}</span>`).join("")}</div>
+          <div class="mapa-aqi-ticks" aria-hidden="true">${limits.map((limit, index) => `<span style="left:${index / (limits.length - 1) * 100}%">${limit}${index === limits.length - 1 ? "+" : ""}</span>`).join("")}</div>
         </div>
-        <p id="mapa-aqi-ranges" class="mapa-aqi-description">${escapeMapaText(ranges)}. ${t("mapa_aqi_extension")}</p>
+        <p id="mapa-aqi-ranges" class="mapa-aqi-description">${escapeMapaText(ranges)}. ${t("mapa_aqi_categorica")} ${t("mapa_aqi_extension")}</p>
         <div class="mapa-no-data">${item("stale", "#C7C7C7", t("aqi_sin_datos_card"))}</div>`;
       return;
     }
     // Otras capas conservan la referencia neutra, sin escala sanitaria.
     legend.innerHTML = `<div class="mapa-legend-title">${escapeMapaText(paramLabel(param))}</div>`;
-    legend.innerHTML += item("recent", "var(--text-dim)", t("mapa_valor_leyenda"));
-    legend.innerHTML += item("missing", "var(--text-dim)", t("mapa_sin_valor")) + item("stale", "#C7C7C7", t("aqi_sin_datos_card"));
+    legend.innerHTML += item("recent", "var(--accent)", t("mapa_valor_leyenda"));
+    legend.innerHTML += item("missing", "var(--accent)", t("mapa_sin_valor")) + item("stale", "#C7C7C7", t("aqi_sin_datos_card"));
   }
 
   async function cargarMapa() {
@@ -2207,6 +2235,8 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       if (mapaTileLayer) mapaInst.removeLayer(mapaTileLayer);
       mapaTileLayer = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap contributors © CARTO" }).addTo(mapaInst);
     }
+
+    initMapaLegend();
 
     mapaInst.eachLayer((l) => { if (l instanceof L.CircleMarker || l instanceof L.Marker) mapaInst.removeLayer(l); });
     if (mapaTileLayer) mapaTileLayer.addTo(mapaInst); // por si el tileLayer cayó dentro del removeLayer de arriba

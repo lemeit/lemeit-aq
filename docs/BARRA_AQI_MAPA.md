@@ -1,5 +1,11 @@
 # Leyenda AQI en barra segmentada
 
+> Decisión posterior: [leyenda interior compacta y acento](CONTROL_LEYENDA_MAPA.md)
+> sustituye la ubicación externa/anchos proporcionales y el gris neutro de otras
+> variables. El titular ahora aprueba naranja reciente, vacío naranja faltante
+> y gris claro solo sin datos recientes. Las descripciones anteriores se
+> conservan como evidencia histórica; AQI/frescura/orden no cambian.
+
 ## Estado real verificado — 30/10/2026
 
 [PR #26](https://github.com/lemeit/lemeit-aq/pull/26) fusionado con expected HEAD

@@ -29,6 +29,12 @@ adapter='''() => {
  window.L={CircleMarker,Marker,tileLayer:()=>new Layer({}),
   circleMarker:(coords,opts)=>new CircleMarker(opts),marker:(coords,opts)=>new Marker(opts),divIcon:opts=>opts};
  mapaInst={eachLayer(fn){[...layers].forEach(fn)},removeLayer(l){layers=layers.filter(x=>x!==l)},invalidateSize(){}};
+
+ L.control=()=>({getContainer(){return this.panel},addTo(map){this.panel=this.onAdd(map);map.getContainer().appendChild(this.panel);return this}});
+ L.DomUtil={create(tag,cls){const el=document.createElement(tag);el.className=cls;return el}};
+ L.DomEvent={disableClickPropagation(){},disableScrollPropagation(){}};
+ mapaInst.getContainer=()=>document.getElementById("mapa-container");
+ mapaInst.on=()=>mapaInst;
  cargarMapa();
 }'''
 with sync_playwright() as p:
