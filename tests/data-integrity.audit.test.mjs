@@ -1,4 +1,4 @@
-// AQ-01: pruebas de aceptación de la corrección. Los demás PASS reproducen
+// AQ-01/AQ-09: pruebas de aceptación de la corrección. Los demás PASS reproducen
 // defectos pendientes o controles; no certifican su corrección. Fixtures sintéticos.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -134,12 +134,12 @@ test('AQ-11: token fallido queda oculto en ok:true de AirGradient',async()=>{
   const old=console.error;console.error=()=>{};
   try {const r=await fixtureFetch(()=>mod.ingestAirGradient(env),url=>new Response(String(url).includes('fixture-A')?'[]':JSON.stringify([ag()]),{status:String(url).includes('fixture-A')?500:200}));assert.equal(r.ok,true);assert.deepEqual(r.errores,[]);}finally{console.error=old;sqlite.close();}
 });
-test('TIMESTAMP: offset queda sin normalizar, misma fecha duplica y UI invalida',async()=>{
+test('TIMESTAMP: backend aún duplica offsets equivalentes; UI los interpreta en UTC',async()=>{
   const {sqlite,env}=db();await mod.upsertAirGradientSensor(env,900001,'fixture',ag());
   for(const timestamp of ['2026-10-12T22:00:00Z','2026-10-12T19:00:00-03:00'])await mod.insertAirGradientLectura(env,900001,ag({timestamp}));
   assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM lecturas').get().n,2);
-  assert.ok(Number.isNaN(ui.toBsAs('2026-10-12 19:00:00-03:00').getTime()));
-  assert.equal(ui.isStale('2026-10-12 19:00:00-03:00'),false);sqlite.close();
+  assert.equal(ui.toBsAs('2026-10-12 19:00:00-03:00').toISOString(),'2026-10-12T22:00:00.000Z');
+  assert.equal(ui.isStale('2026-10-12 19:00:00-03:00'),true);sqlite.close();
 });
 test('TIMESTAMP: texto inválido se persiste y gana MAX(timestamp)',async()=>{
   const {sqlite,env}=db();await mod.upsertAirGradientSensor(env,900001,'fixture',ag());
@@ -174,16 +174,17 @@ test('AQ-11: scheduled no registra resultados ok:false',async()=>{
   const {sqlite,env}=db();env.AIRGRADIENT_TOKEN_OPENAQ='fixture';const pending=[],errors=[];const old=console.error;console.error=(...v)=>errors.push(v);
   try{await fixtureFetch(async()=>{await mod.default.scheduled({},env,{waitUntil(p){pending.push(p);}});await Promise.all(pending);},url=>new Response(JSON.stringify(String(url).includes('purpleair')?{fields,data:[]}:[])));assert.equal(errors.length,0);}finally{console.error=old;sqlite.close();}
 });
-test('AQ-09: mapa colorea igual una lectura reciente y otra antigua',()=>{
-  const ctx=vm.createContext({aqiInfo:()=>({color:'var(--good)'}),pm25ToAqi:aqi});vm.runInContext(uiFunction('colorForParam'),ctx);
+test('AQ-09: mapa neutraliza lecturas antiguas',()=>{
+  const ctx=vm.createContext({aqiInfo:()=>({color:'var(--good)'}),pm25ToAqi:aqi,isStale:ui.isStale});vm.runInContext(uiFunction('colorForParam'),ctx);
   const cs={getPropertyValue:()=> '#00ff00'};
-  assert.equal(ctx.colorForParam({pm2_5:4,timestamp:'2000-01-01 00:00:00'},'aqi',null,cs),ctx.colorForParam({pm2_5:4,timestamp:'2026-10-12 22:00:00'},'aqi',null,cs));
+  assert.equal(ctx.colorForParam({pm2_5:4,timestamp:'2000-01-01 00:00:00'},'aqi',null,cs),'#808080');
+  assert.equal(ctx.colorForParam({pm2_5:4,timestamp:new Date().toISOString()},'aqi',null,cs),'#00ff00');
 });
-test('AQ-09: fallo de red no vuelve a renderizar ni envejece cards',async()=>{
+test('AQ-09: fallo de red reevalúa frescura local',async()=>{
   const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{style:{},classList:{contains:()=>false,add(){},remove(){}}});return elements.get(id);}
-  let renders=0;const ctx=vm.createContext({document:{getElementById:el},API_BASE:'https://fixture.invalid',fetch:async()=>{throw Error('fixture offline');},t:x=>x,renderGrid:()=>renders++,console:{error(){},warn(){},log(){}}});
+  let renders=0;const ctx=vm.createContext({refreshSensorFreshness:()=>renders++,document:{getElementById:el},API_BASE:'https://fixture.invalid',fetch:async()=>{throw Error('fixture offline');},t:x=>x,renderGrid:()=>renders++,console:{error(){},warn(){},log(){}}});
   vm.runInContext(uiFunction('loadSensors'),ctx);
-  await ctx.loadSensors();assert.equal(renders,0);
+  await ctx.loadSensors();assert.equal(renders,1);
 });
 test('AQ-08: Python preserva valores pero sobrescribe nombre manual (HTTP bloqueado)',()=>{
   const p=spawnSync('python',['-B','tests/data-integrity-python.audit.py'],{encoding:'utf8'});assert.equal(p.status,0,p.stdout+p.stderr);assert.match(p.stdout,/PASS/);
@@ -192,8 +193,8 @@ test('AQ-08: Worker conserva nombre manual frente a nueva ingesta',async()=>{
   const {sqlite,env}=db();await fixtureFetch(()=>mod.ingest(env),pa());sqlite.exec("UPDATE sensores SET nombre='Nombre manual'");
   await fixtureFetch(()=>mod.ingest(env),pa({name:'Nombre nuevo API fixture'}));assert.equal(sqlite.prepare('SELECT nombre FROM sensores').get().nombre,'Nombre manual');sqlite.close();
 });
-test('FRESCURA: timestamp futuro se considera fresco',()=>{
-  assert.equal(ui.isStale('2999-01-01 00:00:00'),false);
+test('FRESCURA: timestamp futuro se considera sin datos recientes',()=>{
+  assert.equal(ui.isStale('2999-01-01 00:00:00'),true);
 });
 test('API/UI: error HTTP de historial se muestra como sin datos',async()=>{
   const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{innerHTML:'',value:'24h'});return elements.get(id);}

@@ -1,5 +1,7 @@
 # Auditoría de integridad y calidad de datos — LEMEIT AQ
 
+> Seguimiento AQ-09 (30/10/2026): las tablas y resultados siguientes corresponden al corte histórico auditado. La propuesta [FRESCURA_SENSORES.md](FRESCURA_SENSORES.md) neutraliza fechas antiguas/inválidas/futuras e interpreta offsets en UI, con pruebas offline; pendiente de merge/despliegue. DAT-02 backend (deduplicación textual y MAX de fechas no normalizadas) y AQ-04 permanecen pendientes. Los controles AQ-09 actuales ya son de aceptación; los TAP históricos se conservan sin reescribir.
+
 Fecha: 12 de octubre de 2026, Argentina. Coordinación: chat 01; ingesta e identidad: chat 02; API: chat 03; presentación: chat 04; programación efectiva: chat 05.
 
 ## Resultado y alcance

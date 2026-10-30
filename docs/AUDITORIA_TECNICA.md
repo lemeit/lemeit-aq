@@ -1,5 +1,7 @@
 # Auditoría técnica inicial — LEMEIT · AQ
 
+> Seguimiento AQ-09 (30/10/2026): este informe conserva los hallazgos del commit auditado como evidencia histórica. La corrección de frescura está preparada y probada offline en una rama independiente, pendiente de merge/despliegue. Ver [regla, aceptación, publicación y límites](FRESCURA_SENSORES.md) y [estado de avance](PLAN_MEJORAS.md#registro-de-avance). No supone el cierre productivo de AQ-09 ni de otros hallazgos.
+
 **Origen:** informe de Codex proporcionado por el responsable del proyecto, 2026-10-10.  
 **Commit auditado:** `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`.  
 **Alcance:** revisión de código y comprobaciones locales con mocks y SQLite en memoria; sin ingestas reales, cambios versionados ni verificación operativa de producción.  

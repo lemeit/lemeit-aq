@@ -40,8 +40,8 @@ with sync_playwright() as p:
     assert 'NowCast' not in page.locator('[data-i18n=aqi_sample_note]').inner_text()
     assert page.locator('#sensor-grid').get_by_text(old_card,exact=True).count()==0
     assert page.locator('#sensor-grid p.card-sub').count()==0
-    assert page.locator('#sensor-grid').get_by_text('Sin datos',exact=True).count()==1
-    assert 'Sin datos nuevos hace más de 25 min' in page.locator('#sensor-grid').inner_text()
+    assert page.locator('#sensor-grid').get_by_text('Sin datos recientes',exact=True).count()==1
+    assert 'Puede deberse al sensor, internet o al proveedor/API' in page.locator('#sensor-grid').inner_text()
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
     assert page.locator('[data-i18n=aqi_sample_note]').get_attribute('aria-hidden') is None
     page.screenshot(path=str(Path('/tmp')/f'aq-ultima-{width}.png'))
@@ -52,7 +52,7 @@ with sync_playwright() as p:
     assert 'latest PM2.5 measurement' in page.locator('#info-modal-content').inner_text()
     assert 'daily average' in page.locator('#info-modal-content').inner_text()
     page.evaluate('closeInfoModal()')
-    assert page.locator('#sensor-grid').get_by_text('No data',exact=True).count()==1
+    assert page.locator('#sensor-grid').get_by_text('No recent data',exact=True).count()==1
    page.evaluate("document.querySelector('#mapa-cards').innerHTML=latestSensors.map(s=>buildSensorCardInner(s,'mapa-')).join('')")
    assert page.locator('#mapa-cards p.card-sub').count()==0
    assert 'card_measurement_note' not in html
