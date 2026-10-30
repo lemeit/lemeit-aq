@@ -177,8 +177,10 @@ promedio del día. El código no calcula AQI diario ni NowCast, ni acredita una
 ventana de integración concreta de `pm2.5`/`pm02` del proveedor. Los rangos
 24h/7d/30d del gráfico filtran filas históricas; no cambian este cálculo.
 El timestamp procede de `last_seen` (PurpleAir) o `timestamp` (AirGradient),
-no de la hora de consulta. La UI lo interpreta como UTC y muestra hora argentina;
-la normalización AirGradient tiene limitaciones con offsets y fechas inválidas.
+no de la hora de consulta. En la propuesta AQ-09, la UI interpreta timestamps D1
+sin zona como UTC e ISO con Z/offset respetando su zona, y muestra hora argentina.
+Fechas inválidas o futuras no acreditan frescura. La normalización y selección
+textual de timestamps en el backend siguen pendientes; ver [regla y límites](docs/FRESCURA_SENSORES.md).
 
 Ver [trazabilidad técnica, timestamps, comparación con la auditoría y validación](docs/AQI_TRAZABILIDAD.md).
 
@@ -186,7 +188,7 @@ El archivo `index.html` (raíz del repo) es un single-file HTML estático que co
 
 Funcionalidad: tarjetas clickeables con el estado actual de cada sensor (AQI, PM2.5, temperatura, humedad), gráfico histórico con selector de rango (24h / 7d / 30d), overlay opcional de canales A/B del sensor (para detectar divergencia o degradación), exportación a CSV, y tema claro/oscuro persistido en `localStorage`.
 
-Si un sensor deja de reportar lecturas nuevas hace más de 25 minutos (se desconectó, se quedó sin señal, etc.), su tarjeta lo indica: el badge cambia a "Sin datos" en gris neutro (no un color de calidad de aire, porque ese dato ya quedó viejo), el velocímetro de AQI se atenúa, y aparece un aviso "⚠ Sin datos nuevos hace más de 25 min" debajo del horario de última actualización. Aplica tanto a la grilla de "Actuales" como a las tarjetas del "Mapa" (comparten la misma función de armado de tarjeta); la pestaña "Gráfico" no tiene grilla de tarjetas, solo el histórico del sensor seleccionado.
+En la propuesta AQ-09, lecturas de hasta 25 minutos inclusive conservan color; al superar ese límite, o con fecha inválida/futura, mapa y tarjetas muestran «Sin datos recientes», conservando fecha y visibilidad. El reloj local reevalúa aun sin respuestas API. Las mediciones de la tarjeta se atenúan, sin interpretar falta de señal como baja administrativa. Ver [regla, pruebas y límites](docs/FRESCURA_SENSORES.md). La pestaña «Gráfico» conserva el histórico del sensor seleccionado.
 
 **Badge de proveedor en cada tarjeta**: un ícono circular en el borde inferior de cada tarjeta (Actuales y Mapa) muestra el logo de PurpleAir o AirGradient según el campo `proveedor` que devuelve `/api/ultimas`. Si ese campo llegara vacío para algún sensor viejo, cae por default a `'purpleair'` — aunque en la práctica no debería pasar, porque la columna es `NOT NULL DEFAULT 'purpleair'` en el esquema (ver `d1/schema.sql`).
 
@@ -325,11 +327,12 @@ actual (AQ-12 pendiente). Ver [decisión, aceptación y operación](docs/AQ02_CO
 
 ## Orden de tarjetas
 
-Las tarjetas priorizan AE por número usando `nombre` y, como fallback, `codigo`, sin cambiar proveedor ni selección. Los AE actuales son PurpleAir. Criterios, evidencia, pruebas offline y bloqueo de previews: [docs/ORDEN_TARJETAS.md](docs/ORDEN_TARJETAS.md).
+Las tarjetas priorizan AE por número usando `nombre` y, como fallback, `codigo`, sin cambiar proveedor ni selección. Los AE actuales son PurpleAir. Criterios, evidencia, pruebas offline y exclusión de previews de aquella rama: [docs/ORDEN_TARJETAS.md](docs/ORDEN_TARJETAS.md).
 
 ## Frescura en mapa y tarjetas
 
-Propuesta AQ-09: lecturas válidas de hasta **25 minutos inclusive** conservan su
+[AQ-09, PR #22 abierto](https://github.com/lemeit/lemeit-aq/pull/22), pendiente
+de merge y despliegue por el titular: lecturas válidas de hasta **25 minutos inclusive** conservan su
 color AQI. Al superar ese límite, o con fecha inválida/futura, el marcador pasa
 a gris y la tarjeta permanece visible con mediciones atenuadas, estado **«Sin
 datos recientes»** y última actualización. El popup conserva la fecha de última
@@ -337,5 +340,7 @@ medición. La frescura se reevalúa localmente cada segundo y al volver a la
 pestaña, aunque falle la API/red o no termine una petición; se recupera al recibir
 una lectura reciente. No se alteran datos ni estado administrativo: falta de
 señal puede ser equipo apagado, internet o proveedor/API; una baja requiere una
-decisión explícita. Regla, reproducción, aceptación, pruebas y bloqueo de
-publicación por previews: [docs/FRESCURA_SENSORES.md](docs/FRESCURA_SENSORES.md).
+decisión explícita. Regla, reproducción, aceptación, pruebas y publicación con exclusión de
+previews verificada: [docs/FRESCURA_SENSORES.md](docs/FRESCURA_SENSORES.md).
+
+Índice técnico y estado de propuestas: [docs/README.md](docs/README.md).

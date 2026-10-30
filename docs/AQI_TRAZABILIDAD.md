@@ -1,5 +1,7 @@
 # Trazabilidad del indicador PM2.5 visible (AQI)
 
+> Seguimiento AQ-09 (30/10/2026): la sección temporal de este informe describe la base histórica de #17. En la rama de [frescura](FRESCURA_SENSORES.md), `toBsAs` valida calendario y admite UTC/offsets; fechas inválidas/futuras y >25 min se neutralizan en mapa, popup y tarjetas, incluso sin red. La fórmula AQI permanece intacta. Pendiente de merge/despliegue; normalización y MAX textual del backend siguen pendientes.
+
 Revisión: 13 de octubre de 2026, Argentina. Base exacta de main:
 `2b5d44b990ca573ac8251a48be87983579fccec1`.
 Referencia auditada: `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`.

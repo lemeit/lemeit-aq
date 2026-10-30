@@ -47,3 +47,21 @@ No borrar AE-03, lecturas ni sensores históricos para revertir la configuració
 ## Registro documental de fechas y coordenadas
 
 Al conservar la confirmación de PurpleAir, transcribir únicamente código, modelo, sensor_index, Device ID, fecha de alta y coordenadas declaradas. Excluir claves de lectura y credenciales. **Alta PurpleAir e instalación física son eventos diferentes**: la fecha de registro va en Observaciones de la guía; el montaje real se completa en «Fecha de instalación». No copiar automáticamente una fecha a la otra ni escribir D1 para ajustar documentación. Ver [registro de altas](instalacion/REGISTRO_PURPLEAIR.md).
+
+
+## Interpretar la frescura sin dar de baja equipos (propuesta AQ-09)
+
+[Mapa y tarjetas](FRESCURA_SENSORES.md) conservarán color hasta 25 minutos
+inclusive; después, o con fecha inválida/futura, mostrarán «Sin datos recientes»
+y fecha de última medición, manteniendo la tarjeta visible y atenuada. Se
+reevalúa aun si falla API/red y se recupera al llegar lecturas nuevas. El estado
+no identifica la causa: puede ser equipo apagado, internet o proveedor/API; no
+justifica cambiar `activo`, identidad, ubicación ni historial. Baja
+administrativa solo por decisión explícita futura del titular.
+
+Validación de esta propuesta: fixtures offline; ningún GET productivo, ingesta,
+D1 o migración. La exclusión de previews se verificó solo para la rama AQ-09;
+main conserva despliegue automático. Merge a cargo del titular, pendiente;
+no se acredita versión desplegada ni modificación de los procedimientos de
+alta/secretos descritos arriba. Para validar API/dashboard reales en el futuro
+sigue vigente el permiso de escrituras de visitas del paso 7.

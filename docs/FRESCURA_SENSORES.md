@@ -86,30 +86,38 @@ continuaron interceptadas. Las expectativas anteriores «Sin datos»/«No data»
 y seis muestras de leyenda se actualizaron al texto nuevo y siete muestras
 (seis categorías AQI y una de frescura).
 
-## Publicación bloqueada sin despliegue
+## Publicación autorizada sin despliegue
 
-Comprobación de solo lectura mediante API Cloudflare, 30/10/2026: proyecto
-Pages `purpleair-saladillo`, source GitHub `lemeit/lemeit-aq`,
-`deployments_enabled=true`, `production_deployments_enabled=true`,
-`production_branch=main`, `preview_deployment_setting=custom`,
-`preview_branch_includes=["*"]`, `path_includes=["*"]`, `path_excludes=[]`.
-Las exclusiones son ocho ramas anteriores y **no incluyen**
-`fix/aq09-frescura-sensores`. Latest y canonical apuntan a main `dc951eca…`.
-Por tanto un push/publicación de esta rama es elegible para preview automática,
-contrario a la prohibición de despliegue. No se publicó rama ni PR y no se
-modificó configuración. No se usa una rama anterior excluida ni un marcador
-skip como sustituto de la verificación de configuración solicitada.
+El bloqueo inicial del 30/10/2026 era real: Pages tenía previews custom con
+inclusión `*` y ocho ramas excluidas, sin esta rama. No se publicó mientras
+existía ese bloqueo. Posteriormente el titular autorizó explícitamente publicar
+el PR, actualizar la documentación y excluir **únicamente**
+`fix/aq09-frescura-sensores`; aclaró «lo hago yo el merge entonces».
 
-Los workflows versionados no tienen disparadores push/pull_request: healthcheck
-usa schedule/dispatch; ingesta, dispatch con schedule comentado. No se ejecutó
-ninguno. El proxy local también rechazó `git fetch`; HEAD y PRs se comprobaron
-por conector GitHub. Ese fallo no motivó cambios de red ni credenciales.
+Con esa autorización se leyó nuevamente el proyecto `purpleair-saladillo` y se
+aplicó PATCH solo para agregar esa rama a `source.config.preview_branch_excludes`.
+GET posterior confirmó `exclusionVerified=true`, `sourceVerified=true` (todos
+los otros campos de source idénticos, incluidas ocho exclusiones anteriores),
+`canonicalUnchanged=true` y `latestUnchanged=true`. Se mantienen GitHub
+`lemeit/lemeit-aq`, `production_branch=main`,
+`production_deployments_enabled=true`, `deployments_enabled=true`,
+`preview_deployment_setting=custom`, `preview_branch_includes=["*"]`,
+`path_includes=["*"]` y `path_excludes=[]`. Latest/canonical conservaron el ID
+`b2fc7a1f-db1f-46cb-ab75-2c35d1568c46` y SHA main
+`dc951eca4e509d1898e95f3e9578ab09160ca19b`.
 
-La propuesta queda completa, probada y comprometida localmente, con patch y
-borrador de PR exportados. Para publicar sin preview hace falta una autorización
-posterior que permita excluir esta rama de Pages, o una configuración segura
-verificada por el titular. La tarea actual no autoriza cambiarla. No merge,
-despliegue, migración, ingesta real ni escrituras productivas.
+La exclusión se verificó **antes** de publicar. Los workflows versionados no
+tienen disparadores push/pull_request: healthcheck usa schedule/dispatch;
+ingesta, dispatch con schedule comentado. No se ejecutó ninguno manualmente.
+El proxy local sigue rechazando Git HTTPS; se usa el conector GitHub para
+publicar árboles idénticos a los commits locales, con padres y contenido
+verificados, sin cambiar red ni credenciales.
+
+Estado: [PR #22 abierto](https://github.com/lemeit/lemeit-aq/pull/22) hacia
+main; no fusionado ni desplegado. No se autoriza merge automático: el titular hará el merge.
+Main conserva su despliegue automático; la exclusión protege solo esta rama,
+no un futuro merge. No se abre el preview ni el dashboard productivo, cuyos GET
+podrían escribir visitas. Sin ingestas reales, D1, migraciones ni secretos.
 
 ## Riesgos, límites y reversión
 
@@ -133,3 +141,40 @@ fechas y filtro administrativo de `/api/ultimas` (AQ-04).
 Descartar la rama revierte la propuesta antes de fusionar. Una reversión futura
 por PR no requiere restaurar datos; merge/reversión en main puede desplegar y
 necesita autorización independiente.
+
+## Revalidación antes de publicación
+
+Con la autorización posterior se repitieron las siete suites Node y el smoke
+Chromium offline de frescura: PASS, sin fallos. Sintaxis inline/formatPm25 y
+`git diff --check`: PASS. Se comprobaron 49 enlaces relativos en los diez
+Markdown añadidos/modificados, sin destinos inexistentes. Los tests funcionales
+no cambiaron en esta ampliación documental. README y el nuevo índice técnico
+resumen la regla; plan/roadmap, operación, trazabilidad y auditorías enlazan esta
+propuesta. Se preservaron tablas, fechas, evidencia y TAP históricos.
+
+
+## Publicación comprobada y avance concurrente de main
+
+GitHub creó [PR #22](https://github.com/lemeit/lemeit-aq/pull/22), abierto sin
+merge ni auto-merge. Primer HEAD publicado:
+`74e929b86ce7cb581f62113e4f8061a69572f7ce`; árbol
+`c584631f0a6e8e0f33540283435dcd617d0794ec`, idéntico al commit documental local
+`761734a`. Pages registró `a1d96c17-f84e-48c5-8eb0-44036a5aca8f` con
+`is_skipped=true`, `skip_reason=branch_config`: ninguna etapa inició build/deploy.
+
+Mientras se preparaba el PR se fusionó #20 por otra vía. Main pasó a
+`a9d2acd4d9f6f0e4e154b7dfc3a1e3f5849ecb21`: 21 commits adelante y 0 detrás
+del auditado, 52 archivos en la comparación GitHub. Su registro Pages
+`979816c5-7ac7-46fd-8d0d-5e3f749e4678` está omitido por `commit_message`;
+no es un despliegue de AQ-09. El canónico conserva `dc951eca…` y
+`b2fc7a1f-db1f-46cb-ab75-2c35d1568c46`. La afirmación anterior de latest intacto
+corresponde exclusivamente al instante del PATCH, antes de este evento externo.
+
+Se actualiza la rama de la propuesta sobre ese main, conservando los registros,
+inventario, guías y PDF de #20. Se resuelve el conflicto documental de fin de
+archivo en operación colocando el registro de #20 antes de la sección AQ-09;
+se conserva también su párrafo nuevo en README. Código y pruebas de frescura
+no cambian. Se publican dos commits equivalentes (funcional y documental),
+con lease sobre el HEAD propio anterior; no se cambia main. Las referencias
+previas a 20 commits y a #20 abierto describen la revisión inicial, no el
+estado final. El SHA final y la comprobación Pages posterior constan en el PR.

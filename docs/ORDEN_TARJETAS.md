@@ -1,5 +1,7 @@
 # Orden visual de tarjetas
 
+> Seguimiento AQ-09 (30/10/2026): #21 está fusionado en main `dc951eca4e509d1898e95f3e9578ab09160ca19b`. El límite histórico de renderizado con timestamp NULL descrito abajo se corrige en la propuesta [de frescura](FRESCURA_SENSORES.md), con orden preservado y pruebas offline. AQ-09 aún no está fusionado ni desplegado. La exclusión de previews de #21 no protege otras ramas; AQ-09 tiene su propia exclusión exacta verificada.
+
 Base inspeccionada: `2b3032976e49c5e75f2f4153f6803c522af3ecff`, coincidente con `origin/main` local y el main verificado por el agente coordinador mediante el conector GitHub el 29/10/2026. Comparación local con auditoría `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`: 19 commits adelante; 39 archivos cambiados, incluidos frontend/AQI, identidad AirGradient, schema y diagnóstico. No se certifica despliegue ni cierre de auditoría. El intento local de `git ls-remote` no pudo conectar con el proxy; la verificación de HEAD remoto corresponde al conector GitHub utilizado por el agente coordinador el 29/10/2026.
 
 Se revisaron AGENTS, README, frontend, Worker, D1, workflows y scripts. El Worker registra visitas mediante `logVisita` para GET públicos antes de resolver `/api/ultimas`: no se consultó esa API ni proveedores. Las pruebas de ingesta existentes usan mocks y SQLite en memoria; no son ingestas reales.
