@@ -1,5 +1,10 @@
 # Marcadores compactos del mapa
 
+> Ajuste posterior solicitado: [barra segmentada AQI](BARRA_AQI_MAPA.md)
+> sustituye la lista visible de círculos en la leyenda. Los círculos/colores
+> de marcadores de #24 permanecen; las descripciones de leyendas anteriores
+> se conservan como evidencia histórica, no como diseño actual solicitado.
+
 > Decisión posterior del titular: [una sola forma circular y colores AQI](CIRCULOS_AQI_MAPA.md)
 > sustituye las seis geometrías/acento único de #23, ya fusionado en 934f635.
 > Las referencias siguientes a formas o PR pendiente son evidencia histórica,

@@ -10,7 +10,7 @@ js=(assets/'leaflet.min.js').read_text();css=(assets/'leaflet.min.css').read_tex
 assert '1.9.4' in js
 assert hashlib.sha256(js.encode()).hexdigest()=='5c9aecfc30e4564519dbdcddcc53a418227dcc7568e619e9762ddcec7609ed47'
 assert hashlib.sha256(css.encode()).hexdigest()=='b570abbda963c60b4de4b4ff4b26f9326f53fb2ccf1461fdf0955ca094fb2539'
-base='934f6354bf216876368ba931fd363d32825312db'
+base='0252c3a06a1bdf0baefee0c4c4e2575400976d30'
 rows=[dict(sensor_index=i+1,nombre=f'AE-{i:02}',institucion=f'Escuela fixture AE-{i:02}',
  timestamp='2026-10-30 14:35:00' if i==0 else '2026-10-30 14:59:00',
  pm2_5=pm,temperatura=22.3,humedad=48,presion=1008,co2=500,voc=20,nox=2,
@@ -47,13 +47,14 @@ with sync_playwright() as p:
   page.wait_for_timeout(250)
   if baseline:
    icons=page.locator('.mapa-station-icon')
-   assert icons.locator('[data-shape]').evaluate_all('(els)=>els.slice(0,6).map(e=>e.dataset.shape)')==['circle','square','triangle','diamond','hexagon','star']
-   assert len(set(icons.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==1
+   assert icons.locator('[data-shape]').evaluate_all('(els)=>els.slice(0,6).map(e=>e.dataset.shape)')==['circle']*6
+   assert len(set(icons.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==6
+   assert page.locator('#mapa-legend [data-shape]').count()==8
    for width in [390,1440]:
     page.set_viewport_size({'width':width,'height':844})
     page.evaluate('mapaInst.setView([-35.63,-59.78],12,{animate:false})')
-    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'circles-before-{width}.png'))
-   print('REPRODUCIDO #23: seis geometrías y un único acento AQI; capturas antes guardadas')
+    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'bar-before-{width}.png'))
+   print('REPRODUCIDO main: leyenda con ocho círculos y nombres largos; capturas antes guardadas')
   else:
    markers=page.locator('.mapa-station-icon')
    assert markers.count()==8
@@ -62,7 +63,7 @@ with sync_playwright() as p:
    shapes=['circle']*8
    assert markers.locator('[data-shape]').evaluate_all('(els)=>els.map(e=>e.dataset.shape)')==shapes
    assert page.locator('#sel-mapa-param option[value=aqi]').inner_text()=='AQI · EPA'
-   assert 'Índice de calidad del aire (AQI · EPA)' in page.locator('#mapa-legend').inner_text()
+   assert page.locator('#mapa-legend .mapa-legend-title').inner_text()=='AQI · EPA'
    for width in [320,390,1440]:
     page.set_viewport_size({'width':width,'height':844})
     for lang in ['es','en']:
@@ -83,10 +84,30 @@ with sync_playwright() as p:
       assert len(set(markers.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==6
       assert markers.nth(6).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
       assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,lang,theme)
-      assert page.locator('#mapa-legend [data-shape]').count()==8
+      assert page.locator('#mapa-legend [data-shape]').count()==1
+      segments=page.locator('#mapa-legend .mapa-aqi-segment')
+      assert segments.count()==6
+      assert segments.evaluate_all('(els)=>els.map(e=>Number(e.dataset.aqiMax))')==[50,100,150,200,300,500]
+      assert page.locator('.mapa-aqi-ticks span').all_text_contents()==['0','50','100','150','200','300','500+']
+      for i in range(6):
+       assert segments.nth(i).evaluate('(e)=>getComputedStyle(e).backgroundColor')==markers.nth(i).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')
+      scale=page.locator('.mapa-aqi-scale');assert scale.get_attribute('role')=='img'
+      assert scale.get_attribute('aria-describedby')=='mapa-aqi-ranges'
+      assert scale.locator('.mapa-symbol').count()==0
+      assert page.locator('.mapa-no-data .mapa-symbol').count()==1
+      assert '301–500' in page.locator('#mapa-aqi-ranges').text_content()
+      assert page.locator('#mapa-aqi-ranges').evaluate('(e)=>getComputedStyle(e).clipPath')=='inset(50%)'
+      # Los números caben sin solaparse, incluso a 320 px.
+      ticks=page.locator('.mapa-aqi-ticks span').evaluate_all('(els)=>els.map(e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right}})')
+      bounds=scale.bounding_box()
+      assert ticks[0]['left']>=bounds['x']-1 and ticks[-1]['right']<=bounds['x']+bounds['width']+1
+      assert all(ticks[i]['right']<=ticks[i+1]['left'] for i in range(6)),(width,lang,ticks)
+      actual_widths=segments.evaluate_all('(els)=>els.map(e=>e.getBoundingClientRect().width)')
+      total=sum(actual_widths)
+      for actual,expected in zip(actual_widths,[50,50,50,50,100,200]):assert abs(actual/total-expected/500)<.01
       assert page.locator('#mapa-cards > .card').evaluate_all('(els)=>els.map(e=>Number(e.dataset.sensorIndex))')==[1,2,3,4,5,6,900002,99]
     page.evaluate('setLang("es");document.documentElement.setAttribute("data-theme","light")')
-    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'circles-after-{width}.png'))
+    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'bar-after-{width}.png'))
    # Leaflet real: Enter y Space abren popup, nombres accesibles no dependen de color.
    markers.nth(1).focus();markers.nth(1).press('Enter')
    assert page.locator('.leaflet-popup-content').last.is_visible()
@@ -136,6 +157,6 @@ with sync_playwright() as p:
     assert markers.nth(i).locator('[data-state]').get_attribute('data-state')=='stale'
     assert markers.nth(i).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
    assert not errors,errors
-   print('PASS: Leaflet 1.9.4 real, seis categorías/colores idénticos tarjetas, una geometría circular, teclado Enter/Space/Escape, foco/nombre/tamaño, 320/390/1440, ES/EN, temas, parámetros, frescura/red/recuperación, orden y sin fetch al envejecer')
+   print('PASS: Leaflet 1.9.4 real, barra de seis categorías/colores/límites reales, gris separado, números sin solaparse, círculos conservados, teclado Enter/Space/Escape, foco/nombre/tamaño, 320/390/1440, ES/EN, temas, parámetros, frescura/red/recuperación, orden y sin fetch al envejecer')
   c.close()
  b.close()

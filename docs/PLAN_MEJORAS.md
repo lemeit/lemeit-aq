@@ -110,3 +110,13 @@ checkout probado; sin ejecutar APIs productivas. [Evidencia y límites](CIRCULOS
 La validación operativa se limita a despliegue/HTML estático de esta corrección;
 no cierra otros hallazgos ni acredita sensores online. El seguimiento documental
 no modifica runtime y su integración final se comprueba en su PR.
+
+
+### Leyenda en barra segmentada — seguimiento posterior
+
+Después de completar #24/#25, nueva rama `fix/mapa-barra-aqi` desde main
+`0252c3a06a1bdf0baefee0c4c4e2575400976d30`: [barra AQI](BARRA_AQI_MAPA.md)
+con seis segmentos/colores y límites derivados de categorías actuales, gris
+separado y descripción accesible. No cambia marcadores, otras capas, cálculo,
+frescura ni orden. Leaflet real offline: 320/390/1440, ES/EN y temas; despliegue
+autorizado, con verificación real posterior, sin operaciones de datos.

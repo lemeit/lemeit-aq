@@ -122,7 +122,7 @@ test('AQ-01 aceptación: mapa, etiqueta PM, leyenda y cards usan la misma clasif
   assert.equal(ui.formatParamValue(high,'aqi'),'>500');
   assert.match(ui.buildSensorCardInner(high,''),/aqi_peligrosa/);
   ui.renderMapaLegend('aqi',null);
-  assert.equal((legend.innerHTML.match(/data-shape=/g)||[]).length,8);
+  assert.equal((legend.innerHTML.match(/data-shape=/g)||[]).length,1);
   assert.match(legend.innerHTML,/aqi_muy_no_saludable/);assert.match(legend.innerHTML,/aqi_peligrosa/);
 });
 test('AQ-01 aceptación: gráfico usa inversa actual, seis bandas y extremo >escala', () => {
