@@ -2,7 +2,7 @@
 
 ## Regla e interfaz
 
-- [Barra segmentada AQI](BARRA_AQI_MAPA.md): ajuste de leyenda compacto con límites existentes, datos faltantes separados y categorías accesibles; conserva círculos/colores y otras capas.
+- [Barra segmentada AQI](BARRA_AQI_MAPA.md): ajuste de leyenda compacto con límites existentes, datos faltantes separados y categorías accesibles; conserva círculos/colores y otras capas. [PR #26 fusionado y desplegado](https://github.com/lemeit/lemeit-aq/pull/26), Pages success y HTML estático exacto verificados.
 
 - [Círculos y colores AQI](CIRCULOS_AQI_MAPA.md): corrección vigente del esquema visual; una geometría común, colores de tarjetas, neutro/gris, capturas y pruebas Leaflet reales. [PR #24 fusionado y desplegado](https://github.com/lemeit/lemeit-aq/pull/24), con Pages success y HTML estático verificados; evidencia en el informe.
 - [Marcadores #23](MARCADORES_MAPA.md): registro histórico de formas/acento, fusionado y luego sustituido por decisión explícita del titular.
