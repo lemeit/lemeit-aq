@@ -98,3 +98,15 @@ nueva `fix/mapa-circulos-aqi`. Pruebas Leaflet offline, capturas antes/después,
 frescura y orden conservados. Merge y despliegue autorizados explícitamente,
 sin D1/ingestas/migraciones. Se registra el resultado verificado al terminar;
 los estados de propuestas anteriores quedan como históricos.
+
+
+### Resultado verificado de la corrección circular
+
+[PR #24](https://github.com/lemeit/lemeit-aq/pull/24) fusionado en
+`a8c21b6131c17242cb9828539621a015d990f392` con mensaje sin skip y HEAD esperado.
+Pages deployment `745f9447-2ad2-4762-adea-488e82f70e80` terminó success y el
+canónico coincidió con ese SHA. HTML estático de 188280 bytes idéntico al
+checkout probado; sin ejecutar APIs productivas. [Evidencia y límites](CIRCULOS_AQI_MAPA.md#estado-verificado--30102026).
+La validación operativa se limita a despliegue/HTML estático de esta corrección;
+no cierra otros hallazgos ni acredita sensores online. El seguimiento documental
+no modifica runtime y su integración final se comprueba en su PR.
