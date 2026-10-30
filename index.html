@@ -452,6 +452,15 @@
   .mapa-station-icon .mapa-symbol { width: 44px; height: 44px; align-items: center; justify-content: center; }
   .mapa-station-icon:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; border-radius: 5px; }
   .mapa-legend-note { color: var(--text-dim); }
+  .mapa-aqi-scale { flex: 1 0 100%; min-width: 0; }
+  .mapa-aqi-bar { display: grid; height: 14px; border-radius: 4px; overflow: hidden; }
+  .mapa-aqi-segment { min-width: 0; }
+  .mapa-aqi-ticks { position: relative; height: 17px; margin-top: 4px; color: var(--text); }
+  .mapa-aqi-ticks span { position: absolute; transform: translateX(-50%); font-size: 10px; }
+  .mapa-aqi-ticks span:first-child { transform: none; }
+  .mapa-aqi-ticks span:last-child { transform: translateX(-100%); }
+  .mapa-aqi-description { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .mapa-no-data { flex-basis: 100%; }
 
   .panel {
     background: var(--bg-panel);
@@ -1199,6 +1208,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_titulo: "Mapa de sensores",
       mapa_capa_label: "Capa del mapa",
       mapa_aqi_descripcion: "Índice de calidad del aire (AQI · EPA)",
+      mapa_aqi_extension: "El último tramo continúa por encima del máximo mostrado; el gris indica falta de datos recientes y no es una categoría AQI.",
       mapa_dato_reciente: "Datos recientes",
       mapa_sin_valor: "Sin valor para este parámetro",
       mapa_valor_leyenda: "Medición del parámetro; consultar valor al pulsar",
@@ -1425,6 +1435,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_titulo: "Sensor map",
       mapa_capa_label: "Map layer",
       mapa_aqi_descripcion: "Air quality index (AQI · EPA)",
+      mapa_aqi_extension: "The final band continues above the maximum shown; gray indicates no recent data and is not an AQI category.",
       mapa_dato_reciente: "Recent data",
       mapa_sin_valor: "No value for this parameter",
       mapa_valor_leyenda: "Parameter measurement; select a marker for its value",
@@ -2144,12 +2155,25 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const legend = document.getElementById("mapa-legend");
     if (!legend) return;
     const item = (state, color, label) => `<span class="mapa-legend-item">${mapaSymbolHtml(state, color)}<span>${label}</span></span>`;
-    legend.innerHTML = `<div class="mapa-legend-title">${param === "aqi" ? t("mapa_aqi_descripcion") : escapeMapaText(paramLabel(param))}</div>`;
     if (param === "aqi") {
-      legend.innerHTML += AQI_CATEGORIES.map((category) => item("recent", `var(${category.colorVar})`, t(category.key))).join("");
-    } else {
-      legend.innerHTML += item("recent", "var(--text-dim)", t("mapa_valor_leyenda"));
+      const limits = [0, ...AQI_CATEGORIES.map((category) => category.max)];
+      const maximum = limits[limits.length - 1];
+      const widths = AQI_CATEGORIES.map((category, index) => `${category.max - limits[index]}fr`).join(" ");
+      const ranges = AQI_CATEGORIES.map((category, index) => `${t(category.key)}: ${index ? limits[index] + 1 : 0}–${category.max}`).join(". ");
+      legend.innerHTML = `<div class="mapa-legend-title">${t("param_aqi")}</div>
+        <div class="mapa-aqi-scale" role="img" aria-label="${t("mapa_aqi_descripcion")}" aria-describedby="mapa-aqi-ranges">
+          <div class="mapa-aqi-bar" aria-hidden="true" style="grid-template-columns:${widths}">
+            ${AQI_CATEGORIES.map((category) => `<span class="mapa-aqi-segment" data-aqi-max="${category.max}" style="background:var(${category.colorVar})"></span>`).join("")}
+          </div>
+          <div class="mapa-aqi-ticks" aria-hidden="true">${limits.map((limit, index) => `<span style="left:${limit / maximum * 100}%">${limit}${index === limits.length - 1 ? "+" : ""}</span>`).join("")}</div>
+        </div>
+        <p id="mapa-aqi-ranges" class="mapa-aqi-description">${escapeMapaText(ranges)}. ${t("mapa_aqi_extension")}</p>
+        <div class="mapa-no-data">${item("stale", "#C7C7C7", t("aqi_sin_datos_card"))}</div>`;
+      return;
     }
+    // Otras capas conservan la referencia neutra, sin escala sanitaria.
+    legend.innerHTML = `<div class="mapa-legend-title">${escapeMapaText(paramLabel(param))}</div>`;
+    legend.innerHTML += item("recent", "var(--text-dim)", t("mapa_valor_leyenda"));
     legend.innerHTML += item("missing", "var(--text-dim)", t("mapa_sin_valor")) + item("stale", "#C7C7C7", t("aqi_sin_datos_card"));
   }
 

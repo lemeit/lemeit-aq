@@ -1,5 +1,10 @@
 # Corrección visual: círculos comunes y colores AQI
 
+> Ajuste posterior solicitado: [barra segmentada AQI](BARRA_AQI_MAPA.md)
+> sustituye la lista visible de círculos en la leyenda. Los círculos/colores
+> de marcadores de #24 permanecen; las descripciones de leyendas anteriores
+> se conservan como evidencia histórica, no como diseño actual solicitado.
+
 ## Estado verificado — 30/10/2026
 
 [PR #24](https://github.com/lemeit/lemeit-aq/pull/24) fusionado mediante squash

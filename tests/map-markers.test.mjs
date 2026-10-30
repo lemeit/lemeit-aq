@@ -38,12 +38,14 @@ test('frescura de #22 tiene precedencia; recuperación y valor ausente distingui
  for(const v of [null,NaN,Infinity,-1,'4'])assert.equal(ctx.mapaMarkerState(row(v),'aqi').state,'missing');
  assert.equal(ctx.mapaMarkerState({...row(),humedad:null},'humedad').state,'missing');
 });
-test('leyenda de círculos coloreados y categorías textuales; otras capas neutras',()=>{
- ctx.renderMapaLegend('aqi');assert.equal((legend.innerHTML.match(/data-shape=/g)||[]).length,8);
+test('leyenda segmentada con límites heredados y gris separado; otras capas neutras',()=>{
+ ctx.renderMapaLegend('aqi');assert.equal((legend.innerHTML.match(/data-aqi-max=/g)||[]).length,6);
  for(const key of ['aqi_buena','aqi_moderada','aqi_grupos_sensibles','aqi_no_saludable','aqi_muy_no_saludable','aqi_peligrosa','aqi_sin_datos_card'])assert.ok(legend.innerHTML.includes(key));
  for(const color of ['--good','--moderate','--unhealthy-sg','--unhealthy','--very-unhealthy','--hazardous'])assert.ok(legend.innerHTML.includes(`var(${color})`));
- assert.equal((legend.innerHTML.match(/data-shape="circle"/g)||[]).length,8);
+ assert.equal((legend.innerHTML.match(/data-shape="circle"/g)||[]).length,1);
  assert.doesNotMatch(legend.innerHTML,/square|triangle|diamond|hexagon|star|--accent/);
+ assert.match(legend.innerHTML,/0<\/span>/);for(const v of [50,100,150,200,300])assert.ok(legend.innerHTML.includes(`>${v}</span>`));assert.ok(legend.innerHTML.includes('>500+</span>'));
+ assert.match(legend.innerHTML,/aria-describedby="mapa-aqi-ranges"/);assert.match(legend.innerHTML,/mapa-no-data/);assert.match(legend.innerHTML,/0–50/);assert.match(legend.innerHTML,/301–500/);
  ctx.renderMapaLegend('humedad');assert.equal((legend.innerHTML.match(/data-shape=/g)||[]).length,3);assert.doesNotMatch(legend.innerHTML,/aqi_buena|0–|50–/);
 });
 test('popup muestra la variable elegida/unidad/fecha/estado, escape de metadata',()=>{

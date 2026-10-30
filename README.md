@@ -365,3 +365,13 @@ El selector sigue siendo **AQI · EPA**.
 Merge/despliegue autorizados y verificados: Pages success, canónico con el SHA
 del merge y HTML estático idéntico al probado. Evidencia en el informe; no
 equivale a validar sensores ni APIs productivas.
+
+
+## Leyenda compacta AQI
+
+La propuesta de [barra segmentada](docs/BARRA_AQI_MAPA.md) sustituye la lista
+visible de círculos/categorías bajo el mapa: título **AQI · EPA**, seis colores
+existentes y límites **0/50/100/150/200/300/500+**. Gris «Sin datos recientes»
+separado de la escala, sin considerarlo categoría AQI. Se conservan información
+accesible, círculos de #24, frescura/orden y otras capas neutras; no se aplica
+la sugerencia de cambiarles color. Pruebas offline y capturas en el informe.
