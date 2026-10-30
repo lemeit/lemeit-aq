@@ -86,4 +86,4 @@ se prepara en rama independiente, sin rehacer AQ-09 ni declarar validación
 productiva: formas para seis categorías existentes, un acento del sitio,
 parámetros neutros y popups de la capa elegida. Sin cambios de orden #21,
 identidad/activo/D1 ni ingesta. Criterios y pruebas offline con Leaflet real en
-el informe; pendiente de PR/merge. Resto de hallazgos conserva su alcance.
+el informe; [PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23), pendiente de merge. Resto de hallazgos conserva su alcance.

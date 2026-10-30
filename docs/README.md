@@ -2,7 +2,7 @@
 
 ## Regla e interfaz
 
-- [Marcadores compactos](MARCADORES_MAPA.md): propuesta de formas AQI, acento único y capas neutras; Leaflet real offline, pendiente de merge.
+- [Marcadores compactos](MARCADORES_MAPA.md): propuesta de formas AQI, acento único y capas neutras; Leaflet real offline, [PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23), pendiente de merge.
 
 - [Frescura AQ-09](FRESCURA_SENSORES.md): regla ≤25 min, datos antiguos/inválidos/futuros, mapa/tarjetas, reproducción, aceptación, pruebas offline, autorización y exclusión de previews. [PR #22 fusionado](https://github.com/lemeit/lemeit-aq/pull/22) en d76c687; no equivale a validación de sensores productivos.
 - [Orden de tarjetas #21](ORDEN_TARJETAS.md): integrado en main; AE ascendente y proveedores conservados.

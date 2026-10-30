@@ -185,3 +185,25 @@ metadatos hostiles en superficies preexistentes ajenas al popup.
 
 Antes de merge, descartar la rama revierte la propuesta. Después, una reversión
 por PR restaura la representación previa sin restaurar datos ni esquema.
+
+
+## PR y comprobación de publicación
+
+[PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23) hacia main,
+sin merge ni auto-merge. Primer HEAD remoto:
+`cf86ab005dfe56dd13d83c86b0442d86d47ac07b`, árbol
+`8c1179514dbffc07d64f86fed04995a1324306e8`, idéntico al commit local
+`cab6c4d`. Publicación por conector GitHub a causa del proxy Git local.
+
+Antes de abrir el PR se verificó el registro Pages
+`14d13b9a-840a-406e-a731-c492d167d939` para ese SHA:
+`is_skipped=true`, `skip_reason=commit_message`, ninguna etapa ejecutada.
+Source completo idéntico al GET previo; no se cambió ninguna exclusión.
+El deployment canónico sigue siendo `aa81ba45-2415-4c73-9af3-8eaf2543d407`,
+SHA main `d76c6870bdeb70da2ff4be428752136532bee320`.
+
+Se añade este seguimiento en un commit exclusivamente documental, también con
+prefijo `[CF-Pages-Skip]`. El SHA final, la comprobación Pages después del PR
+y la comparación remota de archivos quedan registrados en la descripción del
+[PR #23](https://github.com/lemeit/lemeit-aq/pull/23). No se afirma que el cambio
+esté fusionado, desplegado ni verificado contra sensores reales.

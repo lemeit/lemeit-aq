@@ -354,6 +354,6 @@ El selector se etiqueta **AQI · EPA**, con leyenda «Índice de calidad del air
 acento naranja real `--accent`, sin cambiar umbrales/cálculo. Las otras capas
 usan un aro neutro sin rangos; al pulsar muestran su valor, unidad, fecha y
 estado. Se quitan etiquetas y números superpuestos. Datos antiguos usan gris
-claro con barra, conservando tarjetas y recuperación de #22. Propuesta en rama
+claro con barra, conservando tarjetas y recuperación de #22. [PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23), rama
 `feat/mapa-marcadores-aqi`, aún sin fusionar ni desplegar desde esta tarea.
 [Diseño, pruebas Leaflet offline, accesibilidad, publicación y reversión](docs/MARCADORES_MAPA.md).
