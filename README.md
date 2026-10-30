@@ -334,7 +334,8 @@ Las tarjetas priorizan AE por número usando `nombre` y, como fallback, `codigo`
 [AQ-09, PR #22 fusionado](https://github.com/lemeit/lemeit-aq/pull/22) en
 `d76c6870bdeb70da2ff4be428752136532bee320`: lecturas válidas de hasta **25 minutos inclusive** conservan su
 color AQI en tarjetas. La propuesta de marcadores usa formas y acento único en
-el mapa (ver debajo). Al superar ese límite, o con fecha inválida/futura, el marcador pasa
+el mapa en la propuesta histórica #23; la corrección vigente usa círculos de
+colores AQI (ver debajo). Al superar ese límite, o con fecha inválida/futura, el marcador pasa
 a gris y la tarjeta permanece visible con mediciones atenuadas, estado **«Sin
 datos recientes»** y última actualización. El popup conserva la fecha de última
 medición. La frescura se reevalúa localmente cada segundo y al volver a la
@@ -347,13 +348,19 @@ previews verificada: [docs/FRESCURA_SENSORES.md](docs/FRESCURA_SENSORES.md).
 Índice técnico y estado de propuestas: [docs/README.md](docs/README.md).
 
 
-## Propuesta de marcadores compactos
+## Marcadores compactos: corrección circular
 
-El selector se etiqueta **AQI · EPA**, con leyenda «Índice de calidad del aire
-(AQI · EPA)». Seis formas distinguen las categorías ya existentes usando el
-acento naranja real `--accent`, sin cambiar umbrales/cálculo. Las otras capas
-usan un aro neutro sin rangos; al pulsar muestran su valor, unidad, fecha y
-estado. Se quitan etiquetas y números superpuestos. Datos antiguos usan gris
-claro con barra, conservando tarjetas y recuperación de #22. [PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23), rama
-`feat/mapa-marcadores-aqi`, aún sin fusionar ni desplegar desde esta tarea.
-[Diseño, pruebas Leaflet offline, accesibilidad, publicación y reversión](docs/MARCADORES_MAPA.md).
+[PR #23](https://github.com/lemeit/lemeit-aq/pull/23) quedó fusionado en
+`934f6354bf216876368ba931fd363d32825312db`; su esquema de formas y acento único
+fue rechazado después por el titular. La corrección en `fix/mapa-circulos-aqi`
+usa **una sola forma circular** y los seis colores AQI existentes, idénticos a
+las tarjetas, sin cambiar cálculo/umbrales. Otras variables: círculo neutro.
+Datos antiguos/inválidos/futuros: círculo gris; tarjetas visibles y atenuadas,
+con recuperación de #22. Sin etiquetas largas ni cifras sobre los puntos.
+Popup, valor/unidad/fecha/estado, teclado y foco de #23 se conservan.
+El selector sigue siendo **AQI · EPA**.
+
+[Regla, pruebas Leaflet offline, capturas y operación autorizada](docs/CIRCULOS_AQI_MAPA.md).
+[Diseño anterior y evidencia histórica de #23](docs/MARCADORES_MAPA.md).
+El titular autorizó el merge/despliegue de esta corrección; su verificación se
+registrará sin confundirla con validación de sensores/API productivos.

@@ -21,8 +21,8 @@ const ui = vm.createContext({
 });
 const constants = html.slice(html.indexOf('  const PM25_AQI_BREAKPOINTS ='), html.indexOf('  const aqiBandsPlugin ='));
 const gauge = html.slice(html.indexOf('  const AQI_GAUGE_BANDS ='), html.indexOf('  function polarToCartesian'));
-const params = html.slice(html.indexOf('  const MAPA_PARAMS ='), html.indexOf('  const MAPA_AQI_SHAPES'));
-const mapHelpers = html.slice(html.indexOf('  const MAPA_AQI_SHAPES'),html.indexOf('  // VOC/NOx'));
+const params = html.slice(html.indexOf('  const MAPA_PARAMS ='), html.indexOf('  // Una geometría común'));
+const mapHelpers = html.slice(html.indexOf('  // Una geometría común'),html.indexOf('  // VOC/NOx'));
 vm.runInContext(constants + gauge + params + mapHelpers + [
   'pm25ToAqi', 'pm25FromAqi', 'aqiInfo', 'formatAqi', 'formatPm25',
   'aqiGaugeNeedleAngle', 'polarToCartesian', 'gaugeArcPath', 'aqiGaugeSvg',
