@@ -26,8 +26,10 @@ test('PM2.5 y todos los parámetros de medición usan el mismo símbolo sin clas
  for(const param of ['pm2_5','temperatura','humedad','presion','voc','co2','nox']){
   const s={...row(),presion:1009,voc:30,co2:600,nox:1};
   assert.equal(ctx.mapaMarkerState(s,param).shape,'circle');
+  assert.equal(ctx.mapaMarkerState(s,param).color,'var(--accent)');
+  const missing=ctx.mapaMarkerState({...s,[param]:null},param);assert.equal(missing.state,'missing');assert.equal(missing.color,'var(--accent)');
  }
- for(const pm of [4,40,400])assert.equal(ctx.mapaMarkerState(row(pm),'pm2_5').color,'var(--text-dim)');
+ for(const pm of [4,40,400])assert.equal(ctx.mapaMarkerState(row(pm),'pm2_5').color,'var(--accent)');
 });
 test('frescura de #22 tiene precedencia; recuperación y valor ausente distinguibles',()=>{
  const s=row();s.timestamp='2026-10-30 14:35:00';
@@ -38,7 +40,7 @@ test('frescura de #22 tiene precedencia; recuperación y valor ausente distingui
  for(const v of [null,NaN,Infinity,-1,'4'])assert.equal(ctx.mapaMarkerState(row(v),'aqi').state,'missing');
  assert.equal(ctx.mapaMarkerState({...row(),humedad:null},'humedad').state,'missing');
 });
-test('leyenda segmentada con límites heredados y gris separado; otras capas neutras',()=>{
+test('leyenda segmentada con límites heredados y gris separado; otras capas con acento sin rangos',()=>{
  ctx.renderMapaLegend('aqi');assert.equal((legend.innerHTML.match(/data-aqi-max=/g)||[]).length,6);
  for(const key of ['aqi_buena','aqi_moderada','aqi_grupos_sensibles','aqi_no_saludable','aqi_muy_no_saludable','aqi_peligrosa','aqi_sin_datos_card'])assert.ok(legend.innerHTML.includes(key));
  for(const color of ['--good','--moderate','--unhealthy-sg','--unhealthy','--very-unhealthy','--hazardous'])assert.ok(legend.innerHTML.includes(`var(${color})`));
@@ -58,7 +60,7 @@ test('popup muestra la variable elegida/unidad/fecha/estado, escape de metadata'
 test('una sola geometría SVG decorativa, sin figuras, texto ni acento monocromático',()=>{
  for(const state of ['recent','stale','missing']){
   const icon=ctx.mapaSymbolHtml(state,state==='stale'?'#C7C7C7':'var(--good)');
-  assert.match(icon,/aria-hidden="true"/);assert.equal((icon.match(/<circle /g)||[]).length,1);
+  assert.match(icon,/aria-hidden="true"/);if(state==='missing'){assert.match(icon,/fill="none"/);assert.match(icon,/stroke="currentColor"/);}assert.equal((icon.match(/<circle /g)||[]).length,1);
   assert.doesNotMatch(icon,/<text|<path|<rect|<polygon|undefined|--accent/);
  }
  assert.doesNotMatch(html,/MAPA_AQI_SHAPES/);

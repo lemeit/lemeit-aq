@@ -44,6 +44,12 @@ with sync_playwright() as p:
     const layer = {addTo(){return this},bindPopup(){return this},on(){return this},getElement(){return null}};
     window.L={tileLayer:()=>layer,circleMarker:()=>layer,marker:()=>layer,divIcon:()=>({})};
     mapaInst={eachLayer(){},invalidateSize(){}};
+
+ L.control=()=>({getContainer(){return this.panel},addTo(map){this.panel=this.onAdd(map);map.getContainer().appendChild(this.panel);return this}});
+ L.DomUtil={create(tag,cls){const el=document.createElement(tag);el.className=cls;return el}};
+ L.DomEvent={disableClickPropagation(){},disableScrollPropagation(){}};
+ mapaInst.getContainer=()=>document.getElementById("mapa-container");
+ mapaInst.on=()=>mapaInst;
     await cargarMapa();
    }''')
    assert page.locator('#mapa-cards > .card').evaluate_all('(c)=>c.map(x=>Number(x.dataset.sensorIndex))') == expected

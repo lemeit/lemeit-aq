@@ -1,5 +1,11 @@
 # Corrección visual: círculos comunes y colores AQI
 
+> Decisión posterior: [leyenda interior compacta y acento](CONTROL_LEYENDA_MAPA.md)
+> sustituye la ubicación externa/anchos proporcionales y el gris neutro de otras
+> variables. El titular ahora aprueba naranja reciente, vacío naranja faltante
+> y gris claro solo sin datos recientes. Las descripciones anteriores se
+> conservan como evidencia histórica; AQI/frescura/orden no cambian.
+
 > Ajuste posterior solicitado: [barra segmentada AQI](BARRA_AQI_MAPA.md)
 > sustituye la lista visible de círculos en la leyenda. Los círculos/colores
 > de marcadores de #24 permanecen; las descripciones de leyendas anteriores

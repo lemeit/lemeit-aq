@@ -130,3 +130,14 @@ autorizado, con verificación real posterior, sin operaciones de datos.
 estático de 190501 bytes idéntico al probado; [hash, evidencia y límites](BARRA_AQI_MAPA.md#estado-real-verificado--30102026).
 Sin cambios en otras capas ni datos. El seguimiento documental mantiene el
 mismo runtime y su canónico final se comprueba en su PR.
+
+
+### Control interior y acento por autorización posterior
+
+Nueva rama `fix/mapa-leyenda-interior-acento` desde `f3db674…`: [leyenda
+interior](CONTROL_LEYENDA_MAPA.md) bottomleft, máximo 240 px, segmentos
+categóricos iguales, límites AQI sin cambios y margen para atribución. Otras
+capas: naranja reciente, vacío naranja faltante y gris claro solo antiguo.
+Leaflet real offline: contención, gestos, 320/390/1440, ES/EN, temas, estados y
+regresiones PASS. Merge/despliegue autorizados; resultado real se registra al
+cierre en la descripción del PR, sin otro PR exclusivamente de tiempos verbales.

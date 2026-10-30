@@ -10,7 +10,7 @@ js=(assets/'leaflet.min.js').read_text();css=(assets/'leaflet.min.css').read_tex
 assert '1.9.4' in js
 assert hashlib.sha256(js.encode()).hexdigest()=='5c9aecfc30e4564519dbdcddcc53a418227dcc7568e619e9762ddcec7609ed47'
 assert hashlib.sha256(css.encode()).hexdigest()=='b570abbda963c60b4de4b4ff4b26f9326f53fb2ccf1461fdf0955ca094fb2539'
-base='0252c3a06a1bdf0baefee0c4c4e2575400976d30'
+base='f3db674fc3dcbec0d031e807bc2fa80ca2ea8054'
 rows=[dict(sensor_index=i+1,nombre=f'AE-{i:02}',institucion=f'Escuela fixture AE-{i:02}',
  timestamp='2026-10-30 14:35:00' if i==0 else '2026-10-30 14:59:00',
  pm2_5=pm,temperatura=22.3,humedad=48,presion=1008,co2=500,voc=20,nox=2,
@@ -49,12 +49,13 @@ with sync_playwright() as p:
    icons=page.locator('.mapa-station-icon')
    assert icons.locator('[data-shape]').evaluate_all('(els)=>els.slice(0,6).map(e=>e.dataset.shape)')==['circle']*6
    assert len(set(icons.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==6
-   assert page.locator('#mapa-legend [data-shape]').count()==8
+   assert page.locator('.mapa-aqi-segment').count()==6
+   assert page.evaluate('!document.getElementById("mapa-container").contains(document.getElementById("mapa-legend"))')
    for width in [390,1440]:
     page.set_viewport_size({'width':width,'height':844})
     page.evaluate('mapaInst.setView([-35.63,-59.78],12,{animate:false})')
-    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'bar-before-{width}.png'))
-   print('REPRODUCIDO main: leyenda con ocho círculos y nombres largos; capturas antes guardadas')
+    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'control-before-{width}.png'))
+   print('REPRODUCIDO main: leyenda externa a todo ancho y otras capas grises; capturas antes guardadas')
   else:
    markers=page.locator('.mapa-station-icon')
    assert markers.count()==8
@@ -65,7 +66,7 @@ with sync_playwright() as p:
    assert page.locator('#sel-mapa-param option[value=aqi]').inner_text()=='AQI · EPA'
    assert page.locator('#mapa-legend .mapa-legend-title').inner_text()=='AQI · EPA'
    for width in [320,390,1440]:
-    page.set_viewport_size({'width':width,'height':844})
+    page.set_viewport_size({'width':width,'height':844});page.wait_for_timeout(350)
     for lang in ['es','en']:
      page.evaluate('(v)=>setLang(v)',lang)
      for theme in ['dark','light']:
@@ -97,17 +98,56 @@ with sync_playwright() as p:
       assert page.locator('.mapa-no-data .mapa-symbol').count()==1
       assert '301–500' in page.locator('#mapa-aqi-ranges').text_content()
       assert page.locator('#mapa-aqi-ranges').evaluate('(e)=>getComputedStyle(e).clipPath')=='inset(50%)'
+      # Control real bottomleft contenido, compacto y fuera de atribución/zoom/selector.
+      assert page.locator('#mapa-legend').count()==1
+      assert page.evaluate('document.querySelector("#mapa-container .leaflet-bottom.leaflet-left").contains(document.getElementById("mapa-legend"))')
+      panel=page.locator('#mapa-legend').bounding_box();area=page.locator('#mapa-container').bounding_box()
+      assert panel['width']<=240.5 and panel['width']<area['width']-15
+      assert panel['x']>=area['x'] and panel['x']+panel['width']<=area['x']+area['width']
+      assert panel['y']>=area['y'] and panel['y']+panel['height']<=area['y']+area['height']
+      assert panel['x']-area['x']<=12
+      attribution=page.locator('.leaflet-control-attribution').bounding_box()
+      assert panel['y']+panel['height']<=attribution['y']-4
+      zoom=page.locator('.leaflet-control-zoom').bounding_box()
+      assert zoom['y']+zoom['height']<panel['y']
+      selector=page.locator('#sel-mapa-param').bounding_box()
+      assert selector['y']+selector['height']<=area['y']
+      assert page.evaluate('document.getElementById("mapa-legend").closest(".chart-wrap").getBoundingClientRect().bottom-document.getElementById("mapa-container").getBoundingClientRect().bottom<3')
       # Los números caben sin solaparse, incluso a 320 px.
       ticks=page.locator('.mapa-aqi-ticks span').evaluate_all('(els)=>els.map(e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right}})')
       bounds=scale.bounding_box()
       assert ticks[0]['left']>=bounds['x']-1 and ticks[-1]['right']<=bounds['x']+bounds['width']+1
-      assert all(ticks[i]['right']<=ticks[i+1]['left'] for i in range(6)),(width,lang,ticks)
+      assert all(ticks[i]['right']+6<=ticks[i+1]['left'] for i in range(6)),(width,lang,ticks)
       actual_widths=segments.evaluate_all('(els)=>els.map(e=>e.getBoundingClientRect().width)')
       total=sum(actual_widths)
-      for actual,expected in zip(actual_widths,[50,50,50,50,100,200]):assert abs(actual/total-expected/500)<.01
+      for actual in actual_widths:assert abs(actual/total-1/6)<.01
+      assert ('categórica' if lang=='es' else 'Categorical') in page.locator('#mapa-aqi-ranges').text_content()
       assert page.locator('#mapa-cards > .card').evaluate_all('(els)=>els.map(e=>Number(e.dataset.sensorIndex))')==[1,2,3,4,5,6,900002,99]
+      # Misma contención y estados de otras capas en cada viewport/idioma/tema.
+      for layer_name in ['pm2_5','temperatura','humedad']:
+       page.select_option('#sel-mapa-param',layer_name)
+       lp=page.locator('#mapa-legend').bounding_box()
+       assert lp['width']<=240.5 and lp['y']>=area['y']
+       assert lp['y']+lp['height']<=attribution['y']-4
+       assert zoom['y']+zoom['height']<lp['y']
+       accent='rgb(217, 105, 31)' if theme=='dark' else 'rgb(155, 61, 0)'
+       assert markers.nth(1).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')==accent
+       assert markers.nth(6).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
+       if layer_name=='pm2_5':
+        assert markers.nth(7).locator('circle').evaluate('(e)=>getComputedStyle(e).fill')=='none'
+        assert markers.nth(7).locator('circle').evaluate('(e)=>getComputedStyle(e).stroke')==accent
+      page.select_option('#sel-mapa-param','aqi')
     page.evaluate('setLang("es");document.documentElement.setAttribute("data-theme","light")')
-    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'bar-after-{width}.png'))
+    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'control-after-{width}.png'))
+   # Gestos dentro del control no mueven mapa; fuera se puede arrastrar.
+   panel=page.locator('#mapa-legend').bounding_box();area=page.locator('#mapa-container').bounding_box()
+   center=page.evaluate('mapaInst.getCenter()');zoom_before=page.evaluate('mapaInst.getZoom()')
+   page.mouse.move(panel['x']+40,panel['y']+20);page.mouse.down();page.mouse.move(panel['x']+100,panel['y']+25,steps=8);page.mouse.up()
+   page.mouse.wheel(0,-400);page.wait_for_timeout(300)
+   assert page.evaluate('mapaInst.getCenter()')==center and page.evaluate('mapaInst.getZoom()')==zoom_before
+   page.mouse.move(area['x']+area['width']-80,area['y']+100);page.mouse.down();page.mouse.move(area['x']+area['width']-140,area['y']+100,steps=8);page.mouse.up();page.wait_for_timeout(300)
+   assert page.evaluate('mapaInst.getCenter()')!=center
+   page.evaluate('mapaInst.setView([-35.63,-59.78],12,{animate:false})')
    # Leaflet real: Enter y Space abren popup, nombres accesibles no dependen de color.
    markers.nth(1).focus();markers.nth(1).press('Enter')
    assert page.locator('.leaflet-popup-content').last.is_visible()
@@ -118,16 +158,23 @@ with sync_playwright() as p:
    page.keyboard.press('Escape');page.wait_for_timeout(300)
    assert page.locator('.leaflet-popup-content').count()==0
    assert markers.nth(1).evaluate('(e)=>e===document.activeElement')
-   # Todas las capas restantes conservan marcadores neutros y valor elegido/unidad real.
+   # Otras capas usan acento naranja, sin clasificar, y conservan el valor y valor elegido/unidad real.
    for param,value in [('pm2_5','20 µg/m³'),('temperatura','22.3 °C'),('humedad','48 %'),('presion','1008 hPa'),('voc','20 (índice)'),('co2','500 ppm'),('nox','2 (índice)')]:
     page.select_option('#sel-mapa-param',param);page.wait_for_timeout(50)
     assert markers.nth(1).locator('[data-shape]').get_attribute('data-shape')=='circle'
-    assert markers.nth(1).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')==page.evaluate('getComputedStyle(document.documentElement).getPropertyValue("--text-dim").trim()').replace('#6B5C4E','rgb(107, 92, 78)')
+    assert markers.nth(1).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(155, 61, 0)'
     page.evaluate('mapaInst.setView([latestSensors[1].latitud,latestSensors[1].longitud],15,{animate:false})')
     markers.nth(1).click();popup=page.locator('.leaflet-popup-content').last.inner_text()
     assert value in popup,(param,popup)
     assert 'Última medición' in popup and 'Datos recientes' in popup and '2026' in popup
     assert page.locator('#mapa-legend [data-shape]').count()==3
+    # Missing de PM2.5: círculo vacío naranja; no se confunde con antiguo.
+    if param=='pm2_5':
+     assert markers.nth(7).locator('[data-state]').get_attribute('data-state')=='missing'
+     assert markers.nth(7).locator('circle').evaluate('(e)=>getComputedStyle(e).fill')=='none'
+     assert markers.nth(7).locator('circle').evaluate('(e)=>getComputedStyle(e).stroke')=='rgb(155, 61, 0)'
+    pp=page.locator('#mapa-legend').bounding_box();aa=page.locator('#mapa-container').bounding_box()
+    assert pp['width']<=240.5 and pp['y']>=aa['y']
    page.select_option('#sel-mapa-param','aqi');page.evaluate('mapaInst.closePopup()')
    page.evaluate('window.savedMarker=Object.values(mapaInst._layers).find(x=>x instanceof L.Marker);window.savedBack=document.querySelector("#mapa-cards .card-back")')
    before=len([u for u in calls if '/api/' in u or '/tiles/' in u])
@@ -157,6 +204,6 @@ with sync_playwright() as p:
     assert markers.nth(i).locator('[data-state]').get_attribute('data-state')=='stale'
     assert markers.nth(i).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
    assert not errors,errors
-   print('PASS: Leaflet 1.9.4 real, barra de seis categorías/colores/límites reales, gris separado, números sin solaparse, círculos conservados, teclado Enter/Space/Escape, foco/nombre/tamaño, 320/390/1440, ES/EN, temas, parámetros, frescura/red/recuperación, orden y sin fetch al envejecer')
+   print('PASS: Leaflet 1.9.4 real, control interior bottomleft ≤240px, sin solapar atribución/zoom/selector, paleta categórica/límites, gestos locales y pan exterior, naranja/vacío/gris, teclado Enter/Space/Escape, foco/nombre/tamaño, 320/390/1440, ES/EN, temas, parámetros, frescura/red/recuperación, orden y sin fetch al envejecer')
   c.close()
  b.close()
