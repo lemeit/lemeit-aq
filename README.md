@@ -352,8 +352,8 @@ previews verificada: [docs/FRESCURA_SENSORES.md](docs/FRESCURA_SENSORES.md).
 
 [PR #23](https://github.com/lemeit/lemeit-aq/pull/23) quedó fusionado en
 `934f6354bf216876368ba931fd363d32825312db`; su esquema de formas y acento único
-fue rechazado después por el titular. La corrección en `fix/mapa-circulos-aqi`
-usa **una sola forma circular** y los seis colores AQI existentes, idénticos a
+fue rechazado después por el titular. La corrección de [PR #24](https://github.com/lemeit/lemeit-aq/pull/24), fusionado y
+desplegado con éxito en `a8c21b6`, usa **una sola forma circular** y los seis colores AQI existentes, idénticos a
 las tarjetas, sin cambiar cálculo/umbrales. Otras variables: círculo neutro.
 Datos antiguos/inválidos/futuros: círculo gris; tarjetas visibles y atenuadas,
 con recuperación de #22. Sin etiquetas largas ni cifras sobre los puntos.
@@ -362,5 +362,6 @@ El selector sigue siendo **AQI · EPA**.
 
 [Regla, pruebas Leaflet offline, capturas y operación autorizada](docs/CIRCULOS_AQI_MAPA.md).
 [Diseño anterior y evidencia histórica de #23](docs/MARCADORES_MAPA.md).
-El titular autorizó el merge/despliegue de esta corrección; su verificación se
-registrará sin confundirla con validación de sensores/API productivos.
+Merge/despliegue autorizados y verificados: Pages success, canónico con el SHA
+del merge y HTML estático idéntico al probado. Evidencia en el informe; no
+equivale a validar sensores ni APIs productivas.

@@ -2,7 +2,7 @@
 
 ## Regla e interfaz
 
-- [Círculos y colores AQI](CIRCULOS_AQI_MAPA.md): corrección vigente del esquema visual; una geometría común, colores de tarjetas, neutro/gris, capturas y pruebas Leaflet reales. Merge/despliegue autorizados para esta tarea.
+- [Círculos y colores AQI](CIRCULOS_AQI_MAPA.md): corrección vigente del esquema visual; una geometría común, colores de tarjetas, neutro/gris, capturas y pruebas Leaflet reales. [PR #24 fusionado y desplegado](https://github.com/lemeit/lemeit-aq/pull/24), con Pages success y HTML estático verificados; evidencia en el informe.
 - [Marcadores #23](MARCADORES_MAPA.md): registro histórico de formas/acento, fusionado y luego sustituido por decisión explícita del titular.
 
 - [Frescura AQ-09](FRESCURA_SENSORES.md): regla ≤25 min, datos antiguos/inválidos/futuros, mapa/tarjetas, reproducción, aceptación, pruebas offline, autorización y exclusión de previews. [PR #22 fusionado](https://github.com/lemeit/lemeit-aq/pull/22) en d76c687; no equivale a validación de sensores productivos.

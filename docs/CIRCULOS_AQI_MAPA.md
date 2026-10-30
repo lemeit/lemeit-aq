@@ -1,5 +1,32 @@
 # Corrección visual: círculos comunes y colores AQI
 
+## Estado verificado — 30/10/2026
+
+[PR #24](https://github.com/lemeit/lemeit-aq/pull/24) fusionado mediante squash
+con HEAD esperado `d45887f81b53eabc203e3818ae04727c6655f40d`, sin conflictos ni
+checks remotos pendientes. Merge/main funcional:
+`a8c21b6131c17242cb9828539621a015d990f392`, árbol
+`d89432506f128b39a70ed9fe0d7327f77b87d6e2`, idéntico al checkout probado.
+El mensaje de merge se fijó explícitamente sin heredar skip.
+
+Cloudflare Pages confirmó deployment
+`745f9447-2ad2-4762-adea-488e82f70e80`, etapa deploy `success`,
+`is_skipped=false`; canónico con el mismo SHA de main. Configuración de origen
+sin cambios. La rama previa sí omitió preview por `commit_message` (registro
+`ab029b78-63f3-4533-916d-cf9956d3598e`), conforme lo previsto.
+
+GET estático a `https://purpleair-saladillo.pages.dev/`, sin ejecutar JS:
+**188280 bytes idénticos byte a byte** al `index.html` del commit desplegado.
+SHA256 `cf7f83e683ad01d9ab7cb04c69dd398321823b91cff6f3c66f03aef3433e584e`.
+Se verificó ausencia de tabla de geometrías y uso del color compartido con
+las tarjetas. Sin solicitudes API, visitas D1, ingestas ni migraciones.
+
+Este es el corte funcional verificado. El PR documental posterior incorpora
+esta evidencia sin alterar HTML/runtime; su integración y SHA canónico final
+se comprueban de nuevo y se registran en la descripción del PR. Las secciones
+siguientes conservan decisión, preparación y procedimiento, sin atribuir a
+la comprobación estática una validación de sensores o de la API productiva.
+
 ## Decisión vigente y base
 
 Corrección explícita del titular tras #23: «la idea no era cambiar geometrías
