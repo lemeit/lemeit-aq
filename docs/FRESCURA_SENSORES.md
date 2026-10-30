@@ -1,5 +1,13 @@
 # AQ-09 — Frescura de sensores
 
+> Seguimiento 30/10/2026: #22 ya está fusionado en main
+> `d76c6870bdeb70da2ff4be428752136532bee320`. Las referencias a PR abierto y
+> pendiente de merge de este informe registran su preparación histórica. La
+> propuesta de [marcadores compactos](MARCADORES_MAPA.md) reutiliza este reloj y
+> recuperación, sustituyendo solo el gris/etiquetado de mapa por símbolo gris
+> claro y las categorías por formas con acento único; tarjetas intactas.
+> No se infiere validación operativa de sensores a partir del merge.
+
 ## Base y alcance
 
 Revisión 30/10/2026 en el entorno Codex Cloud existente. GitHub confirmó main

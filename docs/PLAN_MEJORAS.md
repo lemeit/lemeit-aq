@@ -76,3 +76,14 @@ pendiente del merge del titular. Main avanzó concurrentemente por #20 a
 `a9d2acd4d9f6f0e4e154b7dfc3a1e3f5849ecb21`; la rama AQ-09 conserva esos
 cambios y su resolución documental. Pages omitió el primer HEAD por
 `branch_config`, sin ejecutar preview. [Evidencia y límites](FRESCURA_SENSORES.md#publicación-comprobada-y-avance-concurrente-de-main).
+
+
+### Seguimiento de interfaz y frescura — 30/10/2026
+
+#22 fusionado en `d76c6870bdeb70da2ff4be428752136532bee320`; el estado abierto
+anterior es histórico. El nuevo cambio [Marcadores compactos](MARCADORES_MAPA.md)
+se prepara en rama independiente, sin rehacer AQ-09 ni declarar validación
+productiva: formas para seis categorías existentes, un acento del sitio,
+parámetros neutros y popups de la capa elegida. Sin cambios de orden #21,
+identidad/activo/D1 ni ingesta. Criterios y pruebas offline con Leaflet real en
+el informe; pendiente de PR/merge. Resto de hallazgos conserva su alcance.

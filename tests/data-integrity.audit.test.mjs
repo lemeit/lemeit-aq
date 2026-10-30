@@ -175,10 +175,10 @@ test('AQ-11: scheduled no registra resultados ok:false',async()=>{
   try{await fixtureFetch(async()=>{await mod.default.scheduled({},env,{waitUntil(p){pending.push(p);}});await Promise.all(pending);},url=>new Response(JSON.stringify(String(url).includes('purpleair')?{fields,data:[]}:[])));assert.equal(errors.length,0);}finally{console.error=old;sqlite.close();}
 });
 test('AQ-09: mapa neutraliza lecturas antiguas',()=>{
-  const ctx=vm.createContext({aqiInfo:()=>({color:'var(--good)'}),pm25ToAqi:aqi,isStale:ui.isStale});vm.runInContext(uiFunction('colorForParam'),ctx);
-  const cs={getPropertyValue:()=> '#00ff00'};
-  assert.equal(ctx.colorForParam({pm2_5:4,timestamp:'2000-01-01 00:00:00'},'aqi',null,cs),'#808080');
-  assert.equal(ctx.colorForParam({pm2_5:4,timestamp:new Date().toISOString()},'aqi',null,cs),'#00ff00');
+  const ctx=vm.createContext({pm25ToAqi:aqi,isStale:ui.isStale,t:k=>k});
+  vm.runInContext('const MAPA_PARAMS={aqi:{get:s=>pm25ToAqi(s.pm2_5)}};const AQI_CATEGORIES=[{max:50,key:"good"}];const MAPA_AQI_SHAPES=["circle"];'+uiFunction('mapaMarkerState'),ctx);
+  assert.equal(ctx.mapaMarkerState({pm2_5:4,timestamp:'2000-01-01 00:00:00'},'aqi').state,'stale');
+  assert.equal(ctx.mapaMarkerState({pm2_5:4,timestamp:new Date().toISOString()},'aqi').state,'recent');
 });
 test('AQ-09: fallo de red reevalúa frescura local',async()=>{
   const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{style:{},classList:{contains:()=>false,add(){},remove(){}}});return elements.get(id);}
