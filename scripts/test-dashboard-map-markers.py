@@ -10,7 +10,7 @@ js=(assets/'leaflet.min.js').read_text();css=(assets/'leaflet.min.css').read_tex
 assert '1.9.4' in js
 assert hashlib.sha256(js.encode()).hexdigest()=='5c9aecfc30e4564519dbdcddcc53a418227dcc7568e619e9762ddcec7609ed47'
 assert hashlib.sha256(css.encode()).hexdigest()=='b570abbda963c60b4de4b4ff4b26f9326f53fb2ccf1461fdf0955ca094fb2539'
-base='d76c6870bdeb70da2ff4be428752136532bee320'
+base='934f6354bf216876368ba931fd363d32825312db'
 rows=[dict(sensor_index=i+1,nombre=f'AE-{i:02}',institucion=f'Escuela fixture AE-{i:02}',
  timestamp='2026-10-30 14:35:00' if i==0 else '2026-10-30 14:59:00',
  pm2_5=pm,temperatura=22.3,humedad=48,presion=1008,co2=500,voc=20,nox=2,
@@ -46,16 +46,20 @@ with sync_playwright() as p:
   page.evaluate('showTab("mapa",document.querySelector(\'.nav-btn[onclick*=mapa]\'));mapaInst.setView([-35.63,-59.78],12)')
   page.wait_for_timeout(250)
   if baseline:
-   assert page.locator('.leaflet-marker-icon').count()==8
-   assert page.locator('path.leaflet-interactive').count()==8 # círculo más etiqueta
-   assert page.locator('.leaflet-marker-icon').first.inner_text()
-   print('REPRODUCIDO main: doble capa por estación y etiquetas numéricas/largas; color depende AQI')
+   icons=page.locator('.mapa-station-icon')
+   assert icons.locator('[data-shape]').evaluate_all('(els)=>els.slice(0,6).map(e=>e.dataset.shape)')==['circle','square','triangle','diamond','hexagon','star']
+   assert len(set(icons.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==1
+   for width in [390,1440]:
+    page.set_viewport_size({'width':width,'height':844})
+    page.evaluate('mapaInst.setView([-35.63,-59.78],12,{animate:false})')
+    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'circles-before-{width}.png'))
+   print('REPRODUCIDO #23: seis geometrías y un único acento AQI; capturas antes guardadas')
   else:
    markers=page.locator('.mapa-station-icon')
    assert markers.count()==8
    assert page.locator('path.leaflet-interactive').count()==0
    assert markers.evaluate_all('(els)=>els.every(e=>!e.textContent.trim())')
-   shapes=['circle','square','triangle','diamond','hexagon','star','stale','missing']
+   shapes=['circle']*8
    assert markers.locator('[data-shape]').evaluate_all('(els)=>els.map(e=>e.dataset.shape)')==shapes
    assert page.locator('#sel-mapa-param option[value=aqi]').inner_text()=='AQI · EPA'
    assert 'Índice de calidad del aire (AQI · EPA)' in page.locator('#mapa-legend').inner_text()
@@ -70,13 +74,19 @@ with sync_playwright() as p:
       assert markers.nth(0).get_attribute('tabindex')=='0'
       assert '2026' in markers.nth(0).get_attribute('aria-label')
       assert markers.nth(0).evaluate('(e)=>e.offsetWidth===44 && e.offsetHeight===44')
-      assert markers.nth(0).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')==('rgb(217, 105, 31)' if theme=='dark' else 'rgb(155, 61, 0)')
+      for i,color_var in enumerate(['--good','--moderate','--unhealthy-sg','--unhealthy','--very-unhealthy','--hazardous']):
+       circle_color=markers.nth(i).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')
+       expected=page.evaluate('(v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim()',color_var)
+       # Normalizar token CSS y comparar con el badge real de su tarjeta.
+       assert circle_color==page.locator(f'#mapa-cards .card[data-sensor-index="{i+1}"] .badge').evaluate('(e)=>getComputedStyle(e).color')
+       assert expected
+      assert len(set(markers.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==6
       assert markers.nth(6).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
       assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,lang,theme)
       assert page.locator('#mapa-legend [data-shape]').count()==8
       assert page.locator('#mapa-cards > .card').evaluate_all('(els)=>els.map(e=>Number(e.dataset.sensorIndex))')==[1,2,3,4,5,6,900002,99]
     page.evaluate('setLang("es");document.documentElement.setAttribute("data-theme","light")')
-    page.locator('#mapa-container').screenshot(path=str(root/'work'/f'markers-map-{width}.png'))
+    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'circles-after-{width}.png'))
    # Leaflet real: Enter y Space abren popup, nombres accesibles no dependen de color.
    markers.nth(1).focus();markers.nth(1).press('Enter')
    assert page.locator('.leaflet-popup-content').last.is_visible()
@@ -90,7 +100,8 @@ with sync_playwright() as p:
    # Todas las capas restantes conservan marcadores neutros y valor elegido/unidad real.
    for param,value in [('pm2_5','20 µg/m³'),('temperatura','22.3 °C'),('humedad','48 %'),('presion','1008 hPa'),('voc','20 (índice)'),('co2','500 ppm'),('nox','2 (índice)')]:
     page.select_option('#sel-mapa-param',param);page.wait_for_timeout(50)
-    assert markers.nth(1).locator('[data-shape]').get_attribute('data-shape')=='measurement'
+    assert markers.nth(1).locator('[data-shape]').get_attribute('data-shape')=='circle'
+    assert markers.nth(1).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')==page.evaluate('getComputedStyle(document.documentElement).getPropertyValue("--text-dim").trim()').replace('#6B5C4E','rgb(107, 92, 78)')
     page.evaluate('mapaInst.setView([latestSensors[1].latitud,latestSensors[1].longitud],15,{animate:false})')
     markers.nth(1).click();popup=page.locator('.leaflet-popup-content').last.inner_text()
     assert value in popup,(param,popup)
@@ -100,7 +111,7 @@ with sync_playwright() as p:
    page.evaluate('window.savedMarker=Object.values(mapaInst._layers).find(x=>x instanceof L.Marker);window.savedBack=document.querySelector("#mapa-cards .card-back")')
    before=len([u for u in calls if '/api/' in u or '/tiles/' in u])
    page.evaluate('fixtureNow+=1')
-   page.wait_for_function('document.querySelector(".mapa-station-icon .mapa-symbol").dataset.shape==="stale"')
+   page.wait_for_function('document.querySelector(".mapa-station-icon .mapa-symbol").dataset.state==="stale"')
    assert len([u for u in calls if '/api/' in u or '/tiles/' in u])==before
    assert page.evaluate('savedMarker===Object.values(mapaInst._layers).find(x=>x instanceof L.Marker) && savedBack===document.querySelector("#mapa-cards .card-back")')
    assert page.locator('#mapa-cards .card[data-sensor-index="1"] .sensor-stale').count()==1
@@ -108,15 +119,23 @@ with sync_playwright() as p:
    assert '2026' in page.locator('.leaflet-popup-content').last.inner_text()
    for failure in ['offline','http']:
     mode['value']=failure;page.evaluate('fixtureNow+=1000;loadSensors()');page.wait_for_timeout(100)
-    assert markers.nth(0).locator('[data-shape]').get_attribute('data-shape')=='stale'
+    assert markers.nth(0).locator('[data-shape]').get_attribute('data-state')=='stale'
    mode['value']='pending';page.evaluate('loadSensors();fixtureNow+=30*60000;document.dispatchEvent(new Event("visibilitychange"))')
-   assert markers.locator('[data-shape="stale"]').count()==8
+   assert markers.locator('[data-state="stale"]').count()==8
    for r in pending:r.abort()
    pending.clear();page.wait_for_timeout(50)
    mode['value']='ok';data[0]['timestamp']='2026-10-30T15:30:00Z';page.evaluate('loadSensors()');page.wait_for_timeout(150)
    assert markers.nth(0).locator('[data-shape]').get_attribute('data-shape')=='circle'
+   assert markers.nth(0).locator('[data-state]').get_attribute('data-state')=='recent'
+   assert markers.nth(0).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')==page.locator('#mapa-cards .card[data-sensor-index="1"] .badge').evaluate('(e)=>getComputedStyle(e).color')
    assert page.locator('#mapa-cards .card[data-sensor-index="1"] .sensor-stale').count()==0
+   # Fechas corruptas/futuras también son círculos grises con Leaflet real.
+   for i,ts in [(2,'invalid'),(3,'2099-01-01 00:00:00'),(4,None)]:data[i]['timestamp']=ts
+   page.evaluate('loadSensors()');page.wait_for_timeout(150)
+   for i in [2,3,4]:
+    assert markers.nth(i).locator('[data-state]').get_attribute('data-state')=='stale'
+    assert markers.nth(i).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
    assert not errors,errors
-   print('PASS: Leaflet 1.9.4 real, seis categorías, un acento, teclado Enter/Space/Escape, foco/nombre/tamaño, 320/390/1440, ES/EN, temas, parámetros, frescura/red/recuperación, orden y sin fetch al envejecer')
+   print('PASS: Leaflet 1.9.4 real, seis categorías/colores idénticos tarjetas, una geometría circular, teclado Enter/Space/Escape, foco/nombre/tamaño, 320/390/1440, ES/EN, temas, parámetros, frescura/red/recuperación, orden y sin fetch al envejecer')
   c.close()
  b.close()

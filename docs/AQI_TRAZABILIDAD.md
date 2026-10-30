@@ -1,5 +1,12 @@
 # Trazabilidad del indicador PM2.5 visible (AQI)
 
+> Decisión posterior del titular: [una sola forma circular y colores AQI](CIRCULOS_AQI_MAPA.md)
+> sustituye las seis geometrías/acento único de #23, ya fusionado en 934f635.
+> Las referencias siguientes a formas o PR pendiente son evidencia histórica,
+> no la decisión visual vigente. Frescura #22, orden #21 y cálculo intactos.
+> El titular autorizó merge/despliegue de la corrección circular; las restricciones
+> operativas anteriores se conservan como registro de sus respectivas tareas.
+
 > Propuesta de presentación del mapa (30/10/2026): [marcadores compactos](MARCADORES_MAPA.md)
 > renombra el selector a AQI · EPA y usa seis formas con un único acento,
 > conservando fórmula y categorías de este informe. La frescura de #22 ya está

@@ -87,3 +87,14 @@ productiva: formas para seis categorías existentes, un acento del sitio,
 parámetros neutros y popups de la capa elegida. Sin cambios de orden #21,
 identidad/activo/D1 ni ingesta. Criterios y pruebas offline con Leaflet real en
 el informe; [PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23), pendiente de merge. Resto de hallazgos conserva su alcance.
+
+
+### Corrección circular posterior a #23 — 30/10/2026
+
+#23 fusionado en `934f6354bf216876368ba931fd363d32825312db`. El titular
+sustituye las formas/acento único por [círculos comunes con colores AQI](CIRCULOS_AQI_MAPA.md),
+idénticos a tarjetas; otras capas neutras y sin datos recientes en gris. Rama
+nueva `fix/mapa-circulos-aqi`. Pruebas Leaflet offline, capturas antes/después,
+frescura y orden conservados. Merge y despliegue autorizados explícitamente,
+sin D1/ingestas/migraciones. Se registra el resultado verificado al terminar;
+los estados de propuestas anteriores quedan como históricos.

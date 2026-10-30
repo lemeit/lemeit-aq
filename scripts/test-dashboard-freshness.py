@@ -70,7 +70,7 @@ with sync_playwright() as p:
    assert page.evaluate('currentSensorIndex')==selection
    assert page.evaluate('savedMarker===layers.find(x=>x instanceof L.Marker) && savedBack===document.querySelector("#mapa-cards .card-back")')
    assert page.evaluate('JSON.stringify(latestSensors)')==original
-   assert 'data-shape="stale"' in page.evaluate('layers.filter(x=>x instanceof L.Marker)[0].options.icon.html')
+   assert 'data-state="stale"' in page.evaluate('layers.filter(x=>x instanceof L.Marker)[0].options.icon.html')
    popup=page.evaluate('layers.filter(x=>x instanceof L.Marker)[0].popup')
    assert 'Sin datos recientes' in popup and 'Última medición' in popup and '2026' in popup and 'Buena' not in popup
    for selector in ['#sensor-grid','#mapa-cards']:

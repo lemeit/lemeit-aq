@@ -1,5 +1,12 @@
 # Marcadores compactos del mapa
 
+> Decisión posterior del titular: [una sola forma circular y colores AQI](CIRCULOS_AQI_MAPA.md)
+> sustituye las seis geometrías/acento único de #23, ya fusionado en 934f635.
+> Las referencias siguientes a formas o PR pendiente son evidencia histórica,
+> no la decisión visual vigente. Frescura #22, orden #21 y cálculo intactos.
+> El titular autorizó merge/despliegue de la corrección circular; las restricciones
+> operativas anteriores se conservan como registro de sus respectivas tareas.
+
 ## Base, coordinación y alcance
 
 Base main verificada en GitHub el 30/10/2026:

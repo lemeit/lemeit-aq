@@ -1,5 +1,12 @@
 # AQ-09 — Frescura de sensores
 
+> Decisión posterior del titular: [una sola forma circular y colores AQI](CIRCULOS_AQI_MAPA.md)
+> sustituye las seis geometrías/acento único de #23, ya fusionado en 934f635.
+> Las referencias siguientes a formas o PR pendiente son evidencia histórica,
+> no la decisión visual vigente. Frescura #22, orden #21 y cálculo intactos.
+> El titular autorizó merge/despliegue de la corrección circular; las restricciones
+> operativas anteriores se conservan como registro de sus respectivas tareas.
+
 > Seguimiento 30/10/2026: #22 ya está fusionado en main
 > `d76c6870bdeb70da2ff4be428752136532bee320`. Las referencias a PR abierto y
 > pendiente de merge de este informe registran su preparación histórica. La
