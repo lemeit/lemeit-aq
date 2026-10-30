@@ -15,17 +15,18 @@ const legend = { innerHTML: '' };
 const styles = { getPropertyValue: name => name === '--text-dim' ? '#neutral' : name };
 const ui = vm.createContext({
   t: key => key, document: { documentElement: {}, getElementById: () => legend },
-  getComputedStyle: () => styles, isStale: () => false, infoIconHtml: () => '',
+  paramLabel:k=>k, getComputedStyle: () => styles, isStale: () => false, infoIconHtml: () => '',
   formatBsAsFull: () => 'fixture UTC', STALE_MINUTES: 25, PROVIDER_BADGE: {},
   fetch: () => { throw Error('HTTP prohibido'); },
 });
 const constants = html.slice(html.indexOf('  const PM25_AQI_BREAKPOINTS ='), html.indexOf('  const aqiBandsPlugin ='));
 const gauge = html.slice(html.indexOf('  const AQI_GAUGE_BANDS ='), html.indexOf('  function polarToCartesian'));
-const params = html.slice(html.indexOf('  const MAPA_PARAMS ='), html.indexOf('  function interpolateColorRel'));
-vm.runInContext(constants + gauge + params + [
+const params = html.slice(html.indexOf('  const MAPA_PARAMS ='), html.indexOf('  const MAPA_AQI_SHAPES'));
+const mapHelpers = html.slice(html.indexOf('  const MAPA_AQI_SHAPES'),html.indexOf('  // VOC/NOx'));
+vm.runInContext(constants + gauge + params + mapHelpers + [
   'pm25ToAqi', 'pm25FromAqi', 'aqiInfo', 'formatAqi', 'formatPm25',
   'aqiGaugeNeedleAngle', 'polarToCartesian', 'gaugeArcPath', 'aqiGaugeSvg',
-  'colorForParam', 'unitSuffix', 'formatParamValue', 'renderMapaLegend', 'buildSensorCardInner',
+  'unitSuffix', 'formatParamValue', 'renderMapaLegend', 'buildSensorCardInner',
 ].map(fn).join('\n'), ui);
 const boundaries = [[0,0],[9,50],[9.1,51],[35.4,100],[35.5,101],[55.4,150],
   [55.5,151],[125.4,200],[125.5,201],[225.4,300],[225.5,301],[325.4,500]];
@@ -110,18 +111,18 @@ test('AQ-01 aceptación: gauge completo, numérico y neutro ante inválidos', ()
 test('AQ-01 aceptación: mapa, etiqueta PM, leyenda y cards usan la misma clasificación', () => {
   for (const value of invalid) {
     const sensor={sensor_index:1,nombre:'Fixture',pm2_5:value,timestamp:'fixture'};
-    assert.equal(ui.colorForParam(sensor,'aqi',null,styles),'#neutral');
-    assert.equal(ui.colorForParam(sensor,'pm2_5',null,styles),'#neutral');
+    assert.equal(ui.mapaMarkerState(sensor,'aqi').state,'missing');
+    assert.equal(ui.mapaMarkerState(sensor,'pm2_5').state,'missing');
     assert.equal(ui.formatParamValue(sensor,'aqi'),'—');
     assert.equal(ui.formatParamValue(sensor,'pm2_5'),'—');
     const card=ui.buildSensorCardInner(sensor,'fixture-');
     assert.match(card,/aqi_sin_dato/);assert.doesNotMatch(card,/NaN|Infinity|>300<\/text>/);
   }
   const high={sensor_index:1,nombre:'Fixture',pm2_5:400,timestamp:'fixture'};
-  assert.equal(ui.formatParamValue(high,'aqi'),'param_aqi >500');
+  assert.equal(ui.formatParamValue(high,'aqi'),'>500');
   assert.match(ui.buildSensorCardInner(high,''),/aqi_peligrosa/);
   ui.renderMapaLegend('aqi',null);
-  assert.equal((legend.innerHTML.match(/mapa-legend-swatch/g)||[]).length,7);
+  assert.equal((legend.innerHTML.match(/data-shape=/g)||[]).length,8);
   assert.match(legend.innerHTML,/aqi_muy_no_saludable/);assert.match(legend.innerHTML,/aqi_peligrosa/);
 });
 test('AQ-01 aceptación: gráfico usa inversa actual, seis bandas y extremo >escala', () => {

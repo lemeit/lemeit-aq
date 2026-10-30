@@ -26,6 +26,6 @@ for (const value of [0, 0.1, 9, 12.34, 500.4, 600]) {
 for (const value of [null, undefined, '', '12.3', true, false, -1, NaN, Infinity, -Infinity]) {
   assert.equal(context.formatPm25(value), '—');
 }
-assert.match(html, /PM2\.5: \$\{formatPm25\(s\.pm2_5\)\}/);
+assert.match(html, /escapeMapaText\(formatParamValue\(s, param\)\)/);
 assert.match(html, /metric-value">\$\{formatPm25\(s\.pm2_5\)\}/);
 console.log('Regresión formatPm25: OK (scripts, ubicación, valores y usos en mapa/tarjetas)');

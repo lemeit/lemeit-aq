@@ -2,7 +2,9 @@
 
 ## Regla e interfaz
 
-- [Frescura AQ-09](FRESCURA_SENSORES.md): regla ≤25 min, datos antiguos/inválidos/futuros, mapa/tarjetas, reproducción, aceptación, pruebas offline, autorización y exclusión de previews. [PR #22 abierto](https://github.com/lemeit/lemeit-aq/pull/22), pendiente de merge/despliegue por el titular.
+- [Marcadores compactos](MARCADORES_MAPA.md): propuesta de formas AQI, acento único y capas neutras; Leaflet real offline, [PR #23 abierto](https://github.com/lemeit/lemeit-aq/pull/23), pendiente de merge.
+
+- [Frescura AQ-09](FRESCURA_SENSORES.md): regla ≤25 min, datos antiguos/inválidos/futuros, mapa/tarjetas, reproducción, aceptación, pruebas offline, autorización y exclusión de previews. [PR #22 fusionado](https://github.com/lemeit/lemeit-aq/pull/22) en d76c687; no equivale a validación de sensores productivos.
 - [Orden de tarjetas #21](ORDEN_TARJETAS.md): integrado en main; AE ascendente y proveedores conservados.
 - [Trazabilidad AQI](AQI_TRAZABILIDAD.md): fórmula, unidades y origen; corte histórico con nota de seguimiento temporal AQ-09.
 - [Aclaración de última medición](ACLARACION_ULTIMA_MEDICION.md): registro histórico del texto y pruebas anteriores.

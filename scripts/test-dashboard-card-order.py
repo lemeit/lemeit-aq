@@ -41,7 +41,7 @@ with sync_playwright() as p:
      assert page.locator('#sel-sensor-hist option').evaluate_all('(o)=>o.map(x=>Number(x.value))') == [s['sensor_index'] for s in rows]
    # Ejecuta cargarMapa real con adaptador Leaflet offline mínimo.
    page.evaluate('''async () => {
-    const layer = {addTo(){return this},bindPopup(){return this},on(){return this}};
+    const layer = {addTo(){return this},bindPopup(){return this},on(){return this},getElement(){return null}};
     window.L={tileLayer:()=>layer,circleMarker:()=>layer,marker:()=>layer,divIcon:()=>({})};
     mapaInst={eachLayer(){},invalidateSize(){}};
     await cargarMapa();

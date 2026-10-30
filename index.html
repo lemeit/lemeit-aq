@@ -444,16 +444,16 @@
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     padding: 10px 14px 12px; font-family: var(--font-display); font-size: 10px; color: var(--text-dim);
   }
-  .mapa-legend-item { display: inline-flex; align-items: center; white-space: nowrap; }
-  .mapa-legend-swatch {
-    display: inline-block; width: 10px; height: 10px; border-radius: 2px;
-    margin-right: 4px; vertical-align: middle;
-  }
-  .mapa-legend-gradient {
-    flex: 0 1 120px; height: 8px; border-radius: 4px;
-    background: linear-gradient(90deg, rgb(143,181,107), rgb(217,164,65), rgb(217,115,111));
-  }
-  .mapa-legend-note { color: var(--text-dim); opacity: .75; }
+  .mapa-legend-item { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; }
+  .mapa-legend-title { flex-basis: 100%; font-weight: 700; color: var(--text); }
+  .mapa-symbol { color: var(--accent); display: inline-flex; flex: 0 0 auto; }
+  .mapa-symbol svg { width: 26px; height: 26px; }
+  .mapa-symbol.stale { color: #C7C7C7; }
+  .mapa-symbol.missing { color: var(--text-dim); }
+  .mapa-station-icon { background: transparent; border: 0; }
+  .mapa-station-icon .mapa-symbol { width: 44px; height: 44px; align-items: center; justify-content: center; }
+  .mapa-station-icon:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; border-radius: 5px; }
+  .mapa-legend-note { color: var(--text-dim); }
 
   .panel {
     background: var(--bg-panel);
@@ -974,8 +974,8 @@
     <div class="chart-wrap" style="padding:0;overflow:hidden">
       <div class="chart-hdr" style="padding:12px 14px 0">
         <h2 data-i18n="mapa_titulo">Mapa de sensores</h2>
-        <select class="sel" id="sel-mapa-param" onchange="cargarMapa()">
-          <option value="aqi" data-i18n="mapa_capa_aqi">Capa: indicador PM2.5 (EPA)</option>
+        <select class="sel" id="sel-mapa-param" aria-label="Capa del mapa" data-i18n-title="mapa_capa_label" onchange="cargarMapa()">
+          <option value="aqi" data-i18n="mapa_capa_aqi">AQI · EPA</option>
           <option value="pm2_5" data-i18n="mapa_capa_pm2_5">Capa: PM2.5</option>
           <option value="temperatura" data-i18n="mapa_capa_temperatura">Capa: Temperatura</option>
           <option value="humedad" data-i18n="mapa_capa_humedad">Capa: Humedad</option>
@@ -1199,7 +1199,12 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       zoom_hint: "🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom",
       channel_toggle_label: "Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)",
       mapa_titulo: "Mapa de sensores",
-      mapa_capa_aqi: "Capa: indicador PM2.5 (EPA)",
+      mapa_capa_label: "Capa del mapa",
+      mapa_aqi_descripcion: "Índice de calidad del aire (AQI · EPA)",
+      mapa_dato_reciente: "Datos recientes",
+      mapa_sin_valor: "Sin valor para este parámetro",
+      mapa_valor_leyenda: "Medición del parámetro; consultar valor al pulsar",
+      mapa_capa_aqi: "AQI · EPA",
       mapa_capa_pm2_5: "Capa: PM2.5",
       mapa_capa_temperatura: "Capa: Temperatura",
       mapa_capa_humedad: "Capa: Humedad",
@@ -1362,7 +1367,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       param_voc: "VOC",
       param_co2: "CO2",
       param_nox: "NOx",
-      param_aqi: "Indicador EPA",
+      param_aqi: "AQI · EPA",
       unit_index: "índice",
 
       compare_titulo: "Comparando {n} sitio{plural} — {label}",
@@ -1372,8 +1377,6 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       channel_b: "Canal B",
 
       mapa_sin_coords: "Ningún sensor con coordenadas cargadas todavía.",
-      mapa_sin_datos_escala: "Sin datos de {label} para mostrar escala.",
-      mapa_escala_nota: "(escala relativa a los sensores actuales, no es un estándar de calidad)",
 
       pdf_no_jspdf: "No se pudo cargar el generador de PDF (jsPDF). Puede ser el bloqueador de anuncios/contenido del navegador, o que se haya cortado la conexion a internet. Probá recargar la página o desactivar el bloqueador para este sitio y volvé a intentar.",
       pdf_header: "REGISTRO HISTORICO — CIENCIA CIUDADANA AMBIENTAL",
@@ -1422,7 +1425,12 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       zoom_hint: "🔍 Drag on the chart to zoom · mouse wheel to zoom in/out · pinch to zoom on touch · Ctrl+drag to pan while zoomed",
       channel_toggle_label: "Show A/B channels separately (for selected PM1.0/PM2.5/PM10)",
       mapa_titulo: "Sensor map",
-      mapa_capa_aqi: "Layer: PM2.5 indicator (EPA)",
+      mapa_capa_label: "Map layer",
+      mapa_aqi_descripcion: "Air quality index (AQI · EPA)",
+      mapa_dato_reciente: "Recent data",
+      mapa_sin_valor: "No value for this parameter",
+      mapa_valor_leyenda: "Parameter measurement; select a marker for its value",
+      mapa_capa_aqi: "AQI · EPA",
       mapa_capa_pm2_5: "Layer: PM2.5",
       mapa_capa_temperatura: "Layer: Temperature",
       mapa_capa_humedad: "Layer: Humidity",
@@ -1585,7 +1593,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       param_voc: "VOC",
       param_co2: "CO2",
       param_nox: "NOx",
-      param_aqi: "EPA indicator",
+      param_aqi: "AQI · EPA",
       unit_index: "index",
 
       compare_titulo: "Comparing {n} site{plural} — {label}",
@@ -1595,8 +1603,6 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       channel_b: "Channel B",
 
       mapa_sin_coords: "No sensors with coordinates loaded yet.",
-      mapa_sin_datos_escala: "No {label} data to show a scale.",
-      mapa_escala_nota: "(scale relative to the sensors currently shown, not a health standard)",
 
       pdf_no_jspdf: "Couldn't load the PDF generator (jsPDF). This can happen with an ad/content blocker, or if the internet connection dropped. Try reloading the page or disabling the blocker for this site and try again.",
       pdf_header: "HISTORICAL RECORD — ENVIRONMENTAL CITIZEN SCIENCE",
@@ -2079,10 +2085,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   /* ── MAPA ── */
-  // Capas de datos seleccionables en el mapa, al estilo "Data Layer" del
-  // mapa de PurpleAir (map.purpleair.com): AQI/PM2.5 usan las bandas fijas
-  // de aqiInfo(); el resto usa una escala relativa a los sensores visibles
-  // en este momento (no son estándares de salud, se aclara en la leyenda).
+  // Solo AQI usa las seis categorías existentes; otras capas muestran mediciones, sin rangos.
   const MAPA_PARAMS = {
     aqi: { label: "AQI", unit: "", get: (s) => pm25ToAqi(s.pm2_5) },
     pm2_5: { label: "PM2.5", unit: "µg/m³", get: (s) => s.pm2_5 },
@@ -2094,35 +2097,46 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     nox: { label: "NOx", unit: "índice", get: (s) => s.nox },
   };
 
-  function interpolateColorRel(t) {
-    t = Math.max(0, Math.min(1, t));
-    const stops = [[0, [143, 181, 107]], [0.5, [217, 164, 65]], [1, [217, 115, 111]]];
-    let lo = stops[0], hi = stops[stops.length - 1];
-    for (let i = 0; i < stops.length - 1; i++) {
-      if (t >= stops[i][0] && t <= stops[i + 1][0]) { lo = stops[i]; hi = stops[i + 1]; break; }
+  // Símbolos de presentación propios, no una simbología oficial EPA.
+  const MAPA_AQI_SHAPES = ["circle", "square", "triangle", "diamond", "hexagon", "star"];
+
+  function mapaMarkerState(s, param) {
+    if (isStale(s.timestamp)) return { shape: "stale", label: t("aqi_sin_datos_card"), state: "stale" };
+    const value = MAPA_PARAMS[param].get(s);
+    if (typeof value !== "number" || !Number.isFinite(value) || (param === "pm2_5" && value < 0)) {
+      return { shape: "missing", label: t("mapa_sin_valor"), state: "missing" };
     }
-    const span = hi[0] - lo[0] || 1;
-    const localT = (t - lo[0]) / span;
-    const rgb = lo[1].map((c, i) => Math.round(c + (hi[1][i] - c) * localT));
-    return `rgb(${rgb.join(",")})`;
+    if (param !== "aqi") return { shape: "measurement", label: t("mapa_dato_reciente"), state: "recent" };
+    const index = AQI_CATEGORIES.findIndex((category) => value <= category.max);
+    const category = index < 0 ? AQI_CATEGORIES.length - 1 : index;
+    return { shape: MAPA_AQI_SHAPES[category], label: t(AQI_CATEGORIES[category].key), state: "recent" };
   }
 
-  function computeMapaDomain(conCoords, param) {
-    if (param === "aqi" || param === "pm2_5") return null; // usa bandas fijas de aqiInfo
-    const vals = conCoords.filter((s) => !isStale(s.timestamp)).map((s) => MAPA_PARAMS[param].get(s)).filter((v) => v != null);
-    if (!vals.length) return null;
-    return { min: Math.min(...vals), max: Math.max(...vals) };
+  function mapaSymbolHtml(shape, state) {
+    const paths = {
+      circle: '<circle cx="16" cy="16" r="10"/>',
+      square: '<rect x="6" y="6" width="20" height="20" rx="1"/>',
+      triangle: '<path d="M16 4L29 27H3Z"/>',
+      diamond: '<path d="M16 2L30 16L16 30L2 16Z"/>',
+      hexagon: '<path d="M9 4H23L30 16L23 28H9L2 16Z"/>',
+      star: '<path d="M16 2L20 11L30 12L23 19L25 30L16 24L7 30L9 19L2 12L12 11Z"/>',
+      measurement: '<circle cx="16" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="3"/>',
+      stale: '<circle cx="16" cy="16" r="11" stroke="var(--text-dim)"/><path d="M9 16H23" fill="none" stroke="var(--text)" stroke-width="3"/>',
+      missing: '<circle cx="16" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/>',
+    };
+    return `<span class="mapa-symbol ${state}" data-shape="${shape}" aria-hidden="true"><svg viewBox="0 0 32 32" fill="currentColor" stroke="var(--bg-panel)" stroke-width="1.5" focusable="false">${paths[shape]}</svg></span>`;
   }
 
-  function colorForParam(s, param, domain, cs) {
-    if (isStale(s.timestamp)) return "#808080";
-    if (param === "aqi" || param === "pm2_5") {
-      const info = aqiInfo(pm25ToAqi(s.pm2_5));
-      return cs.getPropertyValue(info.color.replace("var(", "").replace(")", "")).trim() || info.color;
-    }
-    const val = MAPA_PARAMS[param].get(s);
-    if (val == null || !domain || domain.min === domain.max) return cs.getPropertyValue("--text-dim").trim();
-    return interpolateColorRel((val - domain.min) / (domain.max - domain.min));
+  function escapeMapaText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+  }
+
+  function mapaPopupHtml(s, param) {
+    const marker = mapaMarkerState(s, param);
+    return `<strong>${escapeMapaText(s.institucion || s.nombre)}</strong><br>
+      ${escapeMapaText(paramLabel(param))}: ${escapeMapaText(formatParamValue(s, param))}<br>
+      ${escapeMapaText(marker.label)}<br>
+      <small>${escapeMapaText(t("last_measurement", { fecha: formatBsAsFull(s.timestamp) }))}</small>`;
   }
 
   // VOC/NOx no tienen una unidad física (son un índice del sensor, no una
@@ -2136,41 +2150,23 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   function formatParamValue(s, param) {
     const def = MAPA_PARAMS[param];
     const val = def.get(s);
-    if (val == null) return "—";
-    if (param === "aqi") return `${t("param_aqi")} ${formatAqi(val)}`;
+    if (typeof val !== "number" || !Number.isFinite(val)) return "—";
+    if (param === "aqi") return formatAqi(val);
     if (param === "pm2_5" && pm25ToAqi(val) === null) return "—";
     return `${val}${unitSuffix(def)}`;
   }
 
-  function renderMapaLegend(param, domain) {
+  function renderMapaLegend(param) {
     const legend = document.getElementById("mapa-legend");
     if (!legend) return;
-    legend.innerHTML = `<span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:#808080"></span>${t("aqi_sin_datos_card")}</span>`;
-    const def = MAPA_PARAMS[param];
-    if (param === "aqi" || param === "pm2_5") {
-      legend.innerHTML += AQI_CATEGORIES.map((category) =>
-        `<span class="mapa-legend-item"><span class="mapa-legend-swatch" style="background:var(${category.colorVar})"></span>${t(category.key)}</span>`
-      ).join("");
-      return;
+    const item = (shape, state, label) => `<span class="mapa-legend-item">${mapaSymbolHtml(shape, state)}<span>${label}</span></span>`;
+    legend.innerHTML = `<div class="mapa-legend-title">${param === "aqi" ? t("mapa_aqi_descripcion") : escapeMapaText(paramLabel(param))}</div>`;
+    if (param === "aqi") {
+      legend.innerHTML += AQI_CATEGORIES.map((category, index) => item(MAPA_AQI_SHAPES[index], "recent", t(category.key))).join("");
+    } else {
+      legend.innerHTML += item("measurement", "recent", t("mapa_valor_leyenda"));
     }
-    if (!domain) {
-      legend.innerHTML += `<span class="mapa-legend-item">${t("mapa_sin_datos_escala", { label: paramLabel(param).toLowerCase() })}</span>`;
-      return;
-    }
-    legend.innerHTML += `
-      <span class="mapa-legend-item">${domain.min}${unitSuffix(def)}</span>
-      <span class="mapa-legend-gradient"></span>
-      <span class="mapa-legend-item">${domain.max}${unitSuffix(def)}</span>
-      <span class="mapa-legend-note">${t("mapa_escala_nota")}</span>`;
-  }
-
-  // Da vuelta (o cierra) la card del sensor dentro de #mapa-cards — reusa
-  // exactamente la misma lógica/estado que las cards de "Actuales".
-  function flipMapaCard(sensorIndex, label) {
-    const cardEl = document.querySelector(`#mapa-cards .card[data-sensor-index="${sensorIndex}"]`);
-    if (!cardEl) return;
-    cardEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    selectSensor(sensorIndex, label, cardEl, true, "mapa-");
+    legend.innerHTML += item("missing", "missing", t("mapa_sin_valor")) + item("stale", "stale", t("aqi_sin_datos_card"));
   }
 
   async function cargarMapa() {
@@ -2207,9 +2203,6 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     mapaInst.eachLayer((l) => { if (l instanceof L.CircleMarker || l instanceof L.Marker) mapaInst.removeLayer(l); });
     if (mapaTileLayer) mapaTileLayer.addTo(mapaInst); // por si el tileLayer cayó dentro del removeLayer de arriba
 
-    const cs = getComputedStyle(document.documentElement);
-    const labelBg = dark ? "rgba(26,22,18,0.8)" : "rgba(255,255,255,0.85)";
-
     const mapaCards = document.getElementById("mapa-cards");
 
     // La opción "VOC" del selector solo tiene sentido si algún sensor visible
@@ -2238,52 +2231,51 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       return;
     }
 
-    const domain = computeMapaDomain(conCoords, param);
-    renderMapaLegend(param, domain);
+    renderMapaLegend(param);
 
     const freshnessUpdates = [];
     conCoords.forEach((s) => {
-      let color = colorForParam(s, param, domain, cs);
-      const nombre = s.institucion || s.nombre;
-      const aqi = pm25ToAqi(s.pm2_5);
-      const info = aqiInfo(aqi);
-      let stale = isStale(s.timestamp);
-
-      const popupHtml = () => `
-          <strong style="font-family:monospace">${nombre}</strong><br>
-          ${stale ? t("aqi_sin_datos_card") : `PM2.5: ${formatPm25(s.pm2_5)} µg/m³ · ${t("param_aqi")} ${formatAqi(aqi)} (${info.label})`}<br>
-          <small>${t("last_measurement", { fecha: formatBsAsFull(s.timestamp) })}</small>
-        `;
-
-      const labelIcon = () => L.divIcon({
-          html: `<div style="font-family:monospace;font-size:11px;font-weight:700;color:${color};
-                 background:${labelBg};padding:1px 4px;border-radius:3px;
-                 white-space:nowrap;margin-top:-28px;margin-left:18px;cursor:pointer">
-                 ${stale ? t("aqi_sin_datos_card") : formatParamValue(s, param)}</div>`,
-          iconSize: [60, 20], iconAnchor: [0, 0], className: "",
-        });
-
-      const circle = L.circleMarker([s.latitud, s.longitud], {
-        radius: 14, fillColor: color, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.85,
-      })
+      const accessibleLabel = () => `${s.institucion || s.nombre}: ${paramLabel(param)}, ${formatParamValue(s, param)}; ${mapaMarkerState(s, param).label}; ${t("last_measurement", { fecha: formatBsAsFull(s.timestamp) })}`;
+      const icon = () => {
+        const state = mapaMarkerState(s, param);
+        return L.divIcon({ html: mapaSymbolHtml(state.shape, state.state), className: "mapa-station-icon", iconSize: [44, 44], iconAnchor: [22, 22], popupAnchor: [0, -15] });
+      };
+      const marker = L.marker([s.latitud, s.longitud], { icon: icon(), keyboard: true, title: accessibleLabel(), alt: accessibleLabel(), riseOnHover: true })
         .addTo(mapaInst)
-        .bindPopup(popupHtml())
-        .on("click", () => flipMapaCard(s.sensor_index, nombre));
-
-      const label = L.marker([s.latitud, s.longitud], {
-        icon: labelIcon(),
-      }).addTo(mapaInst).on("click", () => flipMapaCard(s.sensor_index, nombre));
+        .bindPopup(mapaPopupHtml(s, param));
+      const updateAccessibleName = () => {
+        const element = marker.getElement();
+        if (element) {
+          element.setAttribute("aria-label", accessibleLabel());
+          element.setAttribute("title", accessibleLabel());
+          element.setAttribute("role", "button");
+          // Leaflet atiende Enter; Space completa la semántica de botón.
+          element.onkeydown = (event) => {
+            if (event.key === " ") { event.preventDefault(); marker.openPopup(); }
+            if (event.key === "Escape") { event.preventDefault(); marker.closePopup(); }
+          };
+        }
+      };
+      marker.on("popupopen", ({ popup }) => {
+        popup.getElement().onkeydown = (event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            event.stopPropagation();
+            marker.closePopup();
+            marker.getElement().focus();
+          }
+        };
+      });
+      updateAccessibleName();
       freshnessUpdates.push(() => {
-        stale = isStale(s.timestamp);
-        color = colorForParam(s, param, computeMapaDomain(conCoords, param), getComputedStyle(document.documentElement));
-        circle.setStyle({ fillColor: color });
-        circle.setPopupContent(popupHtml());
-        label.setIcon(labelIcon());
+        marker.setIcon(icon());
+        marker.setPopupContent(mapaPopupHtml(s, param));
+        updateAccessibleName();
       });
     });
     refreshMapaLayers = () => {
       freshnessUpdates.forEach((update) => update());
-      renderMapaLegend(param, computeMapaDomain(conCoords, param));
+      renderMapaLegend(param);
     };
 
     mapaCards.innerHTML = sortSensorCards(conCoords).map((s) => {

@@ -1,5 +1,11 @@
 # Trazabilidad del indicador PM2.5 visible (AQI)
 
+> Propuesta de presentación del mapa (30/10/2026): [marcadores compactos](MARCADORES_MAPA.md)
+> renombra el selector a AQI · EPA y usa seis formas con un único acento,
+> conservando fórmula y categorías de este informe. La frescura de #22 ya está
+> fusionada en d76c687; el nuevo cambio aún no lo está. La denominación AQI no
+> acredita promedio diario ni NowCast.
+
 > Seguimiento AQ-09 (30/10/2026): la sección temporal de este informe describe la base histórica de #17. En la rama de [frescura](FRESCURA_SENSORES.md), `toBsAs` valida calendario y admite UTC/offsets; fechas inválidas/futuras y >25 min se neutralizan en mapa, popup y tarjetas, incluso sin red. La fórmula AQI permanece intacta. Pendiente de merge/despliegue; normalización y MAX textual del backend siguen pendientes.
 
 Revisión: 13 de octubre de 2026, Argentina. Base exacta de main:

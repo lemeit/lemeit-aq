@@ -19,6 +19,7 @@ adapter='''() => {
   addTo(){layers.push(this);return this;}
   bindPopup(html){this.popup=html;return this;}
   on(){return this;}
+  getElement(){return null;}
   setStyle(style){Object.assign(this.options,style);return this;}
   setPopupContent(html){this.popup=html;return this;}
   setIcon(icon){this.options.icon=icon;return this;}
@@ -62,15 +63,15 @@ with sync_playwright() as p:
    assert page.locator('#sensor-grid .card[data-sensor-index="3"] .badge').inner_text()!='Sin datos recientes' # exactamente 25
    # Reloj cambia sin completar una solicitud: timer debe actualizar ambas vistas.
    selection=page.evaluate('currentSensorIndex');original=page.evaluate('JSON.stringify(latestSensors)')
-   page.evaluate('window.savedCircle=layers.find(x=>x instanceof L.CircleMarker);window.savedBack=document.querySelector("#mapa-cards .card-back")');
+   page.evaluate('window.savedMarker=layers.find(x=>x instanceof L.Marker);window.savedBack=document.querySelector("#mapa-cards .card-back")');
    before=len([u for u in calls if '/api/' in u or '/tiles/' in u]);page.evaluate('fixtureNow+=1')
    page.wait_for_function('document.querySelector("#sensor-grid .card[data-sensor-index=\\"3\\"] .sensor-stale")')
    assert len([u for u in calls if '/api/' in u or '/tiles/' in u])==before, 'envejecer no debe consultar API ni tiles'
    assert page.evaluate('currentSensorIndex')==selection
-   assert page.evaluate('savedCircle===layers.find(x=>x instanceof L.CircleMarker) && savedBack===document.querySelector("#mapa-cards .card-back")')
+   assert page.evaluate('savedMarker===layers.find(x=>x instanceof L.Marker) && savedBack===document.querySelector("#mapa-cards .card-back")')
    assert page.evaluate('JSON.stringify(latestSensors)')==original
-   assert page.evaluate('layers.filter(x=>x instanceof L.CircleMarker)[0].options.fillColor')=='#808080'
-   popup=page.evaluate('layers.filter(x=>x instanceof L.CircleMarker)[0].popup')
+   assert 'data-shape="stale"' in page.evaluate('layers.filter(x=>x instanceof L.Marker)[0].options.icon.html')
+   popup=page.evaluate('layers.filter(x=>x instanceof L.Marker)[0].popup')
    assert 'Sin datos recientes' in popup and 'Última medición' in popup and '2026' in popup and 'Buena' not in popup
    for selector in ['#sensor-grid','#mapa-cards']:
     assert page.locator(selector+' > .card').evaluate_all('(c)=>c.map(x=>Number(x.dataset.sensorIndex))')==[1,2,3,900002]
@@ -86,7 +87,7 @@ with sync_playwright() as p:
    data[2]['timestamp']='invalid';data[3]['timestamp']='2099-01-01 00:00:00'
    page.evaluate('loadSensors()');page.wait_for_timeout(150);page.evaluate('cargarMapa()')
    assert page.locator('#sensor-grid .card[data-sensor-index="3"] .sensor-stale').count()==0
-   assert page.evaluate('layers.filter(x=>x instanceof L.CircleMarker)[0].options.fillColor')!='#808080'
+   assert 'data-shape="circle"' in page.evaluate('layers.filter(x=>x instanceof L.Marker)[0].options.icon.html')
    assert page.locator('#sensor-grid .sensor-stale').count()==3
    for width in [390,1440]:
     page.set_viewport_size({'width':width,'height':844})
