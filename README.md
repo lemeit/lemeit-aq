@@ -48,6 +48,10 @@ Worker "purpleair-saladillo-api" — fetch() (API REST propia, JSON)
 Dashboard HTML estático (Cloudflare Pages) — app.lemeit.ar/aq
 ```
 
+## Verificación de consumo y disparadores (01/11/2026)
+
+**Estado observado más reciente (no sustituye las descripciones históricas que siguen):** el titular informó 23 ejecuciones exitosas (HTTP 200) de cron-job.org entre 04:27 y 15:27, a **:27 y :57 (cada 30 minutos)**; Cloudflare mostraba **«No cron triggers configured»** y GitHub Actions conserva su `schedule` comentado. La cadencia de cron-job.org surge de su historial; falta confirmar su pantalla de configuración. **Atención antes de desplegar:** `worker/wrangler.toml` todavía declara un Cron Trigger; debe reconciliarse con el estado deseado para no reactivarlo por accidente. El Worker hace un solo `fetch` de mediciones PurpleAir por invocación normal de `POST /api/ingest-ahora`, sin reintentos en ese recorrido. El consumo de PurpleAir del 02/10 al 01/11 fue **11.228 llamadas / 967.088 puntos**, pero la reducción a 30 minutos se hizo el **29/10/2026** y se decidió mantenerla, según confirmó el titular. Por lo tanto, **no corresponde comparar directamente el promedio mensual con las ~48 ingestas diarias del esquema nuevo ni inferir llamadas adicionales**; falta medir el consumo específicamente posterior al cambio. [Evidencia, límites y verificaciones pendientes](docs/VERIFICACION_CONSUMO_PURPLEAIR_20261101.md). No se tocaron disparadores ni datos productivos.
+
 ## Historia de la ingesta automática (agosto 2026)
 
 **Primer intento — GitHub Actions solo.** La ingesta corría como `ingest_purpleair.py` disparado por un `cron:` de GitHub Actions cada 15 min. Ese cron empezó a saltear corridas (el último dato quedaba viejo por más de una hora sin ningún error ni corrida fallida visible) — la causa más probable, según la propia documentación de GitHub, es que los scheduled events "pueden demorarse durante períodos de alta carga", con los minutos redondos (:00/:15/:30/:45) como el momento de mayor congestión.
