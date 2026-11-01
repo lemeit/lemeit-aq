@@ -18,7 +18,7 @@ Revisión **sin ingestas, consultas a PurpleAir, escrituras D1 ni despliegues**.
 
 ## Interpretación y límites
 - A intervalos de 30 minutos, cron-job.org produciría unas **48 invocaciones/día** si mantiene la cadencia 24 horas y no hay omisiones. Según el código, cada invocación normal genera una solicitud de mediciones a PurpleAir.
-- El promedio observado del portal es aproximadamente **374 llamadas/día** (11.228 / 30). La diferencia no está explicada por el único camino de cron observado. **No prueba duplicación ni abuso**: el período comprende configuraciones/consumidores no auditados, consultas manuales u otros usos de la clave, y falta desglose por fecha/endpoint.
+- **Aclaración de cronología aportada por el titular:** la reducción de frecuencia a **30 minutos** se efectuó **a fines de octubre de 2026**, pocos días antes de esta revisión. El período agregado 02/10–01/11 incluye mayormente días anteriores a esa optimización. Su promedio de **~374 llamadas/día** (11.228 / 30) **no es comparable directamente** con las ~48 ingestas/día actuales; la discrepancia no constituye por sí misma un indicio de consultas adicionales, duplicación ni consumo anómalo. La fecha exacta del cambio y la evolución diaria del uso todavía no se corroboraron en registros.
 - El HTTP 200 del cron acredita la respuesta del endpoint, **no** las inserciones efectivas de filas nuevas, la frescura ni el correcto AQI.
 - El ritmo histórico de 967.088 puntos / 30 días equivale a ~32.236 puntos/día. A ese ritmo, un saldo de 19.992.888 permitiría ~620 días; proyección, no garantía.
 - El README anterior describía cron-job.org en :12/:27/:42/:57 y Cron Trigger de Cloudflare registrado. Son **antecedentes históricos**, no el estado observado el 01/11/2026.
@@ -27,7 +27,7 @@ Revisión **sin ingestas, consultas a PurpleAir, escrituras D1 ni despliegues**.
 La ausencia de Cron Triggers en el panel contrasta con `worker/wrangler.toml`, donde siguen declarados. **Antes del siguiente despliegue**, reconciliar de forma autorizada la configuración declarativa con el estado deseado para no reactivar accidentalmente un disparador extra. No se modifica `wrangler.toml` en este PR.
 
 ## Siguientes verificaciones (solo lectura, sin gastar puntos de mediciones)
-1. Inspeccionar historial detallado de uso de PurpleAir por fecha/clave/endpoint **si el portal ofrece el desglose**, para identificar el origen de llamadas adicionales, sin invocar endpoints de mediciones.
+1. Verificar en el historial de PurpleAir el **consumo diario anterior y posterior a la reducción de frecuencia de fines de octubre**, y contrastarlo con la fecha precisa del cambio (si hay registros). Solo si persisten diferencias dentro de un período homogéneo, investigar desglose por clave/endpoint; no invocar endpoints de mediciones.
 2. Confirmar directamente la configuración del job de cron-job.org (:27/:57), el período cubierto por los logs y que no hay otros jobs que invoquen la misma ingesta.
 3. Revisar registros ya existentes en Cloudflare (sin invocar endpoints) y métricas de frescura de lecturas para contrastar HTTP 200 con ingestas efectivas.
 4. Coordinar cualquier modificación de programación y cobertura AirGradient con la auditoría de ingesta del chat 02.
