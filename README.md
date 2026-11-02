@@ -69,7 +69,7 @@ Las rutas de lectura pueden registrar visitas en D1; **no usarlas como comprobac
 
 - **cron-job.org:** ingesta PurpleAir observada a los minutos **:27 y :57**, aproximadamente **cada 30 minutos**. El titular decidió mantener esta frecuencia. El historial visible mostró respuestas HTTP 200; no prueba por sí solo nuevas filas D1.
 - **GitHub Actions:** su `schedule` automático está comentado en [`.github/workflows/purpleair-ingest.yml`](.github/workflows/purpleair-ingest.yml); queda ejecución manual.
-- **Cloudflare:** el titular observó **cero Cron Triggers configurados** en producción. **Atención:** `worker/wrangler.toml` aún contiene una declaración histórica de cron; **conciliar antes de cualquier despliegue**, para no volver a activar otro disparador involuntariamente.
+- **Cloudflare:** el titular observó **cero Cron Triggers configurados** en producción. La configuración versionada declara explícitamente `crons = []` para mantener ese estado en futuros despliegues. AirGradient queda sin ingesta automática mientras se mantiene este esquema; revisar su cobertura antes de reconectarlo. Ver [conciliación, validación y reversión](docs/VERIFICACION_CONSUMO_PURPLEAIR_20261101.md#conciliación-de-la-configuración-versionada-02112026).
 
 El endpoint `POST /api/ingest-ahora` ejecuta normalmente **una solicitud HTTP** a PurpleAir `/v1/sensors` con `show_only=SENSOR_INDEXES`, aunque algunos sensores estén apagados. Esto no implica una llamada por sensor. El uso de la API del **02/10 al 01/11** incluye la mayor parte del tiempo **anterior al cambio de frecuencia** del 29/10; no debe utilizarse su promedio mensual para juzgar el ahorro del nuevo esquema.
 

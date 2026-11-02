@@ -37,3 +37,17 @@ La ausencia de Cron Triggers en el panel contrasta con `worker/wrangler.toml`, d
 
 ## Cambios realizados
 Solo documentación. No hay modificaciones de código, disparadores, secrets, DB ni producción. No se ejecutaron pruebas de integración que consuman puntos. Aceptación documental: datos y fecha explícitos, evidencia distinguida de inferencias, sin secretos y enlaces a los archivos fuente.
+
+## Conciliación de la configuración versionada — 02/11/2026
+
+El titular autorizó preparar la conciliación del cron en el repositorio, mediante rama y PR, sin fusionar ni desplegar. Base revisada: `798a3026f431109d0c8e918363398d99b00c4582`. Las secciones anteriores conservan el diagnóstico histórico del 01/11.
+
+**Defecto reproducido offline:** la configuración base declara cuatro ejecuciones por hora (`3,18,33,48 * * * *`), pese al estado deseado sin Cron Triggers. Un futuro despliegue con esa declaración puede recrear consultas adicionales a PurpleAir y ejecutar también AirGradient. La deduplicación D1 no evita el costo de la consulta.
+
+**Cambio mínimo:** conservar `[triggers]` y reemplazar la lista por `crons = []`, con comentarios operativos. Según [Cloudflare](https://developers.cloudflare.com/workers/configuration/cron-triggers/#via-the-wrangler-configuration-file), una lista vacía elimina los Cron Triggers al desplegar; omitir la propiedad conserva los existentes. No se cambia el handler `scheduled()`, los endpoints, campos, sensores, secretos, bindings, D1 ni la programación de cron-job.org. No se ejecuta un despliegue como parte de este trabajo.
+
+**Aceptación y prueba offline:** parsear ambos TOML; comprobar que la base contiene el cron histórico y el resultado contiene un array vacío; comparar que el resto de las claves y valores es idéntico. Comprobar el diff limitado a configuración y documentación. No se simulan llamadas a proveedores ni se ejecuta el handler. La comprobación efectiva de un próximo despliegue queda pendiente de autorización y deberá confirmar cero Cron Triggers mediante lectura de configuración.
+
+**Impacto y límites:** se preserva el esquema acordado de PurpleAir por cron-job.org a :27/:57, hasta 48 ejecuciones diarias normales. Este cambio de repositorio no acredita ahorro adicional actual ni mide consumo real. AirGradient no tiene ingesta automática en este esquema: antes de reconectar sus equipos debe planificarse su cobertura sin duplicar PurpleAir. El umbral de frescura de 25 minutos se conserva; la consulta cada 30 minutos puede producir intervalos de «Sin datos recientes».
+
+**Reversión:** antes de fusionar, cerrar el PR descarta la propuesta. Después de fusionar, revertir su commit mediante otro PR restaura el archivo anterior; eso no modifica producción por sí mismo. No desplegar automáticamente esa reversión: restauraría la declaración del cron histórico y podría duplicar PurpleAir junto con cron-job.org. Cualquier reactivación requiere autorización y coordinación de ambos servicios. No hay cambios de datos que revertir.
