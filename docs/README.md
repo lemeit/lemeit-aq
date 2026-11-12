@@ -14,10 +14,6 @@
 - [Trazabilidad AQI](AQI_TRAZABILIDAD.md): fórmula, unidades y origen; corte histórico con nota de seguimiento temporal AQ-09.
 - [Aclaración de última medición](ACLARACION_ULTIMA_MEDICION.md): registro histórico del texto y pruebas anteriores.
 
-## Instalación en escuelas
-
-- [Miniguías AE-01 a AE-04: color e impresión editable](instalacion/README.md), revisión del 12/11/2026; una página por versión, nombres del plan y tabla EPA actualizada. Incluye los antecedentes AE-00 y la verificación de formularios.
-
 ## Operación y estado
 
 - [Plan de mejoras y registro de avance](PLAN_MEJORAS.md): distinguir propuestas, código integrado y verificación productiva.
