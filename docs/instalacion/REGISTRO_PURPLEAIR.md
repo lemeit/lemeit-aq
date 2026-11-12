@@ -1,6 +1,6 @@
 # Registro de altas PurpleAir y fechas de instalación
 
-Actualización documental: 29/10/2026. Fuente: transcripción de correos de confirmación de PurpleAir aportada por el titular en esta conversación. No se archivan correos completos ni claves de lectura.
+Actualización documental: 12/11/2026. Fuente: transcripción de correos de confirmación de PurpleAir aportada por el titular en esta conversación. No se archivan correos completos ni claves de lectura.
 
 ## Dos fechas distintas
 
@@ -17,6 +17,7 @@ No se escriben ni migran valores de `fecha_instalacion` en D1. Registrar una fec
 | AE-01 | 298687 | `ec:64:c9:cb:9f:3` | 05/10/2026 | -35.43677574362913 | -60.168800362812966 |
 | AE-02 | 298701 | `f0:24:f9:c2:cf:2d` | 05/10/2026 | -35.63495676824009 | -59.7735131464144 |
 | AE-03 | 298691 | `fc:f5:c4:ae:ca:d6` | 28/10/2026 | -35.640825 | -59.778565 |
+| AE-04 | 298873 | `f0:24:f9:c2:ee:ac` | 12/11/2026 | -35.86807451954287 | -60.73151263154378 |
 
 Los correos de AE-01, AE-02, AE-03 y la actualización AE-00 de 2026 registran equipos como exteriores (`Outside`), públicos (`Public`), con intervalo de envío del proveedor por defecto (~90 s). Este intervalo no es la frecuencia de ingesta de LEMEIT ni modifica sus disparadores.
 
@@ -66,3 +67,7 @@ Base AQ consultada: `2b3032976e49c5e75f2f4153f6803c522af3ecff`, 19 commits por d
 Usar este registro como fuente de las fechas del proveedor; [inventario](../INVENTARIO_ESTACIONES.md), README y wiki remiten aquí. Nuevos datos requieren fuente y evento identificado. No incorporar claves de lectura, tokens, contraseñas, contactos privados ni correos completos a Git o PDF.
 
 Mantener únicamente dos guías por sensor: Digital Color e Impresion, con nombres fijos y sin sufijos de versión. Las revisiones sustituyen esas copias; Git conserva el historial. Antes de actualizar una guía completada, conservar los valores ya cargados por la escuela. Se retiran las copias antiguas por instrucción explícita del titular.
+
+## AE-04 y confirmación de instalación de AE-02
+
+El titular aportó correo y pantalla PurpleAir de AE-04: PA-II-FLEX, firmware 7.04, público y exterior. Sigue en pruebas; no está instalado en la escuela de Del Valle. Su etiqueta indicará **Alta en PurpleAir: 12/11/2026**, sin confundirla con fecha de montaje. Institución prevista: Esc. Agraria C.M. Casares (EAS Del Valle). El titular confirma AE-02 instalado en su escuela, sin aportar en esta sesión fecha exacta de montaje. No se cambia su fecha histórica D1 por inferencia. [Alta autorizada y verificación](../ALTA_AE04_20261112.md).
