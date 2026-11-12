@@ -1,8 +1,8 @@
 # Ajuste del límite de frescura del 12 de noviembre de 2026
 
-La ingesta PurpleAir permanece cada 30 minutos (:27/:57). El límite anterior de 25 minutos producía un intervalo de falsa falta de datos recientes: AE-02 encendido, última lectura 08:25:11 ART y edad 27,7 minutos a las 08:52:50. Se propone **40 minutos inclusive**, con margen para el envío del proveedor y el refresco de pantalla de 5 minutos. Es frescura de lectura, no diagnóstico de encendido.
+La ingesta PurpleAir permanece cada 30 minutos (:27/:57). El límite anterior de 25 minutos producía un intervalo de falsa falta de datos recientes: AE-02 encendido, última lectura 08:25:11 ART y edad 27,7 minutos a las 08:52:50. Se adopta **40 minutos inclusive**, con margen para el envío del proveedor y el refresco de pantalla de 5 minutos. Es frescura de lectura, no diagnóstico de encendido.
 
-La prueba usa la constante real del HTML: 27,7/30/35/40 min recientes, 40 min + 1 ms antiguo; futuro, NULL e inválido siguen fallando seguros. No cambia AQI, ingesta, API, D1 ni frecuencia de refresco. La regla requiere publicación de la rama; [registro completo](ALTA_AE04_20261112.md). El informe siguiente conserva la decisión histórica de 25 minutos.
+La prueba usa la constante real del HTML: 27,7/30/35/40 min recientes, 40 min + 1 ms antiguo; futuro, NULL e inválido siguen fallando seguros. No cambia AQI, ingesta, API, D1 ni frecuencia de refresco. La publicación fue autorizada por el titular; [registro completo](ALTA_AE04_20261112.md). El informe siguiente conserva la decisión histórica de 25 minutos.
 
 ---
 
