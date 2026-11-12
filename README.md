@@ -21,17 +21,17 @@ Para el mapa, consultar [círculos y categorías AQI](docs/CIRCULOS_AQI_MAPA.md)
 
 ## Estaciones e inventario
 
-**Confirmación del titular al 01/11/2026:** los sensores **AE-00, AE-01, AE-02 y AE-03 están registrados en PurpleAir y configurados para la ingesta de LEMEIT**. **AE-04 no fue registrado todavía en PurpleAir**, no tiene `sensor_index` asignado y no debe incorporarse anticipadamente a la ingesta.
+**Estado al 12/11/2026:** AE-00 a AE-04 están registrados en PurpleAir e incluidos en la configuración activa de ingesta. AE-04 tiene índice **298873** y sigue en pruebas; AE-02 está instalado en su escuela según el titular. [Alta y verificación](docs/ALTA_AE04_20261112.md).
 
 | Código | PurpleAir `sensor_index` | Estado operativo comunicado |
 | --- | ---: | --- |
 | AE-00 | `198617` | Apagado; instalación/reubicación escolar pendiente |
 | AE-01 | `298687` | Apagado; instalación pendiente |
-| AE-02 | `298701` | Referencia de estación operativa en inventario previo; verificar conectividad actual |
+| AE-02 | `298701` | Instalado en su escuela según titular; conectividad se verifica por última lectura |
 | AE-03 | `298691` | Apagado al 01/11; instalación/reubicación pendiente |
-| AE-04 | — | Previsto; **no registrado** en PurpleAir |
+| AE-04 | `298873` | Registrado; en pruebas, instalación escolar pendiente |
 
-Esta confirmación funcional de los **cuatro índices habilitados** procede del titular y **no equivale a haber leído el contenido cifrado** de `SENSOR_INDEXES`. Las fechas de alta en PurpleAir, la instalación física, el estado registrado en D1 y la conectividad actual son asuntos distintos. Los datos de ubicación y evidencia de cada corte están en el [inventario de estaciones](docs/INVENTARIO_ESTACIONES.md) y en el [registro de altas](docs/instalacion/REGISTRO_PURPLEAIR.md).
+Esta confirmación funcional de los **cinco índices habilitados** procede del titular y **no equivale a haber leído el contenido cifrado** de `SENSOR_INDEXES`. Las fechas de alta en PurpleAir, la instalación física, el estado registrado en D1 y la conectividad actual son asuntos distintos. Los datos de ubicación y evidencia de cada corte están en el [inventario de estaciones](docs/INVENTARIO_ESTACIONES.md) y en el [registro de altas](docs/instalacion/REGISTRO_PURPLEAIR.md).
 
 También se integran sensores AirGradient de la red de Saladillo, con filtro de ubicaciones autorizadas y una identidad técnica por serial físico. No se debe inferir conectividad actual por la existencia de filas históricas. Ver [identidad AirGradient](docs/AQ02_CORRECCION.md).
 
@@ -100,3 +100,7 @@ Aire Escolar LEMEIT impulsa el monitoreo ambiental y la participación de escuel
 ## Licencia
 
 Código: MIT, según la declaración histórica del proyecto. Datos: atribución a los proveedores correspondientes, incluido [PurpleAir](https://www.purpleair.com), para uso educativo e informativo; verificar condiciones específicas de reutilización de cada fuente.
+
+## Frescura compatible con la ingesta
+
+La regla de frescura conserva las lecturas como recientes hasta **40 minutos inclusive**: 30 minutos entre ingestas más margen de envío y actualización del navegador. Superado ese límite se muestra «Sin datos recientes»; no significa equipo físicamente apagado. La ingesta permanece a :27/:57, y el dashboard conserva su consulta de cada 5 minutos. La regla se distribuye con el frontend; ver [registro del cambio](docs/ALTA_AE04_20261112.md).

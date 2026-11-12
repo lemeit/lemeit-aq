@@ -23,7 +23,7 @@ function uiFunction(name) {
 }
 const ui = vm.createContext({});
 vm.runInContext(html.slice(html.indexOf('  const PM25_AQI_BREAKPOINTS ='), html.indexOf('  const AQI_CATEGORIES =')), ui);
-vm.runInContext(['pm25ToAqi','toBsAs','minutosSinDato','isStale'].map(uiFunction).join('\n') + '\nconst STALE_MINUTES=25;', ui);
+vm.runInContext(['pm25ToAqi','toBsAs','minutosSinDato','isStale'].map(uiFunction).join('\n') + '\n'+html.match(/const STALE_MINUTES = \d+;/)[0], ui);
 const aqi = ui.pm25ToAqi;
 function db() {
   const sqlite = new DatabaseSync(':memory:');

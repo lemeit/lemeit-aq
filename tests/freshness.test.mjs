@@ -8,10 +8,10 @@ const now=Date.parse('2026-10-30T15:00:00Z');
 class Clock extends Date { static now(){return now;} }
 const ctx=vm.createContext({Date:Clock,t:k=>k,aqiInfo:()=>({label:"good",color:"var(--good)"})});
 const fn=name=>{const a=html.indexOf('  function '+name+'(');return html.slice(a,html.indexOf('\n  }',a)+4);};
-vm.runInContext('const STALE_MINUTES=25;'+['toBsAs','minutosSinDato','isStale','formatBsAsFull','mapaMarkerState'].map(fn).join('\n'),ctx);
+vm.runInContext(html.match(/const STALE_MINUTES = \d+;/)[0]+['toBsAs','minutosSinDato','isStale','formatBsAsFull','mapaMarkerState'].map(fn).join('\n'),ctx);
 vm.runInContext('const MAPA_PARAMS={aqi:{get:()=>1},pm2_5:{get:()=>1},co2:{get:()=>1},nox:{get:()=>1},voc:{get:()=>1},temperatura:{get:()=>1}};const AQI_CATEGORIES=[{max:50,key:"good"}];',ctx);
-test('borde inclusivo 25 min y 1 ms a cada lado',()=>{
- for(const [age,stale] of [[0,false],[1499999,false],[1500000,false],[1500001,true],[-1,true]]){
+test('borde inclusivo 40 min y 1 ms a cada lado',()=>{
+ for(const [age,stale] of [[0,false],[1662000,false],[1800000,false],[2100000,false],[2399999,false],[2400000,false],[2400001,true],[-1,true]]){
   assert.equal(ctx.isStale(new Date(now-age).toISOString()),stale,String(age));
  }
 });
@@ -35,3 +35,5 @@ test('una lectura reciente recupera su estado sin cambiar timestamp almacenado',
  assert.equal(ctx.mapaMarkerState(s,'aqi').state,'recent');
  assert.equal(s.timestamp,'2026-10-30 14:59:00');
 });
+
+test('el margen cubre ingesta de 30 minutos sin cambiar frecuencias',()=>{assert.match(html,/const STALE_MINUTES = 40;/); assert.match(html,/setInterval\(loadSensors, 5 \* 60 \* 1000\)/);});

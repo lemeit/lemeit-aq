@@ -7,8 +7,8 @@ base='dc951eca4e509d1898e95f3e9578ab09160ca19b'
 now=1793372400000 # 2026-10-30 15:00 UTC
 rows=[dict(sensor_index=i,nombre=name,proveedor=provider,timestamp=ts,pm2_5=4,co2=co2,
            institucion='Escuela fixture '+name,latitud=-35.6,longitud=-59.7)
-      for i,name,provider,ts,co2 in [(3,'AE-02','purpleair','2026-10-30 14:35:00',None),
-       (1,'AE-00','purpleair','2026-10-30 14:36:00',None),
+      for i,name,provider,ts,co2 in [(3,'AE-02','purpleair','2026-10-30 14:20:00',None),
+       (1,'AE-00','purpleair','2026-10-30 14:21:00',None),
        (2,'AE-01','purpleair','2026-10-29 14:00:00',None),
        (900002,'AirGradient','airgradient','2026-10-30 14:59:00',400)]]
 # Ejecuta cargarMapa real con adaptador que retiene estilos, texto y popups.
@@ -66,7 +66,7 @@ with sync_playwright() as p:
    assert page.locator('#sensor-grid .card[data-sensor-index="3"] .badge').inner_text()!='Sin datos recientes'
    print('REPRODUCIDO en main: mapa colorea lectura antigua y tarjeta no envejece tras fallo de red')
   else:
-   assert page.locator('#sensor-grid .card[data-sensor-index="3"] .badge').inner_text()!='Sin datos recientes' # exactamente 25
+   assert page.locator('#sensor-grid .card[data-sensor-index="3"] .badge').inner_text()!='Sin datos recientes' # exactamente 40
    # Reloj cambia sin completar una solicitud: timer debe actualizar ambas vistas.
    selection=page.evaluate('currentSensorIndex');original=page.evaluate('JSON.stringify(latestSensors)')
    page.evaluate('window.savedMarker=layers.find(x=>x instanceof L.Marker);window.savedBack=document.querySelector("#mapa-cards .card-back")');
@@ -111,7 +111,7 @@ with sync_playwright() as p:
    mode['value']='pending';page.evaluate('loadSensors();fixtureNow+=30*60000;document.dispatchEvent(new Event("visibilitychange"))')
    assert page.locator('#sensor-grid .sensor-stale').count()==4
    assert not errors,errors
-   print('PASS: borde 25 min, timer sin fetch, red/HTTP/payload, recuperación, NULL/inválido/futuro, ambas vistas, orden/selección, ES/EN, 390/1440, temas y accesibilidad básica')
+   print('PASS: borde 40 min, timer sin fetch, red/HTTP/payload, recuperación, NULL/inválido/futuro, ambas vistas, orden/selección, ES/EN, 390/1440, temas y accesibilidad básica')
   for r in pending:r.abort()
   page.wait_for_timeout(100)
   c.close()
