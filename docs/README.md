@@ -1,4 +1,4 @@
-# Documentación técnica — Aire Saladillo
+# Documentación técnica — Red de Monitoreo Ambiental
 
 ## Regla e interfaz
 
@@ -32,3 +32,5 @@ de seguimiento enlazan las correcciones posteriores; una prueba offline PASS
 no certifica producción. AQ-09 no cierra AQ-04, DAT-02 backend ni otras tareas.
 
 - [Alta AE-04 y ajuste de frescura del 12/11/2026](ALTA_AE04_20261112.md): autorización, versión activa, datos verificados, pruebas y reversión.
+
+- [Denominación de la red y revisión documental](DENOMINACION_RED.md): Red de Monitoreo Ambiental; diez guías corregidas conservando diseño y campos editables.
