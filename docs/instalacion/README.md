@@ -9,7 +9,7 @@ Revisión documental del 12/11/2026. Dos PDF por estación, con nombres fijos: *
 | AE-03 · Instituto Niño Jesús | [Color](Mini%20Guia%20AE-03%20-%20Instituto%20Nino%20Jesus%20-%20Digital%20Color.pdf) | [Impresión](Mini%20Guia%20AE-03%20-%20Instituto%20Nino%20Jesus%20-%20Impresion.pdf) |
 | AE-04 · Esc. Agraria C.M. Casares (EAS Del Valle) | [Color](Mini%20Guia%20AE-04%20-%20Del%20Valle%20-%20Digital%20Color.pdf) | [Impresión](Mini%20Guia%20AE-04%20-%20Del%20Valle%20-%20Impresion.pdf) |
 
-Completar la fecha efectiva de **instalación física**; no deducirla del alta PurpleAir. AE-04 tiene código reservado: sensor index, Device ID, alta y coordenadas siguen pendientes de confirmación documental. Esta guía no acredita registro, instalación ni visibilidad en el portal.
+Completar la fecha efectiva de **instalación física**; no deducirla del alta PurpleAir. AE-04 está registrado con sensor index 298873 y alta PurpleAir del 12/11/2026, según el registro versionado actualizado durante esta revisión. Sigue en pruebas, sin montaje escolar. La guía no acredita conectividad actual ni constatación de campo.
 
 Los campos de referente, teléfono, red y montaje son para uso local. No incluir contraseñas ni subir copias con información privada al repositorio. Los tres códigos se editan por separado; mantenerlos iguales. Guardar una copia completada antes de actualizar la plantilla.
 

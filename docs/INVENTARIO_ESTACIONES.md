@@ -1,3 +1,11 @@
+# Estado actualizado al 12 de noviembre de 2026
+
+AE-00 a AE-04 están registrados en PurpleAir y configurados para ingesta. AE-02 está instalado en su escuela según el titular. AE-04 (298873), PA-II-FLEX, Device ID f0:24:f9:c2:ee:ac, corresponde a **Esc. Agraria C.M. Casares (EAS Del Valle)** y sigue en pruebas, sin instalación física escolar. Su alta PurpleAir es el **12/11/2026**; fecha de instalación pendiente. D1 confirma siete identidades sin duplicados (cinco PurpleAir y dos AirGradient), con códigos AE-00 a AE-04. AE-02 reportó 2026-11-12 11:55:11 UTC y AE-04 11:55:40 UTC; el mapa muestra ambos con datos recientes. Los otros sensores conservan sus lecturas históricas, sin acreditar conexión actual.
+
+[Operación autorizada, evidencia y reversión](ALTA_AE04_20261112.md). El corte siguiente se conserva como registro histórico y no describe el estado actual.
+
+---
+
 # Inventario y verificación de estaciones
 
 Corte: 28 de octubre de 2026, 23:17 ART (29 de octubre, 02:17 UTC). Este documento distingue confirmación del titular, estado registrado y conectividad. `activo = 1` no demuestra que un equipo esté online.

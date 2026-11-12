@@ -4,14 +4,18 @@ Revisión: 12/11/2026. Alcance exclusivamente documental; no acredita instalaci�
 
 ## Base y fuentes verificadas
 
-- `main = a3d06a500a024212ff83c59ab7cb9ed2f1a98ff3`, consultado por GitHub. Comparación con auditoría `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`: 36 commits adelante, 0 detrás. No se extrapola el estado de la auditoría a producción.
+- Base inicial `main = a3d06a500a024212ff83c59ab7cb9ed2f1a98ff3`, consultada por GitHub. Comparación inicial con auditoría `c03d7d0dca68772f3d1ea3312d797fe48f038f9c`: 36 commits adelante, 0 detrás. No se extrapola el estado de la auditoría a producción.
 - Leídos AGENTS.md, README.md, inventario y registro PurpleAir actuales. [Plan institucional](../plan_despliegue.docx), blob `5f605f3bb57dd97364317a8c366a390631c33a44`, idéntico al archivo de referencia local.
-- Los ocho PDF existentes en `C:\GitHub\lemeit-aq\docs\instalacion` se compararon por SHA-256 con copias cuyo blob Git coincide con main: todos idénticos. No había valores locales nuevos que preservar. Esa carpeta no se modificó.
+- Los ocho PDF existentes en `C:\GitHub\lemeit-aq\docs\instalacion` se compararon por SHA-256 con copias cuyo blob Git coincide con main: todos idénticos al corte inicial. No había valores locales nuevos que preservar. Esa carpeta no se modificó.
 - Tres adjuntos recuperados de la conversación de referencia, leídos y renderizados. SHA-256:
   - AE-02 Digital Color: `9ea6313b67a1e6e287a0de61872a953b6092adb83ff6034d8e5b435d14432ea5`.
   - AE-02 impresión: `26330e5ddf4bf648c19a6606cf65200b2a599a34e2b017b3a2d01ae3e6f88972`.
   - AE-01 impresión editable: `2e6c8d3b05a18f167ced4b179a2d9f073643c7a920650b9f66172e80b113a36c`.
 - El entorno Codex Cloud existente no está expuesto en esta sesión. Preparación y comprobación local de documentos y rama/PR mediante conector GitHub sobre la referencia exacta; no se crea otro entorno.
+
+## Actualización concurrente verificada
+
+Durante la preparación, main avanzó a `7d170384846a650df61fa79b6cb34a63dbd5edf2` (38 commits adelante y 0 detrás de la auditoría). Se volvieron a leer el inventario, registro y [alta AE-04](../ALTA_AE04_20261112.md). Se incorporaron los datos confirmados de AE-04 en ambos PDF y se conservaron todos los cambios ajenos de main al sincronizar la rama. AGENTS.md, plan y los PDF previos no cambiaron. La falta de identificador de AE-04 descrita en la base inicial queda superada por este nuevo registro; no se verifica producción desde esta tarea.
 
 ## Comparación y decisión
 
@@ -24,7 +28,7 @@ Mejoras justificadas:
 - Pie y etiquetas negros o muy oscuros; impresión sin fondos de color y sin gran bloque oscuro en cabecera.
 - Denominaciones exactas del plan: Esc. de Educación Artística N°1 "Lola Mora"; Esc. de Educación Secundaria N°2 "Manuel Pardal"; Instituto Niño Jesús; Esc. Agraria C.M. Casares (EAS Del Valle). Distritos según plan.
 - Se conservan íntegros sensor index, Device ID, alta y coordenadas de registro de AE-01 a AE-03 en Observaciones, tomados de las guías de main y contrastados con REGISTRO_PURPLEAIR.md. No son verificación de campo.
-- Fecha de montaje vacía, sin año prefijado. El alta del proveedor no se copia a instalación. AE-04 usa únicamente el código reservado; identificación, alta y coordenadas quedan como pendientes, sin inventarlas.
+- Fecha de montaje vacía, sin año prefijado. El alta del proveedor no se copia a instalación. AE-04 incorpora sensor index 298873, Device ID f0:24:f9:c2:ee:ac, alta PurpleAir 12/11/2026 y coordenadas declaradas -35.86807451954287, -60.73151263154378, respaldados por el registro actualizado en main. Sigue en pruebas, sin montaje escolar.
 - Texto de montaje, configuración Wi-Fi, mantenimiento y diagnóstico preservado; cambios menores de redacción y espaciado sin alterar los pasos. Se elimina iconografía dependiente de fuentes para evitar glifos defectuosos. El plan general dice 2-4 m y la guía original 1.5-2.0 m: se conserva el original por alcance, sin resolver esa diferencia mediante una suposición. Acordar el punto físico en el relevamiento institucional.
 - La etiqueta Wi-Fi aclara "sin clave". Datos personales y copias completadas son de uso local, no para publicar en Git.
 
@@ -59,4 +63,4 @@ Resultados: ocho archivos, ocho páginas A4, diez campos AcroForm por archivo (8
 
 ## Revisión y reversión
 
-Rama independiente desde el SHA indicado; commit con `[CF-Pages-Skip]` para omitir despliegue Pages. PR para revisión, sin fusión. Revisar diseño y denominaciones antes de usar en campo. Los nombres fijos evitan duplicados y el historial Git conserva las versiones previas. Descartar la rama revierte la propuesta; una eventual fusión requeriría decisión del titular. La sustitución documental no registra AE-04 en PurpleAir ni en LEMEIT.
+Rama independiente desde el SHA inicial indicado, sincronizada con `main = 7d170384846a650df61fa79b6cb34a63dbd5edf2` antes de cerrar; commit con `[CF-Pages-Skip]` para omitir despliegue Pages. PR para revisión, sin fusión. Revisar diseño y denominaciones antes de usar en campo. Los nombres fijos evitan duplicados y el historial Git conserva las versiones previas. Descartar la rama revierte la propuesta; una eventual fusión requeriría decisión del titular. La sustitución documental no ejecuta operaciones de registro en PurpleAir ni en LEMEIT.

@@ -1,3 +1,9 @@
+# Actualización del 12 de noviembre de 2026
+
+AE-04 (298873) fue incorporado con autorización, conservando AE-00 a AE-03. Ficha pública: **EA C.M. Casares (Del Valle)**; equipo en pruebas, no instalado en la escuela. Primera lectura e interfaz verificadas. Ingesta a :27/:57 cada 30 minutos, cron del Worker vacío. La corrección autorizada de frescura amplía a 40 minutos sin aumentar consultas; se distribuye con el frontend. [Registro, versiones, pruebas y reversión](ALTA_AE04_20261112.md). Los apartados siguientes conservan antecedentes de decisiones anteriores, incluido el límite histórico de 25 minutos.
+
+---
+
 # PurpleAir: alta segura, versiones e incidente AE-03
 
 ## Incidente confirmado por el titular

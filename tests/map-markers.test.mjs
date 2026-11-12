@@ -11,7 +11,7 @@ const legend={innerHTML:''};
 const ctx=vm.createContext({Date:Clock,t:k=>k,paramLabel:k=>k,document:{getElementById:()=>legend}});
 const constants=html.slice(html.indexOf('  const PM25_AQI_BREAKPOINTS'),html.indexOf('  const aqiBandsPlugin'));
 const map=html.slice(html.indexOf('  const MAPA_PARAMS'),html.indexOf('  // VOC/NOx'));
-vm.runInContext(constants+'const STALE_MINUTES=25;'+['pm25ToAqi','aqiInfo','formatAqi','formatPm25','toBsAs','minutosSinDato','isStale','formatBsAsFull'].map(fn).join('\n')+map+['unitSuffix','formatParamValue','renderMapaLegend'].map(fn).join('\n'),ctx);
+vm.runInContext(constants+html.match(/const STALE_MINUTES = \d+;/)[0]+['pm25ToAqi','aqiInfo','formatAqi','formatPm25','toBsAs','minutosSinDato','isStale','formatBsAsFull'].map(fn).join('\n')+map+['unitSuffix','formatParamValue','renderMapaLegend'].map(fn).join('\n'),ctx);
 const row=(pm2_5=4)=>({nombre:'Fixture',pm2_5,timestamp:'2026-10-30 14:59:00',temperatura:22.3,humedad:48});
 test('seis categorías y fronteras: círculo y color idéntico a tarjeta, incluido >500',()=>{
  const cases=[[0,'--good'],[9,'--good'],[9.1,'--moderate'],[35.4,'--moderate'],[35.5,'--unhealthy-sg'],[55.4,'--unhealthy-sg'],[55.5,'--unhealthy'],[125.4,'--unhealthy'],[125.5,'--very-unhealthy'],[225.4,'--very-unhealthy'],[225.5,'--hazardous'],[325.4,'--hazardous'],[400,'--hazardous']];
@@ -32,7 +32,7 @@ test('PM2.5 y todos los parámetros de medición usan el mismo símbolo sin clas
  for(const pm of [4,40,400])assert.equal(ctx.mapaMarkerState(row(pm),'pm2_5').color,'var(--accent)');
 });
 test('frescura de #22 tiene precedencia; recuperación y valor ausente distinguibles',()=>{
- const s=row();s.timestamp='2026-10-30 14:35:00';
+ const s=row();s.timestamp='2026-10-30 14:20:00';
  assert.equal(ctx.mapaMarkerState(s,'aqi').state,'recent');now+=1;
  assert.equal(ctx.mapaMarkerState(s,'aqi').color,'#C7C7C7');now-=1;
  for(const timestamp of [null,'invalid','2099-01-01 00:00:00'])assert.equal(ctx.mapaMarkerState({...s,timestamp},'pm2_5').color,'#C7C7C7');
