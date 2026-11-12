@@ -40,7 +40,7 @@ Las coordenadas del domicilio particular, contactos personales, claves de lectur
 
 Se mantienen diseño original y diez campos editables. Los códigos de la etiqueta superior, portal y ficha son editables por separado. Observaciones ocupa dos líneas: identificación del equipo y, debajo, alta PurpleAir más coordenadas de registro. Fecha de instalación se deja sin fecha concreta; el formato en blanco para completar no acredita instalación.
 
-La versión imprimible conserva el pie negro en negrita. La tabla AQI heredada se conserva por fidelidad al original y es histórica; no corresponde al primer tramo actual descrito en [trazabilidad AQI](../AQI_TRAZABILIDAD.md). No usar esta incorporación documental como validación de sus indicaciones escolares.
+**Revisión del 12/11/2026:** AE-01 a AE-04 usan una página recompuesta desde las referencias, pie y etiquetas oscuros, nombres del plan y seis categorías EPA verificadas. Se conservan los datos de registro de AE-01 a AE-03. Fecha de instalación física queda vacía, incluido el año. AE-04 no tiene identificación del proveedor confirmada. AE-00 no se modifica y su tabla permanece histórica. Las orientaciones escolares heredadas no se presentan como protocolo EPA. Ver [índice y versiones](README.md) y [verificación](VERIFICACION_MINIGUIAS_20261112.md).
 
 - [AE-01 - Digital Color](Mini%20Guia%20AE-01%20-%20Lola%20Mora%20-%20Digital%20Color.pdf).
 - [AE-01 - Impresion](Mini%20Guia%20AE-01%20-%20Lola%20Mora%20-%20Impresion.pdf).
@@ -53,7 +53,7 @@ La versión imprimible conserva el pie negro en negrita. La tabla AQI heredada s
 
 - [AE-00 - Impresion](Mini%20Guia%20AE-00%20-%20Madre%20Teresa%20-%20Impresion.pdf).
 
-## Verificación de esta actualización
+## Verificación histórica de la actualización del 29/10/2026
 
 Defecto reproducido: la wiki confundía alta e instalación (columna «Installed» y referencia de alta a `fecha_instalacion`), fechaba AE-01/AE-02 el 06/10 y no conservaba las coordenadas de los correos. Los originales de las guías tampoco tenían los códigos superiores editables.
 
