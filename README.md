@@ -1,9 +1,9 @@
 # Aire Escolar LEMEIT · AQ — Red de monitoreo de calidad del aire
 
-[![Sitio](https://img.shields.io/badge/sitio-app.lemeit.ar%2Faq-009688?style=flat-square)](https://app.lemeit.ar/aq)
-[![Documentación](https://img.shields.io/badge/documentaci%C3%B3n-wiki.lemeit.ar-009688?style=flat-square)](https://wiki.lemeit.ar/red-ambiental/01-aire-saladillo/)
-[![API](https://img.shields.io/badge/API-p%C3%BAblica-FF5722?style=flat-square)](https://app.lemeit.ar/aq/api.html)
-[![Licencia](https://img.shields.io/badge/licencia-MIT-009688?style=flat-square)](#licencia)
+[![Sitio](https://img.shields.io/badge/sitio-app.lemeit.ar%2Faq-009688?style=flat-square&labelColor=555555)](https://app.lemeit.ar/aq)
+[![Documentación](https://img.shields.io/badge/documentaci%C3%B3n-wiki.lemeit.ar-009688?style=flat-square&labelColor=555555)](https://wiki.lemeit.ar/red-ambiental/01-aire-saladillo/)
+[![API](https://img.shields.io/badge/API-p%C3%BAblica-FF5722?style=flat-square&labelColor=555555)](https://app.lemeit.ar/aq/api.html)
+[![Licencia](https://img.shields.io/badge/licencia-MIT-009688?style=flat-square&labelColor=555555)](#licencia)
 
 LEMEIT · AQ (Aire Saladillo / Aire Escolar) permite adquirir, conservar y visualizar mediciones de calidad del aire de sensores **PurpleAir** y **AirGradient** asociados a escuelas y otras ubicaciones de Saladillo y del partido de 25 de Mayo, provincia de Buenos Aires. Es parte de una iniciativa de ciencia ciudadana y educación ambiental. Incluye mediciones de partículas y, según el equipo, temperatura, humedad, CO₂ e índices VOC/NOx.
 
