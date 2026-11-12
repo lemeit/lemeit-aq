@@ -103,4 +103,4 @@ Código: MIT, según la declaración histórica del proyecto. Datos: atribución
 
 ## Frescura compatible con la ingesta
 
-La corrección propuesta en esta rama conserva las lecturas como recientes hasta **40 minutos inclusive**: 30 minutos entre ingestas más margen de envío y actualización del navegador. Superado ese límite se muestra «Sin datos recientes»; no significa equipo físicamente apagado. La ingesta permanece a :27/:57, y el dashboard conserva su consulta de cada 5 minutos. La nueva regla requiere publicación del frontend; ver [registro del cambio](docs/ALTA_AE04_20261112.md).
+La regla de frescura conserva las lecturas como recientes hasta **40 minutos inclusive**: 30 minutos entre ingestas más margen de envío y actualización del navegador. Superado ese límite se muestra «Sin datos recientes»; no significa equipo físicamente apagado. La ingesta permanece a :27/:57, y el dashboard conserva su consulta de cada 5 minutos. La regla se distribuye con el frontend; ver [registro del cambio](docs/ALTA_AE04_20261112.md).
