@@ -19,7 +19,7 @@ El portal presenta tarjetas de estaciones, mapa por parámetro, gráficos histó
 
 El indicador AQI se calcula en el navegador a partir de la concentración PM2.5 disponible, según la implementación documentada; **no representa un AQI diario o NowCast**. Ver [metodología, unidades, límites y trazabilidad](docs/AQI_TRAZABILIDAD.md), y [tratamiento de frescura](docs/FRESCURA_SENSORES.md).
 
-El rediseño propuesto usa los seis colores oficiales EPA en el mapa, popup con nombre, AQI y PM2.5, y frescura de **25 minutos inclusive**: después muestra gris y conserva tarjetas atenuadas. La ingesta sigue cada 30 minutos, por lo que puede haber intervalos sin datos recientes. Ver [revisión, pruebas y coordinación](docs/REDISENO_MAPA_AQI_EPA_20261113.md); PR sin merge ni despliegue.
+El mapa «AQI · EPA» usa círculos y seis colores oficiales EPA, con nombre, AQI, PM2.5, fecha y estado en el popup ([#37 fusionado](https://github.com/lemeit/lemeit-aq/pull/37); publicación informada por el titular). La corrección propuesta de [prioridad y frescura](docs/PRIORIDAD_MAPA_FRESCURA.md) mantiene los puntos recientes encima de los grises y fija **40 minutos inclusive**, con ingesta cada 30 minutos y 10 minutos de margen. Un gris indica falta de datos recientes, **no certifica apagado físico**. El nuevo PR queda sin fusionar ni desplegar.
 
 Para el mapa, consultar [círculos y categorías AQI](docs/CIRCULOS_AQI_MAPA.md), [leyenda interior vigente](docs/CONTROL_LEYENDA_MAPA.md) y [orden de tarjetas](docs/ORDEN_TARJETAS.md). El historial de decisiones visuales anteriores está en esos documentos, no en esta presentación general.
 

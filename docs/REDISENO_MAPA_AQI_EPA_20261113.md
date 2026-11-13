@@ -1,3 +1,5 @@
+> Seguimiento actual: [prioridad y frescura de 40 minutos](PRIORIDAD_MAPA_FRESCURA.md). #37 está fusionado; su publicación fue informada por el titular. Este PR propone 40 minutos inclusive por autorización posterior. Los 25 minutos y estados de publicación descritos más abajo son registros históricos, no la regla de esta rama. Sin nuevo merge ni despliegue.
+
 # Mapa AQI · EPA — revisión del 13/11/2026
 
 ## Base verificada y coordinación

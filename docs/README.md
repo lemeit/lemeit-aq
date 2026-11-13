@@ -2,16 +2,18 @@
 
 ## Regla e interfaz
 
-- [Rediseño AQI · EPA del 13/11/2026](REDISENO_MAPA_AQI_EPA_20261113.md): propuesta con colores oficiales, popup completo y 25 minutos; comparación con auditoría y PR previos, reproducción, aceptación y pruebas.
+- [Prioridad de marcadores y frescura](PRIORIDAD_MAPA_FRESCURA.md): propuesta actual; recientes encima de grises y 40 minutos inclusive, con pruebas de superposición Leaflet real.
 
-- [Control interior de leyenda y acento](CONTROL_LEYENDA_MAPA.md): esquina inferior izquierda, máximo 240 px, paleta categórica y otras capas naranja/vacío/gris. Decisión más reciente; evidencia de despliegue en su PR.
+- [Rediseño AQI · EPA del 13/11/2026](REDISENO_MAPA_AQI_EPA_20261113.md): registro de #37 fusionado con colores oficiales, popup completo y 25 minutos históricos; comparación con auditoría y PR previos, reproducción, aceptación y pruebas.
+
+- [Control interior de leyenda y acento](CONTROL_LEYENDA_MAPA.md): esquina inferior izquierda, máximo 240 px, paleta categórica y otras capas naranja/vacío/gris. Registro de diseño del control; evidencia de despliegue en su PR.
 
 - [Barra segmentada AQI anterior](BARRA_AQI_MAPA.md): registro histórico de leyenda externa con límites existentes, datos faltantes separados y categorías accesibles; conserva círculos/colores y otras capas. [PR #26 fusionado y desplegado](https://github.com/lemeit/lemeit-aq/pull/26), Pages success y HTML estático exacto verificados.
 
 - [Círculos y colores AQI](CIRCULOS_AQI_MAPA.md): corrección vigente del esquema visual; una geometría común, colores de tarjetas, neutro/gris, capturas y pruebas Leaflet reales. [PR #24 fusionado y desplegado](https://github.com/lemeit/lemeit-aq/pull/24), con Pages success y HTML estático verificados; evidencia en el informe.
 - [Marcadores #23](MARCADORES_MAPA.md): registro histórico de formas/acento, fusionado y luego sustituido por decisión explícita del titular.
 
-- [Frescura AQ-09](FRESCURA_SENSORES.md): regla histórica ≤25 min; propuesta actual ≤40 min para ingesta cada 30 min, datos antiguos/inválidos/futuros, mapa/tarjetas, reproducción, aceptación, pruebas offline, autorización y exclusión de previews. [PR #22 fusionado](https://github.com/lemeit/lemeit-aq/pull/22) en d76c687; no equivale a validación de sensores productivos.
+- [Frescura AQ-09](FRESCURA_SENSORES.md): regla histórica ≤25 min; nuevo PR propone ≤40 min para ingesta cada 30 min, datos antiguos/inválidos/futuros, mapa/tarjetas, reproducción, aceptación, pruebas offline, autorización y exclusión de previews. [PR #22 fusionado](https://github.com/lemeit/lemeit-aq/pull/22) en d76c687; no equivale a validación de sensores productivos.
 - [Orden de tarjetas #21](ORDEN_TARJETAS.md): integrado en main; AE ascendente y proveedores conservados.
 - [Trazabilidad AQI](AQI_TRAZABILIDAD.md): fórmula, unidades y origen; corte histórico con nota de seguimiento temporal AQ-09.
 - [Aclaración de última medición](ACLARACION_ULTIMA_MEDICION.md): registro histórico del texto y pruebas anteriores.
