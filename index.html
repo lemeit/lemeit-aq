@@ -43,6 +43,8 @@
     document.documentElement.setAttribute("data-theme", theme);
   })();
 </script>
+<script src="assets/geo/pba-partidos.js"></script>
+<script src="assets/mapa-pba.js"></script>
 <style>
   :root {
     /* paleta lemeit.ar (design.lemeit.ar) — modo oscuro */
@@ -445,20 +447,13 @@
     --very-unhealthy: #8F3F97;
     --hazardous: #7E0023;
   }
-  #mapa-container { height: 400px; width: 100%; position: relative; z-index: 1; }
-  @media (max-width: 640px) {
-    /* EPA AQI: colores oficiales solo en mapa/leyenda; no alteran cálculo ni tarjetas.
-     Fuente: AirNow AQI Technical Assistance Document (tabla de categorías). */
-  #mapa-container {
-    --good: #00E400;
-    --moderate: #FFFF00;
-    --unhealthy-sg: #FF7E00;
-    --unhealthy: #FF0000;
-    --very-unhealthy: #8F3F97;
-    --hazardous: #7E0023;
-  }
-  #mapa-container { height: 280px; }
-  }
+  .mapa-territorio { display:flex; gap:8px; padding:8px 14px; align-items:center; }
+  .mapa-territorio .sel { min-width:0; flex:1; max-width:260px; }
+  .mapa-territorio button { font:inherit; font-family:var(--font-display); font-size:11px; min-height:36px; color:var(--text); background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:6px 10px; cursor:pointer; }
+  .pba-label { position:absolute; white-space:nowrap; font:11px var(--font-body); line-height:1.15; text-align:center; color:var(--text); text-shadow:0 0 3px var(--bg),1px 1px 2px var(--bg),-1px -1px 2px var(--bg); pointer-events:none; }
+  .pba-label small { display:block; font-size:8px; color:var(--text-dim); }
+  .pba-label[hidden] { display:none; }
+  #mapa-container { background:var(--bg); height: 400px; width: 100%; position: relative; z-index: 1; }
 
   .mapa-legend {
     display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
@@ -1017,6 +1012,10 @@
           <option value="nox" data-i18n="mapa_capa_nox">Capa: NOx</option>
         </select>
       </div>
+      <div class="mapa-territorio">
+        <button type="button" onclick="volverProvincia()" data-i18n="mapa_provincia">Provincia</button>
+        <select class="sel" id="sel-mapa-partido" aria-label="Partido de Buenos Aires" data-i18n-title="mapa_partido_label"><option value="" data-i18n="mapa_partidos">Partidos PBA</option></select>
+      </div>
       <div id="mapa-container"></div>
     </div>
     <div class="grid" style="margin-top:12px;margin-bottom:0" id="mapa-cards"></div>
@@ -1237,6 +1236,10 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_dato_reciente: "Datos recientes",
       mapa_sin_valor: "Sin valor para este parámetro",
       mapa_valor_leyenda: "Medición del parámetro; consultar valor al pulsar",
+      mapa_provincia: "Provincia",
+      mapa_partidos: "Partidos PBA",
+      mapa_partidos_no_disponibles: "Partidos PBA no disponibles",
+      mapa_partido_label: "Partido de Buenos Aires",
       mapa_capa_aqi: "AQI · EPA",
       mapa_capa_pm2_5: "Capa: PM2.5",
       mapa_capa_temperatura: "Capa: Temperatura",
@@ -1465,6 +1468,10 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_dato_reciente: "Recent data",
       mapa_sin_valor: "No value for this parameter",
       mapa_valor_leyenda: "Parameter measurement; select a marker for its value",
+      mapa_provincia: "Province",
+      mapa_partidos: "PBA districts",
+      mapa_partidos_no_disponibles: "PBA districts unavailable",
+      mapa_partido_label: "District of Buenos Aires Province",
       mapa_capa_aqi: "AQI · EPA",
       mapa_capa_pm2_5: "Layer: PM2.5",
       mapa_capa_temperatura: "Layer: Temperature",
@@ -2230,7 +2237,17 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     legend.innerHTML += item("missing", "var(--accent)", t("mapa_sin_valor")) + item("stale", "#C7C7C7", t("aqi_sin_datos_card"));
   }
 
+  let mapaTerritorio = null;
+  function volverProvincia() {
+    if (!mapaInst) return;
+    // Bbox derivada de la capa ARBA/IGN; fallback si el recurso local falla.
+    const bbox = window.AQ_PBA?.bbox || [-63.3859, -41.03777, -56.66499, -33.26185];
+    document.getElementById("sel-mapa-partido").value = "";
+    mapaInst.fitBounds([[bbox[1],bbox[0]],[bbox[3],bbox[2]]], { padding:[18,18], animate:false });
+  }
+
   async function cargarMapa() {
+    if (!window.L) return; // Leaflet onload inicia la vista aun si falla la API.
     const dark = document.documentElement.getAttribute("data-theme") !== "light";
     // Los tiles de CARTO ahora exigen API key — en vez de ponerla acá (quedaría
     // visible en "ver código fuente" y cualquiera podría copiarla y gastar la
@@ -2243,18 +2260,16 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     const conCoords = latestSensors.filter((s) => s.latitud != null && s.longitud != null);
 
     if (!mapaInst) {
-      // Encuadre inicial que cubra los dos partidos (Saladillo + 25 de Mayo),
-      // no solo el centroide de los sensores ya desplegados — todavia no hay
-      // sensores propios en 25 de Mayo (Fase 2, escuelas "Lola Mora" y
-      // "Casares/Del Valle", ver plan de despliegue), pero se agrega su
-      // ubicacion de referencia (misma que usa EMA-25C en emas.lemeit.ar)
-      // para que el mapa no arranque mostrando solo Saladillo. Mismo criterio
-      // que en emas.lemeit.ar.
-      const puntosSaladillo = conCoords.length
-        ? conCoords.map((s) => [s.latitud, s.longitud])
-        : [[-35.628, -59.797]];
-      const boundsInicial = L.latLngBounds([...puntosSaladillo, [-35.435069, -60.170656]]);
-      mapaInst = L.map("mapa-container").fitBounds(boundsInicial, { padding: [30, 30] });
+      mapaInst = L.map("mapa-container");
+      if (window.AQ_PBA && window.initAqProvince) {
+        mapaTerritorio = window.initAqProvince(mapaInst, window.AQ_PBA, () => latestSensors);
+      } else {
+        const selector = document.getElementById("sel-mapa-partido");
+        selector.disabled = true;
+        selector.options[0].dataset.i18n = "mapa_partidos_no_disponibles";
+        selector.options[0].textContent = t("mapa_partidos_no_disponibles");
+      }
+      volverProvincia();
       mapaTileLayer = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap contributors © CARTO" }).addTo(mapaInst);
     } else {
       if (mapaTileLayer) mapaInst.removeLayer(mapaTileLayer);
@@ -2262,6 +2277,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     }
 
     initMapaLegend();
+    mapaTerritorio?.update();
 
     mapaInst.eachLayer((l) => { if (l instanceof L.CircleMarker || l instanceof L.Marker) mapaInst.removeLayer(l); });
     if (mapaTileLayer) mapaTileLayer.addTo(mapaInst); // por si el tileLayer cayó dentro del removeLayer de arriba
@@ -2349,6 +2365,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     refreshMapaLayers = () => {
       freshnessUpdates.forEach((update) => update());
       renderMapaLegend(param);
+      mapaTerritorio?.update();
     };
 
     mapaCards.innerHTML = sortSensorCards(conCoords).map((s) => {
@@ -2359,7 +2376,14 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       return card.outerHTML;
     }).join("");
 
-    setTimeout(() => mapaInst.invalidateSize(), 100);
+    setTimeout(() => {
+      const size = mapaInst.getSize?.();
+      const container = document.getElementById("mapa-container");
+      // Redibujar datos no debe recentrar ni redondear el centro manual.
+      if (!size || size.x !== container.clientWidth || size.y !== container.clientHeight) {
+        mapaInst.invalidateSize({ pan:false });
+      }
+    }, 100);
   }
 
   // Delegación de eventos: un solo listener en el contenedor (que nunca se
@@ -3474,7 +3498,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   window.addEventListener("pageshow", refreshSensorFreshness);
   setInterval(loadSensors, 5 * 60 * 1000); // refresca cada 5 min
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" onload="if(document.getElementById('tab-mapa').classList.contains('active')) cargarMapa()"></script>
 
 </body>
 </html>

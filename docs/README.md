@@ -2,7 +2,9 @@
 
 ## Regla e interfaz
 
-- [Prioridad de marcadores y frescura](PRIORIDAD_MAPA_FRESCURA.md): propuesta actual; recientes encima de grises y 40 minutos inclusive, con pruebas de superposición Leaflet real.
+- [Vista provincial y partidos PBA](MAPA_PROVINCIA_PBA.md): propuesta actual, límites/nombres con procedencia ARBA/IGN, licencia, densidad, vista manual, pruebas y futura etapa EMAS sin datos importados.
+
+- [Prioridad de marcadores y frescura](PRIORIDAD_MAPA_FRESCURA.md): PR #38 fusionado; recientes encima de grises y 40 minutos inclusive, con pruebas de superposición Leaflet real.
 
 - [Rediseño AQI · EPA del 13/11/2026](REDISENO_MAPA_AQI_EPA_20261113.md): registro de #37 fusionado con colores oficiales, popup completo y 25 minutos históricos; comparación con auditoría y PR previos, reproducción, aceptación y pruebas.
 
