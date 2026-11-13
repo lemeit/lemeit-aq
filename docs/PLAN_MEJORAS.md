@@ -141,3 +141,10 @@ capas: naranja reciente, vacío naranja faltante y gris claro solo antiguo.
 Leaflet real offline: contención, gestos, 320/390/1440, ES/EN, temas, estados y
 regresiones PASS. Merge/despliegue autorizados; resultado real se registra al
 cierre en la descripción del PR, sin otro PR exclusivamente de tiempos verbales.
+
+
+### Instalaciones escolares — 13/11/2026
+
+**Instalaciones reportadas por el titular — 13/11/2026:** Escuela de Educación Agropecuaria de Carlos Casares, en Del Valle (partido de 25 de Mayo), y Escuela de Educación Artística Lola Mora, en 25 de Mayo. Ambos monitores quedaron instalados, conectados al Wi-Fi escolar y transmitiendo al portal público, según el titular. Las asociaciones documentales existentes son AE-04 (Del Valle) y AE-01 (Lola Mora); no constituyen una nueva comprobación del hardware, de los identificadores ni de la conectividad. Ver [evidencia, alcance y controles pendientes](INSTALACIONES_20261113.md).
+
+El pendiente físico se considera cumplido por reporte para estas dos escuelas. No se cierran AQ-05 (cobertura automática), AQ-20 (observabilidad) ni otros hallazgos técnicos. AE-00 y AE-03 conservan sus pendientes documentados, sin revisión física actual; el estado de AirGradient no cambia. Las siete identidades del corte anterior no son siete equipos verificados online.

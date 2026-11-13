@@ -1,3 +1,11 @@
+# Seguimiento documental del 13 de noviembre de 2026
+
+**Instalaciones reportadas por el titular — 13/11/2026:** Escuela de Educación Agropecuaria de Carlos Casares, en Del Valle (partido de 25 de Mayo), y Escuela de Educación Artística Lola Mora, en 25 de Mayo. Ambos monitores quedaron instalados, conectados al Wi-Fi escolar y transmitiendo al portal público, según el titular. Las asociaciones documentales existentes son AE-04 (Del Valle) y AE-01 (Lola Mora); no constituyen una nueva comprobación del hardware, de los identificadores ni de la conectividad. Ver [evidencia, alcance y controles pendientes](INSTALACIONES_20261113.md).
+
+La descripción del 12/11 siguiente es histórica: AE-04 dejó de estar pendiente de montaje según el nuevo reporte. No se modificaron configuración, secretos ni datos productivos. La instalación no exige otra alta por sí sola.
+
+---
+
 # Actualización del 12 de noviembre de 2026
 
 AE-04 (298873) fue incorporado con autorización, conservando AE-00 a AE-03. Ficha pública: **EA C.M. Casares (Del Valle)**; equipo en pruebas, no instalado en la escuela. Primera lectura e interfaz verificadas. Ingesta a :27/:57 cada 30 minutos, cron del Worker vacío. La corrección autorizada de frescura amplía a 40 minutos sin aumentar consultas; se distribuye con el frontend. [Registro, versiones, pruebas y reversión](ALTA_AE04_20261112.md). Los apartados siguientes conservan antecedentes de decisiones anteriores, incluido el límite histórico de 25 minutos.

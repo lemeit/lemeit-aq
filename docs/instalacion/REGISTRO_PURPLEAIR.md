@@ -1,6 +1,12 @@
 # Registro de altas PurpleAir y fechas de instalación
 
-Actualización documental: 12/11/2026. Fuente: transcripción de correos de confirmación de PurpleAir aportada por el titular en esta conversación. No se archivan correos completos ni claves de lectura.
+Actualización documental: 13/11/2026. Los correos citados debajo respaldan altas previas; el nuevo evento de instalación procede del reporte del titular. Fuente: transcripción de correos de confirmación de PurpleAir aportada por el titular en esta conversación. No se archivan correos completos ni claves de lectura.
+
+## Instalación escolar reportada — 13/11/2026
+
+El titular informa instalados el **13/11/2026**, conectados al Wi-Fi escolar y transmitiendo al portal público, los monitores de la **Escuela de Educación Agropecuaria de Carlos Casares**, en **Del Valle (partido de 25 de Mayo)**, y de la **Escuela de Educación Artística Lola Mora**, en **25 de Mayo**. El inventario previo asocia esas ubicaciones con AE-04 y AE-01, respectivamente. Se conserva esa identidad documental sin inferir modelo ni nuevos IDs. Fecha física reportada: **13/11/2026 para ambos**; no altera las altas PurpleAir del 12/11 y 05/10, respectivamente.
+
+No hay verificación técnica independiente actual ni cambios de `fecha_instalacion` en D1 o en los PDF. El último apartado sobre AE-04 en pruebas corresponde al corte histórico del 12/11. [Informe y aceptación](../INSTALACIONES_20261113.md).
 
 ## Dos fechas distintas
 

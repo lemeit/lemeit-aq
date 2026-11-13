@@ -25,15 +25,15 @@ Para el mapa, consultar [círculos y categorías AQI](docs/CIRCULOS_AQI_MAPA.md)
 
 ## Estaciones e inventario
 
-**Estado al 12/11/2026:** AE-00 a AE-04 están registrados en PurpleAir e incluidos en la configuración activa de ingesta. AE-04 tiene índice **298873** y sigue en pruebas; AE-02 está instalado en su escuela según el titular. [Alta y verificación](docs/ALTA_AE04_20261112.md).
+**Estado documental al 13/11/2026:** AE-00 a AE-04 ya estaban registrados y configurados para ingesta según el corte del 12/11. El titular informa la instalación de dos monitores el **13/11/2026**: **Escuela de Educación Agropecuaria de Carlos Casares**, en **Del Valle (partido de 25 de Mayo)**, y **Escuela de Educación Artística Lola Mora**, en **25 de Mayo**. Ambos quedaron conectados al Wi-Fi escolar y transmiten al portal público, según su reporte. El repositorio los asocia previamente con AE-04 y AE-01, respectivamente; no se revalidaron hardware, IDs ni transmisión actual. [Registro y límites de verificación](docs/INSTALACIONES_20261113.md).
 
 | Código | PurpleAir `sensor_index` | Estado operativo comunicado |
 | --- | ---: | --- |
-| AE-00 | `198617` | Apagado; instalación/reubicación escolar pendiente |
-| AE-01 | `298687` | Apagado; instalación pendiente |
+| AE-00 | `198617` | Último reporte: apagado e instalación/reubicación pendiente; sin revalidación actual |
+| AE-01 | `298687` | Lola Mora: instalado el 13/11/2026, Wi-Fi escolar y transmisión al portal según titular; sin verificación técnica actual |
 | AE-02 | `298701` | Instalado en su escuela según titular; conectividad se verifica por última lectura |
 | AE-03 | `298691` | Apagado al 01/11; instalación/reubicación pendiente |
-| AE-04 | `298873` | Registrado; en pruebas, instalación escolar pendiente |
+| AE-04 | `298873` | Del Valle: instalado el 13/11/2026, Wi-Fi escolar y transmisión al portal según titular; sin verificación técnica actual |
 
 Esta confirmación funcional de los **cinco índices habilitados** procede del titular y **no equivale a haber leído el contenido cifrado** de `SENSOR_INDEXES`. Las fechas de alta en PurpleAir, la instalación física, el estado registrado en D1 y la conectividad actual son asuntos distintos. Los datos de ubicación y evidencia de cada corte están en el [inventario de estaciones](docs/INVENTARIO_ESTACIONES.md) y en el [registro de altas](docs/instalacion/REGISTRO_PURPLEAIR.md).
 
