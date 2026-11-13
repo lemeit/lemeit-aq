@@ -32,7 +32,7 @@ test('PM2.5 y todos los parámetros de medición usan el mismo símbolo sin clas
  for(const pm of [4,40,400])assert.equal(ctx.mapaMarkerState(row(pm),'pm2_5').color,'var(--accent)');
 });
 test('frescura de #22 tiene precedencia; recuperación y valor ausente distinguibles',()=>{
- const s=row();s.timestamp='2026-10-30 14:35:00';
+ const s=row();s.timestamp='2026-10-30 14:20:00';
  assert.equal(ctx.mapaMarkerState(s,'aqi').state,'recent');now+=1;
  assert.equal(ctx.mapaMarkerState(s,'aqi').color,'#C7C7C7');now-=1;
  for(const timestamp of [null,'invalid','2099-01-01 00:00:00'])assert.equal(ctx.mapaMarkerState({...s,timestamp},'pm2_5').color,'#C7C7C7');

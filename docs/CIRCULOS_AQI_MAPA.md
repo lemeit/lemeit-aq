@@ -1,4 +1,4 @@
-> Propuesta 13/11/2026: [revisión AQI · EPA](REDISENO_MAPA_AQI_EPA_20261113.md) aplica 25 minutos por solicitud actual y colores oficiales en mapa; conserva este documento como historial. Sin merge ni despliegue.
+> Seguimiento actual: [prioridad y frescura de 40 minutos](PRIORIDAD_MAPA_FRESCURA.md). #37 está fusionado; su publicación fue informada por el titular. Este PR propone 40 minutos inclusive por autorización posterior. Los 25 minutos y estados de publicación descritos más abajo son registros históricos, no la regla de esta rama. Sin nuevo merge ni despliegue.
 
 # Corrección visual: círculos comunes y colores AQI
 

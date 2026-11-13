@@ -50,6 +50,7 @@ with sync_playwright() as p:
  L.DomEvent={disableClickPropagation(){},disableScrollPropagation(){}};
  mapaInst.getContainer=()=>document.getElementById("mapa-container");
  mapaInst.on=()=>mapaInst;
+    const panes={};mapaInst.getPane=(name)=>panes[name];mapaInst.createPane=(name)=>panes[name]=document.createElement("div");
     await cargarMapa();
    }''')
    assert page.locator('#mapa-cards > .card').evaluate_all('(c)=>c.map(x=>Number(x.dataset.sensorIndex))') == expected

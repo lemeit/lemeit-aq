@@ -25,7 +25,7 @@ export function validateArray(rows, kind = 'sensores') {
   if (kind !== 'sensores' && new Set(rows.map(x => x.id)).size !== rows.length) return { status: 'FAIL', message: 'ID de lectura duplicado' };
   return { status: rows.length ? 'PASS' : 'WARN', message: rows.length ? 'Estructura válida' : 'Array vacío' };
 }
-export function validateFreshness(sensors, readings, { now = Date.now(), staleMinutes = 25 } = {}) {
+export function validateFreshness(sensors, readings, { now = Date.now(), staleMinutes = 40 } = {}) {
   if (!Number.isFinite(now) || !Number.isFinite(staleMinutes) || staleMinutes <= 0) throw new Error('CONFIG');
   if (validateArray(sensors).status === 'FAIL' || validateArray(readings, 'ultimas').status === 'FAIL') return [{ id: 'structure', status: 'FAIL', message: 'Estructura inválida; frescura no evaluada' }];
   const checks = [];
