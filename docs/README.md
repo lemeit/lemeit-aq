@@ -2,6 +2,8 @@
 
 ## Regla e interfaz
 
+- [Rediseño AQI · EPA del 13/11/2026](REDISENO_MAPA_AQI_EPA_20261113.md): propuesta con colores oficiales, popup completo y 25 minutos; comparación con auditoría y PR previos, reproducción, aceptación y pruebas.
+
 - [Control interior de leyenda y acento](CONTROL_LEYENDA_MAPA.md): esquina inferior izquierda, máximo 240 px, paleta categórica y otras capas naranja/vacío/gris. Decisión más reciente; evidencia de despliegue en su PR.
 
 - [Barra segmentada AQI anterior](BARRA_AQI_MAPA.md): registro histórico de leyenda externa con límites existentes, datos faltantes separados y categorías accesibles; conserva círculos/colores y otras capas. [PR #26 fusionado y desplegado](https://github.com/lemeit/lemeit-aq/pull/26), Pages success y HTML estático exacto verificados.

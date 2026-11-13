@@ -13,7 +13,7 @@ const options = { ...config.network, timeoutMs: 10 };
 const response = (status = 200, headers = {}) => ({ status, headers: { 'content-type': 'text/html', ...headers }, durationMs: 5, certificateExpires: 'Jan 01 2030 00:00:00 GMT' });
 const sensor = (sensor_index = 1, proveedor = 'purpleair', activo = 1) => ({ sensor_index, proveedor, activo, nombre: 'SIMULADO' });
 const reading = (sensor_index = 1, timestamp = '2026-10-11 12:00:00', proveedor = 'purpleair') => ({ sensor_index, timestamp, proveedor, id: sensor_index, pm2_5: null });
-const now = Date.parse('2026-10-11T12:40:00Z');
+const now = Date.parse('2026-10-11T12:25:00Z');
 test('lista cerrada bloquea API, proveedores, consultas, puertos y downgrade', () => {
   for (const url of ['https://api.lemeit.ar/aq/api/sensores','https://api.purpleair.com/','http://app.lemeit.ar/aq','https://app.lemeit.ar/aq?token=x','https://u:p@app.lemeit.ar/aq','https://app.lemeit.ar:444/aq','https://app.lemeit.ar/aq#x','https://app.lemeit.ar/otro']) assert.throws(() => pagesUrl(url));
 });
@@ -61,7 +61,7 @@ test('lecturas: duplicados, métricas, timestamp y contrato histórico',()=>{
   for(const x of [[reading(),reading()], [{...reading(),pm2_5:'1'}], [reading(1,'2026-02-30 00:00:00')], [{...reading(),id:null}]]) assert.equal(validateArray(x,'ultimas').status,'FAIL');
   assert.equal(validateArray([reading(),{...reading(1,'2026-10-11 12:01:00'),id:2}],'historico').status,'PASS');
 });
-test('frescura frontera 40 minutos y vieja',()=>{
+test('frescura frontera 25 minutos y vieja',()=>{
   assert.ok(validateFreshness([sensor()],[reading()],{now}).some(x=>x.id==='active:reading'&&x.status==='PASS'));
   assert.ok(validateFreshness([sensor()],[reading()],{now:now+1}).some(x=>x.message==='Lectura vieja'));
 });

@@ -32,7 +32,7 @@ test('PM2.5 y todos los parámetros de medición usan el mismo símbolo sin clas
  for(const pm of [4,40,400])assert.equal(ctx.mapaMarkerState(row(pm),'pm2_5').color,'var(--accent)');
 });
 test('frescura de #22 tiene precedencia; recuperación y valor ausente distinguibles',()=>{
- const s=row();s.timestamp='2026-10-30 14:20:00';
+ const s=row();s.timestamp='2026-10-30 14:35:00';
  assert.equal(ctx.mapaMarkerState(s,'aqi').state,'recent');now+=1;
  assert.equal(ctx.mapaMarkerState(s,'aqi').color,'#C7C7C7');now-=1;
  for(const timestamp of [null,'invalid','2099-01-01 00:00:00'])assert.equal(ctx.mapaMarkerState({...s,timestamp},'pm2_5').color,'#C7C7C7');
@@ -64,4 +64,21 @@ test('una sola geometría SVG decorativa, sin figuras, texto ni acento monocrom�
   assert.doesNotMatch(icon,/<text|<path|<rect|<polygon|undefined|--accent/);
  }
  assert.doesNotMatch(html,/MAPA_AQI_SHAPES/);
+});
+
+test('popup conserva nombre, AQI y PM2.5 en todas las capas, sin valores antiguos vigentes',()=>{
+ const s={...row(),nombre:'AE-01',institucion:'Escuela fixture'};
+ for(const layer of ['aqi','pm2_5','temperatura','humedad']){
+  const popup=ctx.mapaPopupHtml(s,layer);
+  assert.match(popup,/<strong>AE-01<\/strong>/);
+  assert.match(popup,/aqi: 22/);assert.match(popup,/PM2.5: 4 µg\/m³/);
+  const stale=ctx.mapaPopupHtml({...s,timestamp:'2000-01-01 00:00:00'},layer);
+  assert.match(stale,/aqi: —/);assert.match(stale,/PM2.5: —/);
+  assert.doesNotMatch(stale,/aqi: 22|4 µg/);
+ }
+});
+
+test('paleta EPA oficial acotada al mapa y estable entre temas',()=>{
+ const scope=html.match(/#mapa-container \{\s*--good:[^}]+\}/)[0];
+ for(const color of ['#00E400','#FFFF00','#FF7E00','#FF0000','#8F3F97','#7E0023']) assert.ok(scope.includes(color));
 });

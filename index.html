@@ -435,9 +435,29 @@
   .card-unit { font-family: var(--font-display); font-size: 10px; color: var(--text-dim); margin-left: 2px; }
 
   /* ── MAPA ── */
+  /* EPA AQI: colores oficiales solo en mapa/leyenda; no alteran cálculo ni tarjetas.
+     Fuente: AirNow AQI Technical Assistance Document (tabla de categorías). */
+  #mapa-container {
+    --good: #00E400;
+    --moderate: #FFFF00;
+    --unhealthy-sg: #FF7E00;
+    --unhealthy: #FF0000;
+    --very-unhealthy: #8F3F97;
+    --hazardous: #7E0023;
+  }
   #mapa-container { height: 400px; width: 100%; position: relative; z-index: 1; }
   @media (max-width: 640px) {
-    #mapa-container { height: 280px; }
+    /* EPA AQI: colores oficiales solo en mapa/leyenda; no alteran cálculo ni tarjetas.
+     Fuente: AirNow AQI Technical Assistance Document (tabla de categorías). */
+  #mapa-container {
+    --good: #00E400;
+    --moderate: #FFFF00;
+    --unhealthy-sg: #FF7E00;
+    --unhealthy: #FF0000;
+    --very-unhealthy: #8F3F97;
+    --hazardous: #7E0023;
+  }
+  #mapa-container { height: 280px; }
   }
 
   .mapa-legend {
@@ -1009,7 +1029,7 @@
         Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.
       </p>
       <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p2">
-        Arquitectura: cron-job.org consulta la API de PurpleAir cada 30 minutos (:27 y :57); GitHub Actions y el cron del Worker permanecen pausados. Las lecturas se consideran recientes hasta 40 minutos inclusive. Los datos se guardan en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,'api')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Estado al 12/11/2026: cinco PurpleAir registrados; AE-02 instalado en su escuela y AE-04 (Del Valle) todavía en pruebas. El color indica frescura de la última lectura, no el encendido físico.
+        Arquitectura: cron-job.org consulta la API de PurpleAir cada 30 minutos (:27 y :57); GitHub Actions y el cron del Worker permanecen pausados. Las lecturas se consideran recientes hasta 25 minutos inclusive. Los datos se guardan en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,'api')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Estado al 12/11/2026: cinco PurpleAir registrados; AE-02 instalado en su escuela y AE-04 (Del Valle) todavía en pruebas. El color indica frescura de la última lectura, no el encendido físico.
         Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.
       </p>
       <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:10px" data-i18n-html="acerca_p3">
@@ -1227,7 +1247,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_capa_nox: "Capa: NOx",
       acerca_panel_title: "Acerca de este proyecto",
       acerca_p1: 'Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.',
-      acerca_p2: 'Arquitectura: cron-job.org consulta la API de PurpleAir cada 30 minutos (:27 y :57); GitHub Actions y el cron del Worker permanecen pausados. Las lecturas se consideran recientes hasta 40 minutos inclusive. Los datos se guardan en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Estado al 12/11/2026: cinco PurpleAir registrados; AE-02 instalado en su escuela y AE-04 (Del Valle) todavía en pruebas. El color indica frescura de la última lectura, no el encendido físico. Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
+      acerca_p2: 'Arquitectura: cron-job.org consulta la API de PurpleAir cada 30 minutos (:27 y :57); GitHub Actions y el cron del Worker permanecen pausados. Las lecturas se consideran recientes hasta 25 minutos inclusive. Los datos se guardan en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Estado al 12/11/2026: cinco PurpleAir registrados; AE-02 instalado en su escuela y AE-04 (Del Valle) todavía en pruebas. El color indica frescura de la última lectura, no el encendido físico. Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
       acerca_p3: 'Ing. Luciano Lamaita — docente de Física y Química en Saladillo, Buenos Aires — más proyectos en <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
       acerca_p4: '<a href="?tab=creditos" onclick="return goToTab(event,\'creditos\')" style="color:var(--accent)">Fuentes, datos y licencias</a> — de dónde salen los sensores y los datos de referencia de este proyecto, y bajo qué términos se usan.',
       acerca_attrib_label: "Redes y programas de los que este proyecto participa",
@@ -1455,7 +1475,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_capa_nox: "Layer: NOx",
       acerca_panel_title: "About this project",
       acerca_p1: 'A network of <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> sensors installed in educational institutions and homes across Buenos Aires Province — a pilot project in the Saladillo and 25 de Mayo districts — measuring particulate matter (PM2.5/PM10) and other parameters in real time, as part of an environmental monitoring and education initiative.',
-      acerca_p2: 'Architecture: cron-job.org polls PurpleAir every 30 minutes (:27 and :57); GitHub Actions and Worker cron remain paused. Readings are considered recent for up to 40 minutes. Data is stored in Cloudflare D1; a Worker exposes its own public <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">REST API</a>, which this dashboard consumes and which anyone can also use to pull the data. Status on 12 November 2026: five registered PurpleAir sensors; AE-02 installed at its school and AE-04 (Del Valle) still undergoing testing. Color indicates reading freshness, not physical power status. It\'s one of three sibling environmental projects: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (weather), this one (air quality), and <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (water quality). Technical documentation for all three is at <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
+      acerca_p2: 'Architecture: cron-job.org polls PurpleAir every 30 minutes (:27 and :57); GitHub Actions and Worker cron remain paused. Readings are considered recent for up to 25 minutes. Data is stored in Cloudflare D1; a Worker exposes its own public <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">REST API</a>, which this dashboard consumes and which anyone can also use to pull the data. Status on 12 November 2026: five registered PurpleAir sensors; AE-02 installed at its school and AE-04 (Del Valle) still undergoing testing. Color indicates reading freshness, not physical power status. It\'s one of three sibling environmental projects: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (weather), this one (air quality), and <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (water quality). Technical documentation for all three is at <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
       acerca_p3: 'Luciano Lamaita, engineer — physics and chemistry teacher in Saladillo, Buenos Aires — more projects at <a href="https://profe.lemeit.ar" target="_blank" style="color:var(--accent)">profe.lemeit.ar</a>',
       acerca_p4: '<a href="?tab=creditos" onclick="return goToTab(event,\'creditos\')" style="color:var(--accent)">Sources, data and licenses</a> — where this project\'s sensors and reference data come from, and under what terms they\'re used.',
       acerca_attrib_label: "Networks and programs this project takes part in",
@@ -1970,8 +1990,8 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     });
   }
 
-  // Reciente: edad válida entre 0 y 40 min inclusive (ingesta cada 30 min + margen). No implica estado administrativo.
-  const STALE_MINUTES = 40;
+  // Reciente: edad válida entre 0 y 25 min inclusive (regla visual solicitada; no cambia la ingesta). No implica estado administrativo.
+  const STALE_MINUTES = 25;
 
   function minutosSinDato(timestampStr) {
     return (Date.now() - toBsAs(timestampStr).getTime()) / 60000;
@@ -2135,9 +2155,14 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
 
   function mapaPopupHtml(s, param) {
     const marker = mapaMarkerState(s, param);
-    return `<strong>${escapeMapaText(s.institucion || s.nombre)}</strong><br>
-      ${escapeMapaText(paramLabel(param))}: ${escapeMapaText(formatParamValue(s, param))}<br>
-      ${escapeMapaText(marker.label)}<br>
+    const value = (key) => marker.state === "stale" ? "—" : formatParamValue(s, key);
+    const extra = ["aqi", "pm2_5"].includes(param) ? "" :
+      `${escapeMapaText(paramLabel(param))}: ${escapeMapaText(value(param))}<br>`;
+    return `<strong>${escapeMapaText(s.nombre || s.institucion)}</strong><br>
+      ${s.institucion ? `${escapeMapaText(s.institucion)}<br>` : ""}
+      ${escapeMapaText(paramLabel("aqi"))}: ${escapeMapaText(value("aqi"))}<br>
+      PM2.5: ${escapeMapaText(value("pm2_5"))}<br>
+      ${extra}${escapeMapaText(marker.label)}<br>
       <small>${escapeMapaText(t("last_measurement", { fecha: formatBsAsFull(s.timestamp) }))}</small>`;
   }
 

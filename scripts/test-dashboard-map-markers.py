@@ -10,7 +10,7 @@ js=(assets/'leaflet.min.js').read_text();css=(assets/'leaflet.min.css').read_tex
 assert '1.9.4' in js
 assert hashlib.sha256(js.encode()).hexdigest()=='5c9aecfc30e4564519dbdcddcc53a418227dcc7568e619e9762ddcec7609ed47'
 assert hashlib.sha256(css.encode()).hexdigest()=='b570abbda963c60b4de4b4ff4b26f9326f53fb2ccf1461fdf0955ca094fb2539'
-base='f3db674fc3dcbec0d031e807bc2fa80ca2ea8054'
+base='54776fd'
 rows=[dict(sensor_index=i+1,nombre=f'AE-{i:02}',institucion=f'Escuela fixture AE-{i:02}',
  timestamp='2026-10-30 14:35:00' if i==0 else '2026-10-30 14:59:00',
  pm2_5=pm,temperatura=22.3,humedad=48,presion=1008,co2=500,voc=20,nox=2,
@@ -50,12 +50,11 @@ with sync_playwright() as p:
    assert icons.locator('[data-shape]').evaluate_all('(els)=>els.slice(0,6).map(e=>e.dataset.shape)')==['circle']*6
    assert len(set(icons.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==6
    assert page.locator('.mapa-aqi-segment').count()==6
-   assert page.evaluate('!document.getElementById("mapa-container").contains(document.getElementById("mapa-legend"))')
-   for width in [390,1440]:
-    page.set_viewport_size({'width':width,'height':844})
-    page.evaluate('mapaInst.setView([-35.63,-59.78],12,{animate:false})')
-    page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'control-before-{width}.png'))
-   print('REPRODUCIDO main: leyenda externa a todo ancho y otras capas grises; capturas antes guardadas')
+   popup=page.evaluate('mapaPopupHtml(latestSensors[1],"aqi")')
+   assert 'PM2.5' not in popup and '<strong>AE-01</strong>' not in popup
+   page.evaluate('fixtureNow+=1;refreshSensorFreshness()')
+   assert icons.nth(0).locator('[data-state]').get_attribute('data-state')=='recent'
+   print('REPRODUCIDO main 54776fd: lectura >25 min sigue coloreada; popup omite nombre de sensor y PM2.5')
   else:
    markers=page.locator('.mapa-station-icon')
    assert markers.count()==8
@@ -80,7 +79,7 @@ with sync_playwright() as p:
        circle_color=markers.nth(i).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')
        expected=page.evaluate('(v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim()',color_var)
        # Normalizar token CSS y comparar con el badge real de su tarjeta.
-       assert circle_color==page.locator(f'#mapa-cards .card[data-sensor-index="{i+1}"] .badge').evaluate('(e)=>getComputedStyle(e).color')
+       assert circle_color==['rgb(0, 228, 0)','rgb(255, 255, 0)','rgb(255, 126, 0)','rgb(255, 0, 0)','rgb(143, 63, 151)','rgb(126, 0, 35)'][i]
        assert expected
       assert len(set(markers.locator('.mapa-symbol').evaluate_all('(els)=>els.slice(0,6).map(e=>getComputedStyle(e).color)')))==6
       assert markers.nth(6).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(199, 199, 199)'
@@ -152,6 +151,8 @@ with sync_playwright() as p:
    markers.nth(1).focus();markers.nth(1).press('Enter')
    assert page.locator('.leaflet-popup-content').last.is_visible()
    assert 'AQI · EPA' in page.locator('.leaflet-popup-content').last.inner_text()
+   assert 'PM2.5: 20 µg/m³' in page.locator('.leaflet-popup-content').last.inner_text()
+   assert page.locator('.leaflet-popup-content strong').last.inner_text()=='AE-01'
    page.evaluate('mapaInst.closePopup()');markers.nth(1).press('Space')
    assert page.locator('.leaflet-popup-content').last.is_visible()
    page.locator('.leaflet-popup-close-button').last.focus()
@@ -184,6 +185,8 @@ with sync_playwright() as p:
    assert page.evaluate('savedMarker===Object.values(mapaInst._layers).find(x=>x instanceof L.Marker) && savedBack===document.querySelector("#mapa-cards .card-back")')
    assert page.locator('#mapa-cards .card[data-sensor-index="1"] .sensor-stale').count()==1
    markers.nth(0).click();assert 'Sin datos recientes' in page.locator('.leaflet-popup-content').last.inner_text()
+   assert 'AQI · EPA: —' in page.locator('.leaflet-popup-content').last.inner_text()
+   assert 'PM2.5: —' in page.locator('.leaflet-popup-content').last.inner_text()
    assert '2026' in page.locator('.leaflet-popup-content').last.inner_text()
    for failure in ['offline','http']:
     mode['value']=failure;page.evaluate('fixtureNow+=1000;loadSensors()');page.wait_for_timeout(100)
@@ -195,7 +198,7 @@ with sync_playwright() as p:
    mode['value']='ok';data[0]['timestamp']='2026-10-30T15:30:00Z';page.evaluate('loadSensors()');page.wait_for_timeout(150)
    assert markers.nth(0).locator('[data-shape]').get_attribute('data-shape')=='circle'
    assert markers.nth(0).locator('[data-state]').get_attribute('data-state')=='recent'
-   assert markers.nth(0).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')==page.locator('#mapa-cards .card[data-sensor-index="1"] .badge').evaluate('(e)=>getComputedStyle(e).color')
+   assert markers.nth(0).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(0, 228, 0)'
    assert page.locator('#mapa-cards .card[data-sensor-index="1"] .sensor-stale').count()==0
    # Fechas corruptas/futuras también son círculos grises con Leaflet real.
    for i,ts in [(2,'invalid'),(3,'2099-01-01 00:00:00'),(4,None)]:data[i]['timestamp']=ts
