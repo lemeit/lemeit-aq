@@ -13,6 +13,9 @@ Se mantienen **solo dos PDF por sensor**: color e impresión. Los nombres son fi
 
 Las guías conservan la tabla AQI del diseño original, que es histórica; ver la advertencia del registro y la [trazabilidad vigente](../AQI_TRAZABILIDAD.md).
 
-AE-04 se incorpora con el mismo diseño de las guías anteriores, por solicitud del titular. Alta PurpleAir: 12/11/2026; instalación escolar pendiente. [Adaptación y verificación](VERIFICACION_MINIGUIAS_20261112.md).
+AE-04 se incorpora con el mismo diseño de las guías anteriores, por solicitud del titular. Alta PurpleAir: 12/11/2026. Instalación escolar reportada para el 13/11/2026; ver el registro actualizado. [Adaptación y verificación](VERIFICACION_MINIGUIAS_20261112.md).
 
 Denominación unificada: **Red de Monitoreo Ambiental**. Las diez guías AE-00 a AE-04 conservan su diseño y sus datos; se actualizan únicamente cabecera y pie. [Alcance y verificación](../DENOMINACION_RED.md).
+
+
+**Actualización 13/11/2026:** el titular informa instalados y conectados al Wi-Fi escolar los monitores de Lola Mora y de la Escuela de Educación Agropecuaria de Carlos Casares, en Del Valle, ambos transmitiendo al portal público. La fecha de montaje reportada es 13/11/2026, distinta del alta PurpleAir. No se completaron los PDF ni D1; [evidencia y límites](../INSTALACIONES_20261113.md).

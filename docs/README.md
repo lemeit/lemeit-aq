@@ -20,6 +20,8 @@
 
 ## Operación y estado
 
+- [Instalaciones del 13/11/2026](INSTALACIONES_20261113.md): dos instalaciones, Wi-Fi escolar y transmisión reportados por el titular; evidencia previa e identificación documental, sin verificación técnica actual.
+
 - [Plan de mejoras y registro de avance](PLAN_MEJORAS.md): distinguir propuestas, código integrado y verificación productiva.
 - [Inventario](INVENTARIO_ESTACIONES.md): evidencia del corte indicado, sin inferir conectividad actual.
 - [Alta PurpleAir y operación segura](OPERACION_PURPLEAIR.md): permisos, versiones, visitas y reversión; falta de señal no es baja administrativa.

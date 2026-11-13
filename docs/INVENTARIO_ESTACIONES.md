@@ -1,4 +1,10 @@
-# Estado actualizado al 12 de noviembre de 2026
+# Estado documental al 13 de noviembre de 2026
+
+**Instalaciones reportadas por el titular — 13/11/2026:** Escuela de Educación Agropecuaria de Carlos Casares, en Del Valle (partido de 25 de Mayo), y Escuela de Educación Artística Lola Mora, en 25 de Mayo. Ambos monitores quedaron instalados, conectados al Wi-Fi escolar y transmitiendo al portal público, según el titular. Las asociaciones documentales existentes son AE-04 (Del Valle) y AE-01 (Lola Mora); no constituyen una nueva comprobación del hardware, de los identificadores ni de la conectividad. Ver [evidencia, alcance y controles pendientes](INSTALACIONES_20261113.md).
+
+Se retira el pendiente de instalación de estas dos escuelas según ese reporte. AE-02 conserva la instalación informada previamente, sin nueva comprobación. AE-00 y AE-03 mantienen sus últimos pendientes documentados; no se infiere su estado físico actual. No se recalcula un total de equipos online. El último corte D1 documentado conserva siete identidades (cinco PurpleAir y dos AirGradient); no hubo altas nuevas ni consulta D1 en esta revisión.
+
+## Corte histórico del 12 de noviembre de 2026
 
 AE-00 a AE-04 están registrados en PurpleAir y configurados para ingesta. AE-02 está instalado en su escuela según el titular. AE-04 (298873), PA-II-FLEX, Device ID f0:24:f9:c2:ee:ac, corresponde a **Esc. Agraria C.M. Casares (EAS Del Valle)** y sigue en pruebas, sin instalación física escolar. Su alta PurpleAir es el **12/11/2026**; fecha de instalación pendiente. D1 confirma siete identidades sin duplicados (cinco PurpleAir y dos AirGradient), con códigos AE-00 a AE-04. AE-02 reportó 2026-11-12 11:55:11 UTC y AE-04 11:55:40 UTC; el mapa muestra ambos con datos recientes. Los otros sensores conservan sus lecturas históricas, sin acreditar conexión actual.
 
