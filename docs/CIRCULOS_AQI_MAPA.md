@@ -1,3 +1,5 @@
+> Propuesta 13/11/2026: [revisión AQI · EPA](REDISENO_MAPA_AQI_EPA_20261113.md) aplica 25 minutos por solicitud actual y colores oficiales en mapa; conserva este documento como historial. Sin merge ni despliegue.
+
 # Corrección visual: círculos comunes y colores AQI
 
 > Decisión posterior: [leyenda interior compacta y acento](CONTROL_LEYENDA_MAPA.md)

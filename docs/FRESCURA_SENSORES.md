@@ -1,3 +1,5 @@
+> Propuesta 13/11/2026: [revisión AQI · EPA](REDISENO_MAPA_AQI_EPA_20261113.md) aplica 25 minutos por solicitud actual y colores oficiales en mapa; conserva este documento como historial. Sin merge ni despliegue.
+
 # Ajuste del límite de frescura del 12 de noviembre de 2026
 
 La ingesta PurpleAir permanece cada 30 minutos (:27/:57). El límite anterior de 25 minutos producía un intervalo de falsa falta de datos recientes: AE-02 encendido, última lectura 08:25:11 ART y edad 27,7 minutos a las 08:52:50. Se adopta **40 minutos inclusive**, con margen para el envío del proveedor y el refresco de pantalla de 5 minutos. Es frescura de lectura, no diagnóstico de encendido.
