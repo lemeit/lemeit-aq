@@ -24,6 +24,10 @@ with sync_playwright() as p:
   def route(r):
    u=r.request.url;calls.append(u)
    if u=='http://fixture.invalid/?pwa=1':r.fulfill(content_type='text/html',body=html)
+   elif '/assets/' in u:
+    file=root/'assets'/u.split('/assets/')[1]
+    if file.is_file():r.fulfill(content_type='text/javascript',body=file.read_text())
+    else:r.abort()
    elif 'leaflet.min.js' in u:r.fulfill(content_type='text/javascript',body=js)
    elif 'leaflet.min.css' in u:r.fulfill(content_type='text/css',body=css)
    elif '/api/ultimas' in u:r.fulfill(content_type='application/json',body=json.dumps(data))
