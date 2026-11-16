@@ -1984,6 +1984,28 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     });
   }
 
+  // Fecha local discreta: solo primera marca visible y cambios de día.
+  // El eje sigue siendo lineal para no afectar zoom/pan de Chart.js.
+  function chartTickLabel(timestamps, value, tickIndex, visibleTicks) {
+    const idx = Math.round(value);
+    const ts = timestamps[idx];
+    if (!ts) return "";
+    const time = formatBsAsTime(ts);
+    const date = toBsAs(ts);
+    if (!Number.isFinite(date.getTime())) return time;
+    const day = date.toLocaleDateString("es-AR", {
+      timeZone: "America/Argentina/Buenos_Aires", day: "2-digit", month: "2-digit",
+    });
+    const prevValue = tickIndex > 0 ? visibleTicks[tickIndex - 1]?.value : null;
+    const prevTs = prevValue == null ? null : timestamps[Math.round(prevValue)];
+    const prevDate = prevTs ? toBsAs(prevTs) : null;
+    const prevDay = prevDate && Number.isFinite(prevDate.getTime())
+      ? prevDate.toLocaleDateString("es-AR", {
+          timeZone: "America/Argentina/Buenos_Aires", day: "2-digit", month: "2-digit",
+        }) : null;
+    return tickIndex === 0 || day !== prevDay ? [time, day] : time;
+  }
+
   function formatBsAsFull(timestampStr) {
     const date = toBsAs(timestampStr);
     if (!Number.isFinite(date.getTime())) return t("timestamp_unknown");
@@ -2679,11 +2701,12 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
             backgroundColor: cs.getPropertyValue("--bg-panel").trim(), borderColor: colorBorder,
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 9 }, bodyFont: { family: "JetBrains Mono", size: 10 },
+            callbacks: { title: (items) => (items.length ? formatBsAsFull(currentRows[items[0].dataIndex]?.timestamp) : "") },
           },
         },
         scales: {
           x: {
-            ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 8 }, maxTicksLimit: 4, maxRotation: 0 },
+            ticks: { color: colorDim, font: { family: "JetBrains Mono", size: 8 }, maxTicksLimit: 4, maxRotation: 0, callback: (value) => labels[value] ?? "" },
             grid: { color: colorBorder, drawTicks: false },
           },
           y: {
@@ -3139,7 +3162,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
         max: Math.max(rows.length - 1, 0),
         ticks: {
           color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12,
-          callback: (value) => labels[Math.round(value)] ?? "",
+          callback: function (value, index) { return chartTickLabel(rows.map(r => r.timestamp), value, index, this.ticks); },
         },
         grid: { color: colorBorder },
       },
@@ -3222,7 +3245,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
             backgroundColor: cs.getPropertyValue("--bg-panel").trim(), borderColor: colorBorder,
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 10 }, bodyFont: { family: "JetBrains Mono", size: 12 },
-            callbacks: { title: (items) => (items.length ? labels[items[0].dataIndex] ?? "" : "") },
+            callbacks: { title: (items) => (items.length ? formatBsAsFull(rows[items[0].dataIndex]?.timestamp) : "") },
           },
           zoom: buildZoomOptions(rows.length - 1),
         },
@@ -3288,7 +3311,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
             backgroundColor: cs.getPropertyValue("--bg-panel").trim(), borderColor: colorBorder,
             borderWidth: 1, titleColor: colorDim, bodyColor: cs.getPropertyValue("--text").trim(),
             titleFont: { family: "JetBrains Mono", size: 10 }, bodyFont: { family: "JetBrains Mono", size: 12 },
-            callbacks: { title: (items) => (items.length ? labels[items[0].dataIndex] ?? "" : "") },
+            callbacks: { title: (items) => (items.length ? formatBsAsFull(allTimestamps[items[0].dataIndex]) : "") },
           },
           zoom: buildZoomOptions(allTimestamps.length - 1),
         },
@@ -3299,7 +3322,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
             max: Math.max(allTimestamps.length - 1, 0),
             ticks: {
               color: colorDim, font: { family: "JetBrains Mono", size: 10 }, maxTicksLimit: 12,
-              callback: (value) => labels[Math.round(value)] ?? "",
+              callback: function (value, index) { return chartTickLabel(allTimestamps, value, index, this.ticks); },
             },
             grid: { color: colorBorder },
           },
