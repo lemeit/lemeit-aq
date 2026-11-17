@@ -448,12 +448,16 @@
     --very-unhealthy: #8F3F97;
     --hazardous: #7E0023;
   }
-  .mapa-territorio { position:relative; display:flex; gap:8px; padding:8px 14px; align-items:center; }
-  .mapa-territorio button { font:11px var(--font-display); min-height:36px; color:var(--text); background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:6px 10px; cursor:pointer; }
-  .mapa-capas-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:1100; width:224px; max-width:calc(100vw - 48px); box-sizing:border-box; padding:8px; background:var(--bg-panel); color:var(--text); border:1px solid var(--border); border-radius:6px; box-shadow:0 3px 10px rgba(0,0,0,.2); }
-  .mapa-capas-panel label { display:flex; gap:8px; align-items:center; min-height:40px; font-size:13px; cursor:pointer; }
-  .mapa-capas-panel input { accent-color:var(--accent); width:18px; height:18px; }
-  .mapa-capas-panel[hidden], .mapa-legend[hidden] { display:none; }
+  .mapa-display { position:relative; font-family:var(--font-body); }
+  .mapa-display-button { display:flex; align-items:center; justify-content:center; width:44px; height:44px; padding:0; border:1px solid var(--border); border-radius:6px; background:var(--bg-panel); color:var(--text); cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,.18); }
+  .mapa-display-button svg { width:20px; height:20px; stroke:var(--text); }
+  .mapa-display-panel { position:absolute; right:0; top:calc(100% + 6px); width:210px; max-width:calc(100vw - 68px); box-sizing:border-box; padding:10px 12px; background:var(--bg-panel); color:var(--text); border:1px solid var(--border); border-radius:6px; box-shadow:0 3px 10px rgba(0,0,0,.2); }
+  .mapa-display-panel .sel { width:100%; min-width:0; box-sizing:border-box; font-size:11px; min-height:36px; }
+  .mapa-display-panel fieldset { margin:10px 0 0; padding:0; border:0; }
+  .mapa-display-panel legend, .mapa-display-measurement { display:block; font:11px var(--font-display); margin-bottom:6px; padding:0; }
+  .mapa-display-panel fieldset label { display:flex; gap:8px; align-items:center; min-height:40px; font-size:13px; cursor:pointer; }
+  .mapa-display-panel input { accent-color:var(--accent); width:18px; height:18px; }
+  .mapa-display[hidden], .mapa-display-panel[hidden], .mapa-legend[hidden] { display:none; }
   #mapa-container { background:var(--bg); height: 400px; width: 100%; position: relative; z-index: 1; }
 
   .mapa-legend {
@@ -1000,30 +1004,31 @@
   <!-- MAPA -->
   <div class="section active" id="tab-mapa">
     <div class="chart-wrap" style="padding:0;overflow:hidden">
-      <div class="chart-hdr" style="padding:12px 14px 0">
-        <h2 data-i18n="mapa_titulo">Mapa de sensores</h2>
-        <select class="sel" id="sel-mapa-param" aria-label="Capa del mapa" data-i18n-title="mapa_capa_label" onchange="cargarMapa()">
-          <option value="aqi" data-i18n="mapa_capa_aqi">AQI · EPA</option>
-          <option value="pm2_5" data-i18n="mapa_capa_pm2_5">Capa: PM2.5</option>
-          <option value="temperatura" data-i18n="mapa_capa_temperatura">Capa: Temperatura</option>
-          <option value="humedad" data-i18n="mapa_capa_humedad">Capa: Humedad</option>
-          <option value="presion" data-i18n="mapa_capa_presion">Capa: Presión</option>
-          <option value="voc" data-i18n="mapa_capa_voc">Capa: VOC</option>
-          <option value="co2" data-i18n="mapa_capa_co2">Capa: CO2</option>
-          <option value="nox" data-i18n="mapa_capa_nox">Capa: NOx</option>
-        </select>
-      </div>
-      <div class="mapa-territorio">
-        <button type="button" onclick="volverProvincia()" data-i18n="mapa_provincia">Provincia</button>
-        <div id="mapa-capas">
-          <button type="button" id="mapa-capas-button" aria-expanded="false" aria-controls="mapa-capas-panel" data-i18n="mapa_capas">Capas</button>
-          <div id="mapa-capas-panel" class="mapa-capas-panel" role="group" aria-label="Capas del mapa" data-i18n-title="mapa_capas_label" hidden>
-            <label><input type="checkbox" id="mapa-sensores" checked><span data-i18n="mapa_sensores">Sensores AQ</span></label>
-            <label><input type="checkbox" id="mapa-limites" checked><span data-i18n="mapa_limites">Límites de partidos</span></label>
+      <div class="chart-hdr" style="padding:12px 14px 0"><h2 data-i18n="mapa_titulo">Mapa de sensores</h2></div>
+      <div id="mapa-container">
+        <div id="mapa-display" class="mapa-display" hidden>
+          <button type="button" id="mapa-display-button" class="mapa-display-button" title="Visualización" aria-label="Visualización" data-i18n-title="mapa_visualizacion" aria-expanded="false" aria-controls="mapa-display-panel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="var(--bg-panel)"/><circle cx="15" cy="12" r="2" fill="var(--bg-panel)"/><circle cx="9" cy="18" r="2" fill="var(--bg-panel)"/></svg>
+          </button>
+          <div id="mapa-display-panel" class="mapa-display-panel" role="group" aria-label="Visualización" data-i18n-title="mapa_visualizacion" hidden>
+            <label id="mapa-medicion-label" class="mapa-display-measurement" for="sel-mapa-param" data-i18n="mapa_medicion">Medición</label>
+            <select class="sel" id="sel-mapa-param" aria-labelledby="mapa-medicion-label" onchange="cargarMapa()">
+              <option value="aqi" data-i18n="mapa_medicion_aqi">AQI · EPA</option>
+              <option value="pm2_5" data-i18n="mapa_medicion_pm2_5">PM2.5</option>
+              <option value="temperatura" data-i18n="mapa_medicion_temperatura">Temperatura</option>
+              <option value="humedad" data-i18n="mapa_medicion_humedad">Humedad</option>
+              <option value="presion" data-i18n="mapa_medicion_presion">Presión</option>
+              <option value="voc" data-i18n="mapa_medicion_voc">VOC</option>
+              <option value="co2" data-i18n="mapa_medicion_co2">CO2</option>
+              <option value="nox" data-i18n="mapa_medicion_nox">NOx</option>
+            </select>
+            <fieldset><legend data-i18n="mapa_mostrar">Mostrar</legend>
+              <label><input type="checkbox" id="mapa-sensores" checked><span data-i18n="mapa_sensores">Sensores AQ</span></label>
+              <label><input type="checkbox" id="mapa-limites" checked><span data-i18n="mapa_limites">Límites de partidos</span></label>
+            </fieldset>
           </div>
         </div>
       </div>
-      <div id="mapa-container"></div>
     </div>
     <div class="grid" style="margin-top:12px;margin-bottom:0" id="mapa-cards"></div>
   </div>
@@ -1236,26 +1241,25 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       zoom_hint: "🔍 Arrastrá sobre el gráfico para hacer zoom · rueda del mouse para acercar/alejar · pellizcá para zoom táctil · Ctrl+arrastrar para desplazarte una vez con zoom",
       channel_toggle_label: "Mostrar canales A/B por separado (PM1.0/PM2.5/PM10 seleccionados)",
       mapa_titulo: "Mapa de sensores",
-      mapa_capa_label: "Capa del mapa",
       mapa_aqi_descripcion: "Índice de calidad del aire (AQI · EPA)",
       mapa_aqi_categorica: "Paleta categórica de segmentos iguales; no es una escala numérica proporcional.",
       mapa_aqi_extension: "El último tramo continúa por encima del máximo mostrado; el gris indica falta de datos recientes y no es una categoría AQI.",
       mapa_dato_reciente: "Datos recientes",
       mapa_sin_valor: "Sin valor para este parámetro",
       mapa_valor_leyenda: "Medición del parámetro; consultar valor al pulsar",
-      mapa_provincia: "Provincia",
-      mapa_capas: "Capas",
-      mapa_capas_label: "Capas del mapa",
+      mapa_visualizacion: "Visualización",
+      mapa_medicion: "Medición",
+      mapa_mostrar: "Mostrar",
       mapa_sensores: "Sensores AQ",
       mapa_limites: "Límites de partidos",
-      mapa_capa_aqi: "AQI · EPA",
-      mapa_capa_pm2_5: "Capa: PM2.5",
-      mapa_capa_temperatura: "Capa: Temperatura",
-      mapa_capa_humedad: "Capa: Humedad",
-      mapa_capa_presion: "Capa: Presión",
-      mapa_capa_voc: "Capa: VOC",
-      mapa_capa_co2: "Capa: CO2",
-      mapa_capa_nox: "Capa: NOx",
+      mapa_medicion_aqi: "AQI · EPA",
+      mapa_medicion_pm2_5: "PM2.5",
+      mapa_medicion_temperatura: "Temperatura",
+      mapa_medicion_humedad: "Humedad",
+      mapa_medicion_presion: "Presión",
+      mapa_medicion_voc: "VOC",
+      mapa_medicion_co2: "CO2",
+      mapa_medicion_nox: "NOx",
       acerca_panel_title: "Acerca de este proyecto",
       acerca_p1: 'Red de sensores <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> y <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> instalada en instituciones educativas y domicilios de la Provincia de Buenos Aires — proyecto piloto en los partidos de Saladillo y 25 de Mayo — que mide material particulado (PM2.5/PM10) y otros parámetros en tiempo real como parte de una iniciativa de monitoreo y educación ambiental.',
       acerca_p2: 'Arquitectura: cron-job.org consulta la API de PurpleAir cada 30 minutos (:27 y :57); GitHub Actions y el cron del Worker permanecen pausados. Las lecturas se consideran recientes hasta 40 minutos inclusive. Los datos se guardan en Cloudflare D1; un Worker expone una <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">API REST propia y pública</a> que consume este dashboard y que también puede usar cualquiera para bajar los datos. Estado al 12/11/2026: cinco PurpleAir registrados; AE-02 instalado en su escuela y AE-04 (Del Valle) todavía en pruebas. El color indica frescura de la última lectura, no el encendido físico. Es uno de tres proyectos ambientales hermanos: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (meteorología), este (calidad del aire) y <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (calidad del agua). Documentación técnica de los tres en <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
@@ -1469,26 +1473,25 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       zoom_hint: "🔍 Drag on the chart to zoom · mouse wheel to zoom in/out · pinch to zoom on touch · Ctrl+drag to pan while zoomed",
       channel_toggle_label: "Show A/B channels separately (for selected PM1.0/PM2.5/PM10)",
       mapa_titulo: "Sensor map",
-      mapa_capa_label: "Map layer",
       mapa_aqi_descripcion: "Air quality index (AQI · EPA)",
       mapa_aqi_categorica: "Categorical palette with equal-width bands; not a proportional numeric scale.",
       mapa_aqi_extension: "The final band continues above the maximum shown; gray indicates no recent data and is not an AQI category.",
       mapa_dato_reciente: "Recent data",
       mapa_sin_valor: "No value for this parameter",
       mapa_valor_leyenda: "Parameter measurement; select a marker for its value",
-      mapa_provincia: "Province",
-      mapa_capas: "Layers",
-      mapa_capas_label: "Map layers",
+      mapa_visualizacion: "Display",
+      mapa_medicion: "Measurement",
+      mapa_mostrar: "Show",
       mapa_sensores: "AQ sensors",
       mapa_limites: "District boundaries",
-      mapa_capa_aqi: "AQI · EPA",
-      mapa_capa_pm2_5: "Layer: PM2.5",
-      mapa_capa_temperatura: "Layer: Temperature",
-      mapa_capa_humedad: "Layer: Humidity",
-      mapa_capa_presion: "Layer: Pressure",
-      mapa_capa_voc: "Layer: VOC",
-      mapa_capa_co2: "Layer: CO2",
-      mapa_capa_nox: "Layer: NOx",
+      mapa_medicion_aqi: "AQI · EPA",
+      mapa_medicion_pm2_5: "PM2.5",
+      mapa_medicion_temperatura: "Temperature",
+      mapa_medicion_humedad: "Humidity",
+      mapa_medicion_presion: "Pressure",
+      mapa_medicion_voc: "VOC",
+      mapa_medicion_co2: "CO2",
+      mapa_medicion_nox: "NOx",
       acerca_panel_title: "About this project",
       acerca_p1: 'A network of <a href="https://www.purpleair.com" target="_blank" style="color:var(--accent)">PurpleAir</a> and <a href="https://www.airgradient.com" target="_blank" style="color:var(--accent)">AirGradient</a> sensors installed in educational institutions and homes across Buenos Aires Province — a pilot project in the Saladillo and 25 de Mayo districts — measuring particulate matter (PM2.5/PM10) and other parameters in real time, as part of an environmental monitoring and education initiative.',
       acerca_p2: 'Architecture: cron-job.org polls PurpleAir every 30 minutes (:27 and :57); GitHub Actions and Worker cron remain paused. Readings are considered recent for up to 40 minutes. Data is stored in Cloudflare D1; a Worker exposes its own public <a href="?tab=api" onclick="return goToTab(event,\'api\')" style="color:var(--accent)">REST API</a>, which this dashboard consumes and which anyone can also use to pull the data. Status on 12 November 2026: five registered PurpleAir sensors; AE-02 installed at its school and AE-04 (Del Valle) still undergoing testing. Color indicates reading freshness, not physical power status. It\'s one of three sibling environmental projects: <a href="https://app.lemeit.ar/emas" target="_blank" style="color:var(--accent)">app.lemeit.ar/emas</a> (weather), this one (air quality), and <a href="https://app.lemeit.ar/wq" target="_blank" style="color:var(--accent)">app.lemeit.ar/wq</a> (water quality). Technical documentation for all three is at <a href="https://wiki.lemeit.ar" target="_blank" style="color:var(--accent)">wiki.lemeit.ar</a>.',
@@ -2281,7 +2284,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   }
 
   let mapaTerritorio = null;
-  function volverProvincia() {
+  function encuadrarProvinciaInicial() {
     if (!mapaInst) return;
     // Bbox derivada de la capa ARBA/IGN; fallback si el recurso local falla.
     const bbox = window.AQ_PBA?.bbox || [-63.3859, -41.03777, -56.66499, -33.26185];
@@ -2303,13 +2306,15 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
 
     if (!mapaInst) {
       mapaInst = L.map("mapa-container");
+      window.initAqDisplay?.(mapaInst, aplicarVisibilidadSensores, visible => mapaTerritorio?.setVisible(visible));
+      applyStaticTranslations();
       if (window.AQ_PBA && window.initAqProvince) {
         mapaTerritorio = window.initAqProvince(mapaInst, window.AQ_PBA);
         mapaTerritorio.setVisible(document.getElementById("mapa-limites").checked);
       } else {
         document.getElementById("mapa-limites").disabled = true;
       }
-      volverProvincia();
+      encuadrarProvinciaInicial();
       mapaTileLayer = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap contributors © CARTO" }).addTo(mapaInst);
     } else {
       if (mapaTileLayer) mapaInst.removeLayer(mapaTileLayer);
@@ -3530,7 +3535,6 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     });
   }
 
-  window.initAqLayers?.(aplicarVisibilidadSensores, visible => mapaTerritorio?.setVisible(visible));
   applyStaticTranslations();
   buildParamToggle();
   loadSensors();

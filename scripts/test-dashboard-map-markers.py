@@ -115,8 +115,7 @@ with sync_playwright() as p:
       assert panel['y']+panel['height']<=attribution['y']-4
       zoom=page.locator('.leaflet-control-zoom').bounding_box()
       assert zoom['y']+zoom['height']<panel['y']
-      selector=page.locator('#sel-mapa-param').bounding_box()
-      assert selector['y']+selector['height']<=area['y']
+      assert page.locator('#mapa-container .leaflet-top.leaflet-right #sel-mapa-param').count()==1
       assert page.evaluate('document.getElementById("mapa-legend").closest(".chart-wrap").getBoundingClientRect().bottom-document.getElementById("mapa-container").getBoundingClientRect().bottom<3')
       # Los números caben sin solaparse, incluso a 320 px.
       ticks=page.locator('.mapa-aqi-ticks span').evaluate_all('(els)=>els.map(e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right}})')
@@ -130,7 +129,7 @@ with sync_playwright() as p:
       assert page.locator('#mapa-cards > .card').evaluate_all('(els)=>els.map(e=>Number(e.dataset.sensorIndex))')==[1,2,3,4,5,6,900002,99]
       # Misma contención y estados de otras capas en cada viewport/idioma/tema.
       for layer_name in ['pm2_5','temperatura','humedad']:
-       page.select_option('#sel-mapa-param',layer_name)
+       page.select_option('#sel-mapa-param',layer_name,force=True)
        lp=page.locator('#mapa-legend').bounding_box()
        assert lp['width']<=240.5 and lp['y']>=area['y']
        assert lp['y']+lp['height']<=attribution['y']-4
@@ -141,7 +140,7 @@ with sync_playwright() as p:
        if layer_name=='pm2_5':
         assert marker(7).locator('circle').evaluate('(e)=>getComputedStyle(e).fill')=='none'
         assert marker(7).locator('circle').evaluate('(e)=>getComputedStyle(e).stroke')==accent
-      page.select_option('#sel-mapa-param','aqi')
+      page.select_option('#sel-mapa-param','aqi',force=True)
     page.evaluate('setLang("es");document.documentElement.setAttribute("data-theme","light")')
     page.locator('#tab-mapa > .chart-wrap').screenshot(path=str(root/'work'/f'control-after-{width}.png'))
    # Gestos dentro del control no mueven mapa; fuera se puede arrastrar.
@@ -167,7 +166,7 @@ with sync_playwright() as p:
    assert marker(1).evaluate('(e)=>e===document.activeElement')
    # Otras capas usan acento naranja, sin clasificar, y conservan el valor y valor elegido/unidad real.
    for param,value in [('pm2_5','20 µg/m³'),('temperatura','22.3 °C'),('humedad','48 %'),('presion','1008 hPa'),('voc','20 (índice)'),('co2','500 ppm'),('nox','2 (índice)')]:
-    page.select_option('#sel-mapa-param',param);page.wait_for_timeout(50)
+    page.select_option('#sel-mapa-param',param,force=True);page.wait_for_timeout(50)
     assert marker(1).locator('[data-shape]').get_attribute('data-shape')=='circle'
     assert marker(1).locator('.mapa-symbol').evaluate('(e)=>getComputedStyle(e).color')=='rgb(155, 61, 0)'
     page.evaluate('mapaInst.setView([latestSensors[1].latitud,latestSensors[1].longitud],15,{animate:false})')
@@ -182,7 +181,7 @@ with sync_playwright() as p:
      assert marker(7).locator('circle').evaluate('(e)=>getComputedStyle(e).stroke')=='rgb(155, 61, 0)'
     pp=page.locator('#mapa-legend').bounding_box();aa=page.locator('#mapa-container').bounding_box()
     assert pp['width']<=240.5 and pp['y']>=aa['y']
-   page.select_option('#sel-mapa-param','aqi');page.evaluate('mapaInst.closePopup()')
+   page.select_option('#sel-mapa-param','aqi',force=True);page.evaluate('mapaInst.closePopup()')
    page.evaluate('window.savedMarker=Object.values(mapaInst._layers).find(x=>x instanceof L.Marker);window.savedBack=document.querySelector("#mapa-cards .card-back")')
    before=len([u for u in calls if '/api/' in u or '/tiles/' in u])
    page.evaluate('fixtureNow+=1')
