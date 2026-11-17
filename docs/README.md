@@ -2,7 +2,9 @@
 
 ## Regla e interfaz
 
-- [Control compacto Capas (17/11/2026)](CONTROL_CAPAS_MAPA_20261117.md): propuesta actual, reemplaza listado por sensores/límites, preferencias, accesibilidad, pruebas y siguientes etapas sin datos nuevos.
+- [Visualización dentro de Leaflet (17/11/2026)](VISUALIZACION_MAPA_LEAFLET_20261117.md): propuesta actual; un control para Medición/Mostrar, sin franja externa ni Provincia, con reproducción, aceptación y pruebas.
+
+- [Control compacto Capas (17/11/2026)](CONTROL_CAPAS_MAPA_20261117.md): registro de #43 fusionado, reemplazó listado por sensores/límites, preferencias, accesibilidad, pruebas y siguientes etapas sin datos nuevos.
 
 - [Vista provincial y partidos PBA](MAPA_PROVINCIA_PBA.md): registro histórico de #40, límites/nombres con procedencia ARBA/IGN, licencia, densidad, vista manual, pruebas y futura etapa EMAS sin datos importados.
 

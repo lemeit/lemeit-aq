@@ -1,3 +1,5 @@
+> Seguimiento: #43 fusionado. La propuesta de [Visualización Leaflet](VISUALIZACION_MAPA_LEAFLET_20261117.md) reúne medición y visibilidad dentro del mapa y retira Provincia/franja externa. Este documento conserva decisiones y pruebas históricas de #43.
+
 # Control compacto Capas — 17/11/2026
 
 ## Base, reproducción y coordinación
