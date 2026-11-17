@@ -45,6 +45,7 @@
 </script>
 <script src="assets/geo/pba-partidos.js"></script>
 <script src="assets/mapa-pba.js"></script>
+<script src="assets/mapa-capas.js"></script>
 <style>
   :root {
     /* paleta lemeit.ar (design.lemeit.ar) — modo oscuro */
@@ -447,12 +448,12 @@
     --very-unhealthy: #8F3F97;
     --hazardous: #7E0023;
   }
-  .mapa-territorio { display:flex; gap:8px; padding:8px 14px; align-items:center; }
-  .mapa-territorio .sel { min-width:0; flex:1; max-width:260px; }
-  .mapa-territorio button { font:inherit; font-family:var(--font-display); font-size:11px; min-height:36px; color:var(--text); background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:6px 10px; cursor:pointer; }
-  .pba-label { position:absolute; white-space:nowrap; font:11px var(--font-body); line-height:1.15; text-align:center; color:var(--text); text-shadow:0 0 3px var(--bg),1px 1px 2px var(--bg),-1px -1px 2px var(--bg); pointer-events:none; }
-  .pba-label small { display:block; font-size:8px; color:var(--text-dim); }
-  .pba-label[hidden] { display:none; }
+  .mapa-territorio { position:relative; display:flex; gap:8px; padding:8px 14px; align-items:center; }
+  .mapa-territorio button { font:11px var(--font-display); min-height:36px; color:var(--text); background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:6px 10px; cursor:pointer; }
+  .mapa-capas-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:1100; width:224px; max-width:calc(100vw - 48px); box-sizing:border-box; padding:8px; background:var(--bg-panel); color:var(--text); border:1px solid var(--border); border-radius:6px; box-shadow:0 3px 10px rgba(0,0,0,.2); }
+  .mapa-capas-panel label { display:flex; gap:8px; align-items:center; min-height:40px; font-size:13px; cursor:pointer; }
+  .mapa-capas-panel input { accent-color:var(--accent); width:18px; height:18px; }
+  .mapa-capas-panel[hidden], .mapa-legend[hidden] { display:none; }
   #mapa-container { background:var(--bg); height: 400px; width: 100%; position: relative; z-index: 1; }
 
   .mapa-legend {
@@ -1014,7 +1015,13 @@
       </div>
       <div class="mapa-territorio">
         <button type="button" onclick="volverProvincia()" data-i18n="mapa_provincia">Provincia</button>
-        <select class="sel" id="sel-mapa-partido" aria-label="Partido de Buenos Aires" data-i18n-title="mapa_partido_label"><option value="" data-i18n="mapa_partidos">Partidos PBA</option></select>
+        <div id="mapa-capas">
+          <button type="button" id="mapa-capas-button" aria-expanded="false" aria-controls="mapa-capas-panel" data-i18n="mapa_capas">Capas</button>
+          <div id="mapa-capas-panel" class="mapa-capas-panel" role="group" aria-label="Capas del mapa" data-i18n-title="mapa_capas_label" hidden>
+            <label><input type="checkbox" id="mapa-sensores" checked><span data-i18n="mapa_sensores">Sensores AQ</span></label>
+            <label><input type="checkbox" id="mapa-limites" checked><span data-i18n="mapa_limites">Límites de partidos</span></label>
+          </div>
+        </div>
       </div>
       <div id="mapa-container"></div>
     </div>
@@ -1237,9 +1244,10 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_sin_valor: "Sin valor para este parámetro",
       mapa_valor_leyenda: "Medición del parámetro; consultar valor al pulsar",
       mapa_provincia: "Provincia",
-      mapa_partidos: "Partidos PBA",
-      mapa_partidos_no_disponibles: "Partidos PBA no disponibles",
-      mapa_partido_label: "Partido de Buenos Aires",
+      mapa_capas: "Capas",
+      mapa_capas_label: "Capas del mapa",
+      mapa_sensores: "Sensores AQ",
+      mapa_limites: "Límites de partidos",
       mapa_capa_aqi: "AQI · EPA",
       mapa_capa_pm2_5: "Capa: PM2.5",
       mapa_capa_temperatura: "Capa: Temperatura",
@@ -1469,9 +1477,10 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
       mapa_sin_valor: "No value for this parameter",
       mapa_valor_leyenda: "Parameter measurement; select a marker for its value",
       mapa_provincia: "Province",
-      mapa_partidos: "PBA districts",
-      mapa_partidos_no_disponibles: "PBA districts unavailable",
-      mapa_partido_label: "District of Buenos Aires Province",
+      mapa_capas: "Layers",
+      mapa_capas_label: "Map layers",
+      mapa_sensores: "AQ sensors",
+      mapa_limites: "District boundaries",
       mapa_capa_aqi: "AQI · EPA",
       mapa_capa_pm2_5: "Layer: PM2.5",
       mapa_capa_temperatura: "Layer: Temperature",
@@ -2237,6 +2246,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
   function renderMapaLegend(param) {
     const legend = document.getElementById("mapa-legend");
     if (!legend) return;
+    legend.hidden = document.getElementById("mapa-sensores")?.checked === false;
     const item = (state, color, label) => `<span class="mapa-legend-item">${mapaSymbolHtml(state, color)}<span>${label}</span></span>`;
     if (param === "aqi") {
       const limits = [0, ...AQI_CATEGORIES.map((category) => category.max)];
@@ -2259,12 +2269,22 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     legend.innerHTML += item("missing", "var(--accent)", t("mapa_sin_valor")) + item("stale", "#C7C7C7", t("aqi_sin_datos_card"));
   }
 
+  function aplicarVisibilidadSensores() {
+    const visible = document.getElementById("mapa-sensores").checked;
+    for (const name of ["mapaStale", "mapaRecent"]) {
+      const pane = mapaInst?.getPane(name);
+      if (pane) pane.style.display = visible ? "" : "none";
+    }
+    if (!visible) mapaInst?.closePopup?.();
+    const legend = document.getElementById("mapa-legend");
+    if (legend) legend.hidden = !visible;
+  }
+
   let mapaTerritorio = null;
   function volverProvincia() {
     if (!mapaInst) return;
     // Bbox derivada de la capa ARBA/IGN; fallback si el recurso local falla.
     const bbox = window.AQ_PBA?.bbox || [-63.3859, -41.03777, -56.66499, -33.26185];
-    document.getElementById("sel-mapa-partido").value = "";
     mapaInst.fitBounds([[bbox[1],bbox[0]],[bbox[3],bbox[2]]], { padding:[18,18], animate:false });
   }
 
@@ -2284,12 +2304,10 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     if (!mapaInst) {
       mapaInst = L.map("mapa-container");
       if (window.AQ_PBA && window.initAqProvince) {
-        mapaTerritorio = window.initAqProvince(mapaInst, window.AQ_PBA, () => latestSensors);
+        mapaTerritorio = window.initAqProvince(mapaInst, window.AQ_PBA);
+        mapaTerritorio.setVisible(document.getElementById("mapa-limites").checked);
       } else {
-        const selector = document.getElementById("sel-mapa-partido");
-        selector.disabled = true;
-        selector.options[0].dataset.i18n = "mapa_partidos_no_disponibles";
-        selector.options[0].textContent = t("mapa_partidos_no_disponibles");
+        document.getElementById("mapa-limites").disabled = true;
       }
       volverProvincia();
       mapaTileLayer = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap contributors © CARTO" }).addTo(mapaInst);
@@ -2299,7 +2317,6 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     }
 
     initMapaLegend();
-    mapaTerritorio?.update();
 
     mapaInst.eachLayer((l) => { if (l instanceof L.CircleMarker || l instanceof L.Marker) mapaInst.removeLayer(l); });
     if (mapaTileLayer) mapaTileLayer.addTo(mapaInst); // por si el tileLayer cayó dentro del removeLayer de arriba
@@ -2338,6 +2355,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     for (const [name, zIndex] of [["mapaStale", 590], ["mapaRecent", 610]]) {
       if (!mapaInst.getPane(name)) mapaInst.createPane(name).style.zIndex = zIndex;
     }
+    aplicarVisibilidadSensores();
     const freshnessUpdates = [];
     conCoords.forEach((s) => {
       const accessibleLabel = () => `${s.institucion || s.nombre}: ${paramLabel(param)}, ${formatParamValue(s, param)}; ${mapaMarkerState(s, param).label}; ${t("last_measurement", { fecha: formatBsAsFull(s.timestamp) })}`;
@@ -2387,7 +2405,6 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     refreshMapaLayers = () => {
       freshnessUpdates.forEach((update) => update());
       renderMapaLegend(param);
-      mapaTerritorio?.update();
     };
 
     mapaCards.innerHTML = sortSensorCards(conCoords).map((s) => {
@@ -3513,6 +3530,7 @@ curl "https://api.lemeit.ar/aq/api/historico/12345?desde=2026-08-01&hasta=2026-0
     });
   }
 
+  window.initAqLayers?.(aplicarVisibilidadSensores, visible => mapaTerritorio?.setVisible(visible));
   applyStaticTranslations();
   buildParamToggle();
   loadSensors();

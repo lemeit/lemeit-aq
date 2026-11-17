@@ -1,3 +1,5 @@
+> Seguimiento 17/11/2026: #41 quitó etiquetas duplicadas; la propuesta de [Capas](CONTROL_CAPAS_MAPA_20261117.md) retira el selector/listado de partidos. Lo siguiente conserva decisiones y pruebas históricas de #40.
+
 # Vista provincial PBA y nombres de partidos
 
 ## Base y alcance
