@@ -4,11 +4,12 @@
 // propia) y las librerías de CDN (Chart.js, jsPDF, Leaflet, fuentes,
 // design.lemeit.ar) NUNCA se cachean acá: van directo a red, así siempre
 // se ven lecturas actuales y versiones al día de esas librerías.
-const CACHE_NAME = "aq-shell-v5-provincia-pba";
+const CACHE_NAME = "aq-shell-v6-control-capas";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./assets/mapa-pba.js",
+  "./assets/mapa-capas.js",
   "./assets/geo/pba-partidos.js",
   "./manifest.json",
   "./favicon.svg",

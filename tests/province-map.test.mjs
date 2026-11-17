@@ -18,6 +18,6 @@ test('135 partidos reales, no comunas ni nombres de ciudades sustituidos',()=>{
 test('PBA cubre extremos provinciales y recursos locales están en shell PWA',()=>{
  assert.ok(data.bbox[0]<-63&&data.bbox[1]<-41&&data.bbox[2]>-57&&data.bbox[3]>-33.3);
  const sw=fs.readFileSync('sw.js','utf8');
- for(const path of ['assets/mapa-pba.js','assets/geo/pba-partidos.js'])assert.ok(sw.includes(path));
+ for(const path of ['assets/mapa-pba.js','assets/geo/pba-partidos.js','assets/mapa-capas.js'])assert.ok(sw.includes(path));
  assert.ok(fs.statSync('assets/geo/pba-partidos.js').size<300000);
 });

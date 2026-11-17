@@ -2,7 +2,9 @@
 
 ## Regla e interfaz
 
-- [Vista provincial y partidos PBA](MAPA_PROVINCIA_PBA.md): propuesta actual, límites/nombres con procedencia ARBA/IGN, licencia, densidad, vista manual, pruebas y futura etapa EMAS sin datos importados.
+- [Control compacto Capas (17/11/2026)](CONTROL_CAPAS_MAPA_20261117.md): propuesta actual, reemplaza listado por sensores/límites, preferencias, accesibilidad, pruebas y siguientes etapas sin datos nuevos.
+
+- [Vista provincial y partidos PBA](MAPA_PROVINCIA_PBA.md): registro histórico de #40, límites/nombres con procedencia ARBA/IGN, licencia, densidad, vista manual, pruebas y futura etapa EMAS sin datos importados.
 
 - [Prioridad de marcadores y frescura](PRIORIDAD_MAPA_FRESCURA.md): PR #38 fusionado; recientes encima de grises y 40 minutos inclusive, con pruebas de superposición Leaflet real.
 
